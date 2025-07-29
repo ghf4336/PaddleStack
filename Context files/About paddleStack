@@ -1,0 +1,31 @@
+# About the app:
+I want to create a simple, web browser-based Pickleball queue system as a digital alternative to the traditional paddle stack method, inspired by practices described in the what is paddle stack sesction below. The goal is a single, intuitive interface to manage player sessions and clearly display who’s up next.
+
+Technology Stack:
+- Frontend: React.js htkml, CSS, and JavaScript
+- Backend: Node.js with Express
+ - memmory: in-memory database (for simplicity, no need for persistent storage)
+ Feel free to add any additional libraries or frameworks that you think would enhance the app's functionality or user experience.
+
+ What is paddle stack?
+ What is Open Play (Paddle Stacking)?
+The concept of paddle stacking in pickleball is a method used to manage the rotation of players during open play sessions. In recreational or open play sessions, especially when courts are busy and there are many players waiting to get on the court, paddle stacking is a common practice to determine the order of play.
+
+
+How Paddle Stacking Works
+Players who are waiting to play will place (or “stack”) their paddles in a designated area, often on the side of the court or in special paddle racks. This is typically done in groups of four since pickleball doubles is the most common format. The order in which the paddles are stacked determines the order of play. The first group of four paddles represents the next group to play on a court when it becomes available.
+
+Rotation and Fair Play
+Once a game finishes and a court becomes available, the next group of four players (as determined by the stacked paddles) will take the court. The previous players will either rest or, if they wish to play again, place their paddles at the end of the line. This system ensures a fair rotation and allows everyone an opportunity to play. It’s especially useful during busy times when there are more players than available courts.
+
+Variations in Paddle Stacking
+Some venues might have variations of this system, such as different rules for winners staying on or incorporating challenge courts, but the basic principle of paddle stacking remains the same. This system is a simple and effective way to manage court rotations and ensure that everyone gets a chance to play in a fair and organized manner.
+
+Purpose
+The primary purpose of paddle stacking is to maintain an organized rotation of players, ensuring that everyone gets an equal opportunity to play, especially during peak times when courts are bustling with activity.
+
+Procedure
+Players waiting for their turn will place their paddles in the designated area. As courts become available, the next set of paddles in line will indicate the next group of players. This system is predominantly used for doubles play, which requires four players.
+
+Duration of Play
+Typically, each game lasts until one team scores 11 points with a win by 2. After the game, players vacate the court for the next set of players.
