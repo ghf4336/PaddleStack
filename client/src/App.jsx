@@ -1,35 +1,88 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import { useState } from 'react';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [playerName, setPlayerName] = useState('');
+  const [showPaidModal, setShowPaidModal] = useState(false);
+  const [hasPaid, setHasPaid] = useState(false);
+  const [sessionPlayers, setSessionPlayers] = useState([]);
+  const [generalQueue, setGeneralQueue] = useState([]);
+
+  const handleAddPlayer = () => {
+    if (playerName.trim()) {
+      setShowPaidModal(true);
+    }
+  };
+
+  const handleConfirmAdd = () => {
+    setSessionPlayers([
+      ...sessionPlayers,
+      { name: playerName, paid: hasPaid }
+    ]);
+    setPlayerName('');
+    setHasPaid(false);
+    setShowPaidModal(false);
+  };
+
+  const handleCancelAdd = () => {
+    setShowPaidModal(false);
+    setHasPaid(false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app-container">
+      <div className="sidebar">
+        <h3>Session Players ({sessionPlayers.length})</h3>
+        <div className="add-player-row">
+          <input
+            type="text"
+            placeholder="Enter player name"
+            value={playerName}
+            onChange={e => setPlayerName(e.target.value)}
+            className="player-input"
+          />
+          <button className="add-btn" onClick={handleAddPlayer}>Add</button>
+        </div>
+        <div className="session-list">
+          {sessionPlayers.map((p, i) => (
+            <div className="session-player" key={i}>
+              {p.name} {p.paid && <span className="paid-badge">Paid</span>}
+            </div>
+          ))}
+        </div>
+        <div className="general-queue">
+          <h4>General Queue ({generalQueue.length})</h4>
+          {/* Placeholder for general queue */}
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+
+      {/* Modal for paid confirmation */}
+      {showPaidModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h4>Has the player paid?</h4>
+            <label>
+              <input
+                type="checkbox"
+                checked={hasPaid}
+                onChange={e => setHasPaid(e.target.checked)}
+              />{' '}
+              Paid
+            </label>
+            <div className="modal-actions">
+              <button onClick={handleConfirmAdd} className="confirm-btn">Confirm</button>
+              <button onClick={handleCancelAdd} className="cancel-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Main content placeholder for right panel */}
+      <div className="main-content">
+        {/* To be implemented: Next Up, Courts, etc. */}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
