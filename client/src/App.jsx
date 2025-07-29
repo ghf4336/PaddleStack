@@ -47,7 +47,10 @@ function App() {
         <div className="session-list">
           {sessionPlayers.map((p, i) => (
             <div className="session-player" key={i}>
-              {p.name} {p.paid && <span className="paid-badge">Paid</span>}
+              <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>}</span>
+              <button className="remove-btn" title="Remove player" onClick={() => {
+                setSessionPlayers(sessionPlayers.filter((_, idx) => idx !== i));
+              }}>×</button>
             </div>
           ))}
         </div>
