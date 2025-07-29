@@ -23,7 +23,9 @@ describe('PaddleStack App - User Registration', () => {
     fireEvent.change(screen.getByPlaceholderText(/enter player name/i), { target: { value: 'Test Player' } });
     fireEvent.click(screen.getByText(/add/i));
     fireEvent.click(screen.getByText(/confirm/i));
-    expect(screen.getByText('Test Player')).toBeInTheDocument();
+    // Check that Test Player appears in the session list (left panel)
+    const sessionList = screen.getByText('Session Players', { exact: false }).parentElement;
+    expect(sessionList.querySelector('.session-list')).toHaveTextContent('Test Player');
   });
 
   test('removes player from session list when X is clicked', () => {
@@ -33,6 +35,8 @@ describe('PaddleStack App - User Registration', () => {
     fireEvent.click(screen.getByText(/confirm/i));
     const removeBtn = screen.getByTitle(/remove player/i);
     fireEvent.click(removeBtn);
-    expect(screen.queryByText('Test Player')).not.toBeInTheDocument();
+    // Check that Test Player is no longer in the session list
+    const sessionList = screen.getByText('Session Players', { exact: false }).parentElement;
+    expect(sessionList.querySelector('.session-list')).not.toHaveTextContent('Test Player');
   });
 });

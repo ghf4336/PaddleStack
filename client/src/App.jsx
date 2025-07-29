@@ -20,9 +20,18 @@ function App() {
   };
 
   const handleConfirmAdd = () => {
+    // Ensure unique name
+    let baseName = playerName.trim();
+    let newName = baseName;
+    let count = 2;
+    const existingNames = sessionPlayers.map(p => p.name);
+    while (existingNames.includes(newName)) {
+      newName = `${baseName} (${count})`;
+      count++;
+    }
     setSessionPlayers([
       ...sessionPlayers,
-      { name: playerName, paid: hasPaid }
+      { name: newName, paid: hasPaid }
     ]);
     setPlayerName('');
     setHasPaid(false);
