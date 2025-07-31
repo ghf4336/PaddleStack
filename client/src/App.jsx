@@ -2,8 +2,35 @@
 import React, { useState } from 'react';
 import './App.css';
 
-
 function App() {
+  // Remove court handler with in-panel confirmation (must be inside App)
+  const [courtToRemove, setCourtToRemove] = useState(null); // index of court to remove or null
+  const handleRemoveCourt = (courtIdx) => {
+    setCourtToRemove(courtIdx);
+  };
+
+  const handleConfirmRemoveCourt = () => {
+    setCourts(prevCourts => {
+      const court = prevCourts[courtToRemove];
+      if (court && court.players && court.players.length > 0) {
+        setSessionPlayers(prevPlayers => {
+          // Remove these players from their current positions in the queue
+          const namesToRemove = court.players.map(p => p.name);
+          const filtered = prevPlayers.filter(p => !namesToRemove.includes(p.name));
+          // Add them to the end, preserving their order
+          return [...filtered, ...court.players];
+        });
+      }
+      // Remove the court and renumber
+      const filtered = prevCourts.filter((_, idx) => idx !== courtToRemove);
+      return filtered.map((c, i) => ({ ...c, number: i + 1 }));
+    });
+    setCourtToRemove(null);
+  };
+
+  const handleCancelRemoveCourt = () => {
+    setCourtToRemove(null);
+  };
   const [playerName, setPlayerName] = useState('');
   const [showPaidModal, setShowPaidModal] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
@@ -20,6 +47,26 @@ function App() {
         players: []
       }
     ]);
+  };
+
+  // Complete game handler
+  const handleCompleteGame = (courtIdx) => {
+    setCourts(prevCourts => {
+      const court = prevCourts[courtIdx];
+      // Only complete if court is full
+      if (!court.players || court.players.length !== 4) return prevCourts;
+      // Remove these players from the court and add them to the end of the queue
+      setSessionPlayers(prevPlayers => {
+        // Remove current court players from their current positions
+        const namesToRemove = court.players.map(p => p.name);
+        const filtered = prevPlayers.filter(p => !namesToRemove.includes(p.name));
+        // Add them to the end
+        return [...filtered, ...court.players];
+      });
+      // The effect will reassign the next up players to the court
+      // Clear the court's players immediately
+      return prevCourts.map((c, idx) => idx === courtIdx ? { ...c, players: [] } : c);
+    });
   };
 
   // Assign players to free courts when possible and remove them from next up
@@ -203,11 +250,59 @@ function App() {
           gap: 16
         }}>
           {courts.map((court, idx) => (
-            <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
                 <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
                 <span style={{ marginLeft: 12, background: '#19c37d', color: '#fff', fontWeight: 600, fontSize: 14, borderRadius: 8, padding: '2px 10px' }}>Active</span>
+                <button
+                  className="remove-court-btn"
+                  title="Remove court"
+                  style={{ marginLeft: 'auto', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 18, width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onClick={() => handleRemoveCourt(idx)}
+                >
+                  ×
+                </button>
               </div>
+              {/* In-panel confirmation popup for removing court */}
+              {courtToRemove === idx && (
+                <div className="remove-court-popup" style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: 'rgba(255,255,255,0.97)',
+                  borderRadius: 12,
+                  zIndex: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 12px #0002',
+                  padding: 24
+                }}>
+                  <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 12, color: '#e74c3c', textAlign: 'center' }}>Remove this court?</div>
+                  <div style={{ fontSize: 15, color: '#333', marginBottom: 20, textAlign: 'center' }}>
+                    Are you sure you want to remove this court?<br />Any players on this court will be returned to the queue.
+                  </div>
+                  <div style={{ display: 'flex', gap: 16 }}>
+                    <button
+                      className="confirm-remove-court-btn"
+                      style={{ background: '#e74c3c', color: '#fff', fontWeight: 700, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}
+                      onClick={handleConfirmRemoveCourt}
+                    >
+                      Remove
+                    </button>
+                    <button
+                      className="cancel-remove-court-btn"
+                      style={{ background: '#bbb', color: '#222', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}
+                      onClick={handleCancelRemoveCourt}
+                    >
+                      Keep
+                    </button>
+                  </div>
+                </div>
+              )}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', marginBottom: 12 }}>
                 {court.players && court.players.length === 4 ? (
                   [0, 1, 2, 3].map(i => {
@@ -225,7 +320,14 @@ function App() {
                   </div>
                 )}
               </div>
-              {/* Game Complete and Remove Court buttons will be added in next steps */}
+              <button
+                className="complete-game-btn"
+                style={{ width: '100%', background: '#222', color: '#fff', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '10px 0', marginTop: 8, cursor: court.players && court.players.length === 4 ? 'pointer' : 'not-allowed', opacity: court.players && court.players.length === 4 ? 1 : 0.5, border: 'none' }}
+                onClick={() => handleCompleteGame(idx)}
+                disabled={!(court.players && court.players.length === 4)}
+              >
+                Complete Game
+              </button>
             </div>
           ))}
         </div>

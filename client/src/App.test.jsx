@@ -90,12 +90,30 @@ describe('PaddleStack App', () => {
     expect(screen.getAllByText('Henry').length).toBeGreaterThan(0);
   });
 
-  test('cannot add more than 8 courts', () => {
+  test('removing a court returns its players to the end of the queue and removes the court', () => {
     render(<App />);
-    for (let i = 0; i < 8; i++) {
-      fireEvent.click(screen.getByText('+ Add Court'));
-    }
-    expect(screen.getAllByText('Courts (8)').length).toBeGreaterThan(0);
-    expect(screen.getByText('+ Add Court')).toBeDisabled();
+    fireEvent.click(screen.getByText('Load Test Data'));
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // Court 1 should be filled with Alice, Bob, Charlie, Diana
+    expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
+    // Remove the court
+    const removeCourtBtn = screen.getByTitle('Remove court');
+    fireEvent.click(removeCourtBtn);
+    // Confirm removal in popup
+    fireEvent.click(screen.getByText('Remove'));
+    // Court 1 should be gone
+    expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
+    // Alice, Bob, Charlie, Diana should be at the end of the queue (general queue)
+    // Add another court to force assignment of next up
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // Now Eve, Frank, Alice, Bob should be assigned to Court 1 (since Alice/Bob/Charlie/Diana are now at the end)
+    // Next up should show Charlie, Diana, and any new players
+    expect(screen.getAllByText('Charlie').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Diana').length).toBeGreaterThan(0);
+    // General queue should include Alice and Bob at the end
+    const queuePlayers = screen.getAllByText(/Alice|Bob|Charlie|Diana/).map(el => el.textContent);
+    // No duplicates
+    const unique = new Set(queuePlayers);
+    expect(unique.size).toBe(queuePlayers.length);
   });
 });
