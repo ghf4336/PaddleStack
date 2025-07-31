@@ -27,7 +27,7 @@ function App() {
     setCourts(prevCourts => {
       let assignedIndices = new Set();
       let updated = prevCourts.map((court, idx) => {
-        // Always assign a unique group of 4 unassigned players to each court
+        // Only assign a group if there are 4 unassigned players available
         let group = [];
         for (let i = 0; i < sessionPlayers.length && group.length < 4; i++) {
           if (!assignedIndices.has(i)) {
@@ -35,7 +35,13 @@ function App() {
             assignedIndices.add(i);
           }
         }
-        return { ...court, players: group };
+        if (group.length === 4) {
+          return { ...court, players: group };
+        } else {
+          // Not enough players, leave court empty
+          // Remove any partial assignment
+          return { ...court, players: [] };
+        }
       });
       return updated;
     });
@@ -63,9 +69,9 @@ function App() {
       if (idx !== -1) assignedIndices.add(idx);
     });
   });
-  // Next up: first 4 * number of courts unassigned players
-  const nextUpPlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, courts.length * 4);
-  const generalQueue = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(courts.length * 4);
+  // Next up: first 4 unassigned players
+  const nextUpPlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 4);
+  const generalQueue = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(4);
 
   const handleAddPlayer = () => {
     if (playerName.trim()) {
@@ -159,8 +165,8 @@ function App() {
       {/* Main content: Next Up display and Courts */}
       <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
         <div className="nextup-section">
-          <h3>Next Up ({nextUpPlayers.length}/{courts.length * 4})</h3>
-          <div className="nextup-desc">Next {courts.length * 4} players to enter any available court</div>
+          <h3>Next Up ({nextUpPlayers.length}/4)</h3>
+          <div className="nextup-desc">Next 4 players to enter any available court</div>
           <div className="nextup-grid">
             {[0, 1].map(row => (
               <div className="nextup-row" key={row}>
