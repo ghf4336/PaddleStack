@@ -8,11 +8,38 @@ function App() {
   const [showPaidModal, setShowPaidModal] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [sessionPlayers, setSessionPlayers] = useState([]);
-  const [courts, setCourts] = useState([]); // Array of court numbers
+  const [courts, setCourts] = useState([]); // Array of { number, players: [] }
 
+  // Add court (empty, not auto-assigned)
   const handleAddCourt = () => {
-    setCourts(prev => prev.length < 8 ? [...prev, { number: prev.length + 1 }] : prev);
+    if (courts.length >= 8) return;
+    setCourts(prev => [
+      ...prev,
+      {
+        number: prev.length + 1,
+        players: []
+      }
+    ]);
   };
+
+  // Assign players to free courts when possible and remove them from next up
+  React.useEffect(() => {
+    setCourts(prevCourts => {
+      let assignedIndices = new Set();
+      let updated = prevCourts.map((court, idx) => {
+        // Always assign a unique group of 4 unassigned players to each court
+        let group = [];
+        for (let i = 0; i < sessionPlayers.length && group.length < 4; i++) {
+          if (!assignedIndices.has(i)) {
+            group.push(sessionPlayers[i]);
+            assignedIndices.add(i);
+          }
+        }
+        return { ...court, players: group };
+      });
+      return updated;
+    });
+  }, [sessionPlayers, courts.length]);
 
   // Test data for quick loading
   const testPlayers = [
@@ -28,9 +55,17 @@ function App() {
     setSessionPlayers(testPlayers);
   };
 
-  // Next up: first 4 players, General queue: rest
-  const nextUpPlayers = sessionPlayers.slice(0, 4);
-  const generalQueue = sessionPlayers.slice(4);
+  // Calculate indices of players currently assigned to courts
+  const assignedIndices = new Set();
+  courts.forEach(court => {
+    (court.players || []).forEach(player => {
+      const idx = sessionPlayers.findIndex(p => p && player && p.name === player.name);
+      if (idx !== -1) assignedIndices.add(idx);
+    });
+  });
+  // Next up: first 4 * number of courts unassigned players
+  const nextUpPlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, courts.length * 4);
+  const generalQueue = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(courts.length * 4);
 
   const handleAddPlayer = () => {
     if (playerName.trim()) {
@@ -124,8 +159,8 @@ function App() {
       {/* Main content: Next Up display and Courts */}
       <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
         <div className="nextup-section">
-          <h3>Next Up ({nextUpPlayers.length}/4)</h3>
-          <div className="nextup-desc">Next 4 players to enter any available court</div>
+          <h3>Next Up ({nextUpPlayers.length}/{courts.length * 4})</h3>
+          <div className="nextup-desc">Next {courts.length * 4} players to enter any available court</div>
           <div className="nextup-grid">
             {[0, 1].map(row => (
               <div className="nextup-row" key={row}>
@@ -156,18 +191,38 @@ function App() {
               + Add Court
             </button>
           </div>
-          <div className="courts-list" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 16
-          }}>
-            {courts.map((court, idx) => (
-              <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Court {court.number}</div>
-                {/* Blank panel for now */}
+        <div className="courts-list" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 16
+        }}>
+          {courts.map((court, idx) => (
+            <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
+                <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
+                <span style={{ marginLeft: 12, background: '#19c37d', color: '#fff', fontWeight: 600, fontSize: 14, borderRadius: 8, padding: '2px 10px' }}>Active</span>
               </div>
-            ))}
-          </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', marginBottom: 12 }}>
+                {court.players && court.players.length === 4 ? (
+                  [0, 1, 2, 3].map(i => {
+                    const p = court.players[i];
+                    return (
+                      <div key={i} style={{ background: '#f6f6fa', borderRadius: 6, padding: '8px 10px', minHeight: 36, display: 'flex', alignItems: 'center', fontWeight: 500, fontSize: 15 }}>
+                        <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
+                        <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ gridColumn: 'span 2', color: '#bbb', textAlign: 'center', padding: '16px 0', fontWeight: 500 }}>
+                    Waiting for players...
+                  </div>
+                )}
+              </div>
+              {/* Game Complete and Remove Court buttons will be added in next steps */}
+            </div>
+          ))}
+        </div>
         </div>
       </div>
     </div>

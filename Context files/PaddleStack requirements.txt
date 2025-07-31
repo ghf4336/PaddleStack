@@ -24,6 +24,8 @@ For a high level design please refer to the following file figama wireframe in t
 
 #5. Court pannel:
 - Each court should have a button to remove it from the session. When clicked, the court should be removed from the session and the list of courts should update accordingly. Each court should have a complte game button. When clicked, the game should be completed and the players assigned to that court should be removed from the session and added to the next up display. The next set of players should fill the court automatically.
+- each court should have a complete game button
+-should display who is on each court (just like the next up seccion)
 
 6# General queue:
 If there is more than 8 players waiting in the queue, the next 8 players should be displayed in the next up display. the rest of the players should be added into the general queue. The general queue should be displayed in a scrollable list below the next up display.
