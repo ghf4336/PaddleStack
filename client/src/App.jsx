@@ -8,6 +8,11 @@ function App() {
   const [showPaidModal, setShowPaidModal] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [sessionPlayers, setSessionPlayers] = useState([]);
+  const [courts, setCourts] = useState([]); // Array of court numbers
+
+  const handleAddCourt = () => {
+    setCourts(prev => prev.length < 8 ? [...prev, { number: prev.length + 1 }] : prev);
+  };
 
   // Test data for quick loading
   const testPlayers = [
@@ -115,8 +120,9 @@ function App() {
           </div>
         </div>
       )}
-      {/* Main content: Next Up display */}
-      <div className="main-content">
+
+      {/* Main content: Next Up display and Courts */}
+      <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
         <div className="nextup-section">
           <h3>Next Up ({nextUpPlayers.length}/4)</h3>
           <div className="nextup-desc">Next 4 players to enter any available court</div>
@@ -133,6 +139,32 @@ function App() {
                     </div>
                   ) : <div className="nextup-card empty" key={col} role="presentation"></div>;
                 })}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Courts Panel */}
+        <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ margin: 0 }}>Courts ({courts.length})</h3>
+            <button
+              className="add-court-btn"
+              style={{ padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer' }}
+              onClick={handleAddCourt}
+              disabled={courts.length >= 8}
+            >
+              + Add Court
+            </button>
+          </div>
+          <div className="courts-list" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 16
+          }}>
+            {courts.map((court, idx) => (
+              <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Court {court.number}</div>
+                {/* Blank panel for now */}
               </div>
             ))}
           </div>
