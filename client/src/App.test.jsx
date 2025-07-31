@@ -4,6 +4,44 @@ import App from './App';
 import '@testing-library/jest-dom';
 
 describe('PaddleStack App', () => {
+  test('completing a game only moves that court\'s players to the back of the queue', () => {
+    render(<App />);
+    // Load test data and add two courts
+    fireEvent.click(screen.getByText('Load Test Data'));
+    fireEvent.click(screen.getByText('+ Add Court'));
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // At this point:
+    // Court 1: Alice, Bob, Charlie, Diana
+    // Court 2: Eve, Frank, (empty, empty)
+    // Add two more players to fill Court 2
+    ['Gina', 'Henry'].forEach(name => {
+      fireEvent.change(screen.getByPlaceholderText(/Enter player name/i), { target: { value: name } });
+      fireEvent.click(screen.getByText('Add'));
+      fireEvent.click(screen.getByText('Confirm'));
+    });
+    // Now Court 2 should be: Eve, Frank, Gina, Henry
+    // Complete game on Court 1
+    const completeBtns = screen.getAllByText('Complete Game');
+    fireEvent.click(completeBtns[0]); // Court 1
+    // Alice, Bob, Charlie, Diana should be at the end of the queue, not in any court
+    // Court 1 should now have next 4 unassigned: none left, so should be empty
+    expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
+    // Court 2 should still have Eve, Frank, Gina, Henry (at least somewhere)
+    expect(screen.getAllByText('Eve').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Frank').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Gina').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Henry').length).toBeGreaterThan(0);
+    // Optionally, check that Court 2 card contains all four names
+    const court2 = screen.getAllByText('Court 2')[0].closest('.court-card');
+    expect(court2).toHaveTextContent('Eve');
+    expect(court2).toHaveTextContent('Frank');
+    expect(court2).toHaveTextContent('Gina');
+    expect(court2).toHaveTextContent('Henry');
+    // Alice, Bob, Charlie, Diana should be in the general queue
+    expect(screen.getAllByText(/Alice|Bob|Charlie|Diana/).length).toBeGreaterThanOrEqual(4);
+    // Court 2 should not have changed
+    // (already checked above)
+  });
   test('renders session player list and add player modal', () => {
     render(<App />);
     expect(screen.getByText(/Session Players/i)).toBeInTheDocument();

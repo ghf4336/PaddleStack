@@ -72,25 +72,34 @@ function App() {
   // Assign players to free courts when possible and remove them from next up
   React.useEffect(() => {
     setCourts(prevCourts => {
-      let assignedIndices = new Set();
-      let updated = prevCourts.map((court, idx) => {
-        // Only assign a group if there are 4 unassigned players available
-        let group = [];
-        for (let i = 0; i < sessionPlayers.length && group.length < 4; i++) {
-          if (!assignedIndices.has(i)) {
-            group.push(sessionPlayers[i]);
-            assignedIndices.add(i);
-          }
+      // Find all assigned player names (to courts)
+      const assignedNames = new Set();
+      prevCourts.forEach(court => {
+        (court.players || []).forEach(player => {
+          if (player && player.name) assignedNames.add(player.name);
+        });
+      });
+
+      // Get unassigned players in order
+      const unassigned = sessionPlayers.filter(p => !assignedNames.has(p.name));
+      let unassignedIdx = 0;
+
+      // Only fill empty courts, leave others as-is
+      return prevCourts.map(court => {
+        if (court.players && court.players.length === 4) {
+          // Already full, leave as is
+          return court;
         }
+        // Try to assign 4 unassigned players
+        const group = unassigned.slice(unassignedIdx, unassignedIdx + 4);
         if (group.length === 4) {
+          unassignedIdx += 4;
           return { ...court, players: group };
         } else {
           // Not enough players, leave court empty
-          // Remove any partial assignment
           return { ...court, players: [] };
         }
       });
-      return updated;
     });
   }, [sessionPlayers, courts.length]);
 
