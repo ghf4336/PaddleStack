@@ -9,6 +9,20 @@ function App() {
   const [hasPaid, setHasPaid] = useState(false);
   const [sessionPlayers, setSessionPlayers] = useState([]);
 
+  // Test data for quick loading
+  const testPlayers = [
+    { name: 'Alice', paid: true },
+    { name: 'Bob', paid: false },
+    { name: 'Charlie', paid: true },
+    { name: 'Diana', paid: true },
+    { name: 'Eve', paid: false },
+    { name: 'Frank', paid: true }
+  ];
+
+  const handleLoadTestData = () => {
+    setSessionPlayers(testPlayers);
+  };
+
   // Next up: first 4 players, General queue: rest
   const nextUpPlayers = sessionPlayers.slice(0, 4);
   const generalQueue = sessionPlayers.slice(4);
@@ -57,6 +71,9 @@ function App() {
           />
           <button className="add-btn" onClick={handleAddPlayer}>Add</button>
         </div>
+        <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
+          Load Test Data
+        </button>
         <div className="session-list">
           {sessionPlayers.map((p, i) => (
             <div className="session-player" key={i}>
