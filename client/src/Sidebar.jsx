@@ -4,8 +4,6 @@ function Sidebar({
   sessionPlayers,
   courts,
   pausedPlayers,
-  playerName,
-  setPlayerName,
   handleAddPlayer,
   handleLoadTestData,
   handleEnablePausedPlayer,
@@ -16,17 +14,12 @@ function Sidebar({
 }) {
   return (
     <div className="sidebar" style={{ position: 'relative' }}>
-      <h3>Session Players ({sessionPlayers.length})</h3>
-      <div className="add-player-row">
-        <input
-          type="text"
-          placeholder="Enter player name"
-          value={playerName}
-          onChange={e => setPlayerName(e.target.value)}
-          className="player-input"
-        />
-        <button className="add-btn" onClick={handleAddPlayer}>Add</button>
-      </div>
+      <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 20 }}>👤➕</span> Session Players ({sessionPlayers.length})
+        <button className="add-btn" style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#11121a', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }} onClick={handleAddPlayer}>
+          Add Player
+        </button>
+      </h3>
       <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
         Load Test Data
       </button>

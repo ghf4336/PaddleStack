@@ -41,9 +41,7 @@ function App() {
   const handleCancelRemoveCourt = () => {
     setCourtToRemove(null);
   };
-  const [playerName, setPlayerName] = useState('');
   const [showPaidModal, setShowPaidModal] = useState(false);
-  const [hasPaid, setHasPaid] = useState(false);
   // Session players: static order, never reorders
   const [sessionPlayers, setSessionPlayers] = useState([]);
   const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
@@ -150,15 +148,15 @@ function App() {
   const nextUpPlayers = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 4);
   const generalQueue = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(4);
 
+  // Open modal to add player
   const handleAddPlayer = () => {
-    if (playerName.trim()) {
-      setShowPaidModal(true);
-    }
+    setShowPaidModal(true);
   };
 
-  const handleConfirmAdd = () => {
+  // Confirm from PaidModal
+  const handleConfirmAdd = ({ name, phone, payment }) => {
     // Ensure unique name
-    let baseName = playerName.trim();
+    let baseName = name.trim();
     let newName = baseName;
     let count = 2;
     const existingNames = sessionPlayers.map(p => p.name);
@@ -166,18 +164,16 @@ function App() {
       newName = `${baseName} (${count})`;
       count++;
     }
+    const paid = payment === 'online' || payment === 'cash';
     setSessionPlayers([
       ...sessionPlayers,
-      { name: newName, paid: hasPaid, addedAt: Date.now() }
+      { name: newName, phone: phone || '', paid, payment, addedAt: Date.now() }
     ]);
-    setPlayerName('');
-    setHasPaid(false);
     setShowPaidModal(false);
   };
 
   const handleCancelAdd = () => {
     setShowPaidModal(false);
-    setHasPaid(false);
   };
 
   // Remove/pause player modal state
@@ -221,8 +217,7 @@ function App() {
   const paidModalInSidebar = (
     <PaidModal
       show={showPaidModal}
-      hasPaid={hasPaid}
-      onPaidChange={setHasPaid}
+      onPaidChange={() => {}}
       onConfirm={handleConfirmAdd}
       onCancel={handleCancelAdd}
     />
@@ -236,8 +231,6 @@ function App() {
         sessionPlayers={sessionPlayers}
         courts={courts}
         pausedPlayers={pausedPlayers}
-        playerName={playerName}
-        setPlayerName={setPlayerName}
         handleAddPlayer={handleAddPlayer}
         handleLoadTestData={handleLoadTestData}
         handleEnablePausedPlayer={handleEnablePausedPlayer}
