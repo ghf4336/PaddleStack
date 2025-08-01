@@ -2,6 +2,12 @@
 
 import React, { useState, useRef } from 'react';
 import './App.css';
+import Sidebar from './Sidebar';
+import Toast from './Toast';
+import PlayerActionModal from './PlayerActionModal';
+import PaidModal from './PaidModal';
+import NextUpSection from './NextUpSection';
+import CourtsPanel from './CourtsPanel';
 
 function App() {
   // Toast state
@@ -213,251 +219,50 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="sidebar">
-        <h3>Session Players ({sessionPlayers.length})</h3>
-        <div className="add-player-row">
-          <input
-            type="text"
-            placeholder="Enter player name"
-            value={playerName}
-            onChange={e => setPlayerName(e.target.value)}
-            className="player-input"
-          />
-          <button className="add-btn" onClick={handleAddPlayer}>Add</button>
-        </div>
-        <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
-          Load Test Data
-        </button>
-        <div className="session-list">
-          {[...sessionPlayers]
-            .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))
-            .map((p, i) => {
-              // Check if player is in a court
-              const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
-              const isPaused = pausedPlayers.some(pp => pp.name === p.name);
-              return (
-                <div className={`session-player${isPaused ? ' paused' : ''}`} key={p.name} style={isPaused ? { opacity: 0.5, background: '#f6f6fa' } : {}}>
-                  <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>} {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}</span>
-                  {isPaused ? (
-                    <button
-                      className="enable-btn"
-                      title="Enable player"
-                      style={{ marginLeft: 8, background: '#19c37d', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 15, padding: '4px 12px', cursor: 'pointer' }}
-                      onClick={() => handleEnablePausedPlayer(p)}
-                    >Enable</button>
-                  ) : (
-                    <button
-                      className="remove-btn"
-                      title="Remove or pause player"
-                      disabled={inCourt}
-                      onClick={() => {
-                        if (inCourt) {
-                          setToast(`${p.name} is currently in a court and cannot be removed or paused.`);
-                          clearTimeout(toastTimeout.current);
-                          toastTimeout.current = setTimeout(() => setToast(null), 2500);
-                          return;
-                        }
-                        handleRemovePlayer(p);
-                      }}
-                    >×</button>
-                  )}
-                </div>
-              );
-            })}
-        </div>
-      {/* Toast message */}
-      {toast && (
-        <div style={{
-          position: 'fixed',
-          bottom: 32,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: '#222',
-          color: '#fff',
-          padding: '14px 32px',
-          borderRadius: 12,
-          fontSize: 18,
-          fontWeight: 600,
-          zIndex: 1000,
-          boxShadow: '0 2px 12px #0003',
-          pointerEvents: 'none',
-        }}>{toast}</div>
-      )}
-        <div className="general-queue">
-          <h4>General Queue ({generalQueue.length})</h4>
-          {generalQueue.map((p, i) => (
-            <div className="queue-player" key={i}>
-              <span className="queue-dot" /> {p.name}
-              <span className="queue-num">#{i + 1}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Sidebar
+        sessionPlayers={sessionPlayers}
+        courts={courts}
+        pausedPlayers={pausedPlayers}
+        playerName={playerName}
+        setPlayerName={setPlayerName}
+        handleAddPlayer={handleAddPlayer}
+        handleLoadTestData={handleLoadTestData}
+        handleEnablePausedPlayer={handleEnablePausedPlayer}
+        handleRemovePlayer={handleRemovePlayer}
+        toast={toast}
+        toastTimeout={toastTimeout}
+        generalQueue={generalQueue}
+      />
+      <Toast message={toast} />
 
-      {/* Remove/Pause Player Modal */}
-      {showPlayerActionModal && playerToAction && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h4>Player Options</h4>
-            <div style={{ marginBottom: 18, fontSize: 16, color: '#333', textAlign: 'center' }}>
-              What would you like to do with <b>{playerToAction.name}</b>?
-            </div>
-            <div className="modal-actions" style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-              <button onClick={handleConfirmDeletePlayer} className="confirm-btn" style={{ background: '#e74c3c', color: '#fff', fontWeight: 700, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}>Delete Player</button>
-              <button onClick={handleConfirmPausePlayer} className="pause-btn" style={{ background: '#bbb', color: '#222', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}>Pause Player</button>
-              <button onClick={handleCancelPlayerAction} className="cancel-btn" style={{ background: '#eee', color: '#222', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}>Cancel</button>
-            </div>
-            <div style={{ marginTop: 12, fontSize: 13, color: '#888', textAlign: 'center' }}>
-              (Players can only be deleted or paused if not currently in a court)
-            </div>
-          </div>
-        </div>
-      )}
+      <PlayerActionModal
+        show={showPlayerActionModal}
+        player={playerToAction}
+        onDelete={handleConfirmDeletePlayer}
+        onPause={handleConfirmPausePlayer}
+        onCancel={handleCancelPlayerAction}
+      />
 
-      {/* Modal for paid confirmation */}
-      {showPaidModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h4>Has the player paid?</h4>
-            <label>
-              <input
-                type="checkbox"
-                checked={hasPaid}
-                onChange={e => setHasPaid(e.target.checked)}
-              />{' '}
-              Paid
-            </label>
-            <div className="modal-actions">
-              <button onClick={handleConfirmAdd} className="confirm-btn">Confirm</button>
-              <button onClick={handleCancelAdd} className="cancel-btn">Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PaidModal
+        show={showPaidModal}
+        hasPaid={hasPaid}
+        onPaidChange={setHasPaid}
+        onConfirm={handleConfirmAdd}
+        onCancel={handleCancelAdd}
+      />
 
       {/* Main content: Next Up display and Courts */}
       <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
-        <div className="nextup-section">
-          <h3>Next Up ({nextUpPlayers.length}/4)</h3>
-          <div className="nextup-desc">Next 4 players to enter any available court</div>
-          <div className="nextup-grid">
-            {[0, 1].map(row => (
-              <div className="nextup-row" key={row}>
-                {[0, 1].map(col => {
-                  const idx = row * 2 + col;
-                  const p = nextUpPlayers[idx];
-                  return p ? (
-                    <div className="nextup-card" key={col}>
-                      <div className="nextup-num">#{idx + 1}</div>
-                      <div className="nextup-name">{p.name}</div>
-                    </div>
-                  ) : <div className="nextup-card empty" key={col} role="presentation"></div>;
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Courts Panel */}
-        <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <h3 style={{ margin: 0 }}>Courts ({courts.length})</h3>
-            <button
-              className="add-court-btn"
-              style={{ padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer' }}
-              onClick={handleAddCourt}
-              disabled={courts.length >= 8}
-            >
-              + Add Court
-            </button>
-          </div>
-        <div className="courts-list" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 16
-        }}>
-          {courts.map((court, idx) => (
-            <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
-                <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
-                <span style={{ marginLeft: 12, background: '#19c37d', color: '#fff', fontWeight: 600, fontSize: 14, borderRadius: 8, padding: '2px 10px' }}>Active</span>
-                <button
-                  className="remove-court-btn"
-                  title="Remove court"
-                  style={{ marginLeft: 'auto', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 18, width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  onClick={() => handleRemoveCourt(idx)}
-                >
-                  ×
-                </button>
-              </div>
-              {/* In-panel confirmation popup for removing court */}
-              {courtToRemove === idx && (
-                <div className="remove-court-popup" style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  background: 'rgba(255,255,255,0.97)',
-                  borderRadius: 12,
-                  zIndex: 10,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 2px 12px #0002',
-                  padding: 24
-                }}>
-                  <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 12, color: '#e74c3c', textAlign: 'center' }}>Remove this court?</div>
-                  <div style={{ fontSize: 15, color: '#333', marginBottom: 20, textAlign: 'center' }}>
-                    Are you sure you want to remove this court?<br />Any players on this court will be returned to the queue.
-                  </div>
-                  <div style={{ display: 'flex', gap: 16 }}>
-                    <button
-                      className="confirm-remove-court-btn"
-                      style={{ background: '#e74c3c', color: '#fff', fontWeight: 700, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}
-                      onClick={handleConfirmRemoveCourt}
-                    >
-                      Remove
-                    </button>
-                    <button
-                      className="cancel-remove-court-btn"
-                      style={{ background: '#bbb', color: '#222', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}
-                      onClick={handleCancelRemoveCourt}
-                    >
-                      Keep
-                    </button>
-                  </div>
-                </div>
-              )}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', marginBottom: 12 }}>
-                {court.players && court.players.length === 4 ? (
-                  [0, 1, 2, 3].map(i => {
-                    const p = court.players[i];
-                    return (
-                      <div key={i} style={{ background: '#f6f6fa', borderRadius: 6, padding: '8px 10px', minHeight: 36, display: 'flex', alignItems: 'center', fontWeight: 500, fontSize: 15 }}>
-                        <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
-                        <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div style={{ gridColumn: 'span 2', color: '#bbb', textAlign: 'center', padding: '16px 0', fontWeight: 500 }}>
-                    Waiting for players...
-                  </div>
-                )}
-              </div>
-              <button
-                className="complete-game-btn"
-                style={{ width: '100%', background: '#222', color: '#fff', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '10px 0', marginTop: 8, cursor: court.players && court.players.length === 4 ? 'pointer' : 'not-allowed', opacity: court.players && court.players.length === 4 ? 1 : 0.5, border: 'none' }}
-                onClick={() => handleCompleteGame(idx)}
-                disabled={!(court.players && court.players.length === 4)}
-              >
-                Complete Game
-              </button>
-            </div>
-          ))}
-        </div>
-        </div>
+        <NextUpSection nextUpPlayers={nextUpPlayers} />
+        <CourtsPanel
+          courts={courts}
+          courtToRemove={courtToRemove}
+          handleRemoveCourt={handleRemoveCourt}
+          handleConfirmRemoveCourt={handleConfirmRemoveCourt}
+          handleCancelRemoveCourt={handleCancelRemoveCourt}
+          handleAddCourt={handleAddCourt}
+          handleCompleteGame={handleCompleteGame}
+        />
       </div>
     </div>
   );
