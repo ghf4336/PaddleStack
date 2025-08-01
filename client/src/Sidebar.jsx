@@ -15,7 +15,7 @@ function Sidebar({
   generalQueue
 }) {
   return (
-    <div className="sidebar">
+    <div className="sidebar" style={{ position: 'relative' }}>
       <h3>Session Players ({sessionPlayers.length})</h3>
       <div className="add-player-row">
         <input
@@ -30,6 +30,9 @@ function Sidebar({
       <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
         Load Test Data
       </button>
+      {/* PaidModal will be rendered here if present */}
+      {/** @ts-ignore: PaidModal is injected as a prop by App.jsx for in-panel rendering */}
+      {typeof window !== 'undefined' && window.__PaidModalInSidebar}
       <div className="session-list">
         {[...sessionPlayers]
           .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))

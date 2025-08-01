@@ -217,6 +217,19 @@ function App() {
     });
   };
 
+  // Render PaidModal inside Sidebar using a portal-like prop
+  const paidModalInSidebar = (
+    <PaidModal
+      show={showPaidModal}
+      hasPaid={hasPaid}
+      onPaidChange={setHasPaid}
+      onConfirm={handleConfirmAdd}
+      onCancel={handleCancelAdd}
+    />
+  );
+  if (typeof window !== 'undefined') {
+    window.__PaidModalInSidebar = paidModalInSidebar;
+  }
   return (
     <div className="app-container">
       <Sidebar
@@ -241,14 +254,6 @@ function App() {
         onDelete={handleConfirmDeletePlayer}
         onPause={handleConfirmPausePlayer}
         onCancel={handleCancelPlayerAction}
-      />
-
-      <PaidModal
-        show={showPaidModal}
-        hasPaid={hasPaid}
-        onPaidChange={setHasPaid}
-        onConfirm={handleConfirmAdd}
-        onCancel={handleCancelAdd}
       />
 
       {/* Main content: Next Up display and Courts */}
