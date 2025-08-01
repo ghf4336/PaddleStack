@@ -2,7 +2,8 @@
     render(<App />);
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'UnpaidPlayer' } });
     fireEvent.click(screen.getByText('Add'));
-    // Paid modal appears, do not click 'Paid' (leave as unpaid)
+    // Paid modal appears, select 'Pay later'
+    fireEvent.click(screen.getByLabelText('Pay later'));
     fireEvent.click(screen.getByText('Confirm'));
     // There may be multiple UnpaidPlayer elements, just check at least one exists
     const unpaidPlayers = await screen.findAllByText('UnpaidPlayer');
@@ -66,6 +67,7 @@ describe('PaddleStack App', () => {
     render(<App />);
     fireEvent.change(screen.getByPlaceholderText(/Enter player name/i), { target: { value: 'Alice' } });
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     // Alice appears in both session list and next up, so use getAllByText
     const aliceEls = screen.getAllByText('Alice');
@@ -76,6 +78,7 @@ describe('PaddleStack App', () => {
     render(<App />);
     fireEvent.change(screen.getByPlaceholderText(/Enter player name/i), { target: { value: 'Bob' } });
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     // Use correct button title
     const removeBtn = screen.getByTitle('Remove or pause player');
@@ -109,6 +112,7 @@ describe('PaddleStack App', () => {
     ['A', 'B', 'C'].forEach(name => {
       fireEvent.change(screen.getByPlaceholderText(/Enter player name/i), { target: { value: name } });
       fireEvent.click(screen.getByText('Add'));
+      fireEvent.click(screen.getByLabelText('Paid online'));
       fireEvent.click(screen.getByText('Confirm'));
     });
     fireEvent.click(screen.getByText('+ Add Court'));
@@ -116,6 +120,7 @@ describe('PaddleStack App', () => {
     // Add a 4th player
     fireEvent.change(screen.getByPlaceholderText(/Enter player name/i), { target: { value: 'D' } });
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     expect(screen.queryAllByText('Waiting for players...').length).toBe(0);
     expect(screen.getAllByText('A').length).toBeGreaterThan(0);
@@ -136,6 +141,7 @@ describe('PaddleStack App', () => {
     ['Gina', 'Henry'].forEach(name => {
       fireEvent.change(screen.getByPlaceholderText(/Enter player name/i), { target: { value: name } });
       fireEvent.click(screen.getByText('Add'));
+      fireEvent.click(screen.getByLabelText('Paid online'));
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Next up should now show Eve, Frank, Gina, Henry
@@ -196,7 +202,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'TestPlayer' } });
     fireEvent.click(screen.getByText('Add'));
     // Paid modal appears
-    fireEvent.click(screen.getByLabelText('Paid'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     // There may be multiple TestPlayer elements, just check at least one exists
     const testPlayers = await screen.findAllByText('TestPlayer');
@@ -212,6 +218,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // Add player
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'DeleteMe' } });
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     // Remove button (×) should be enabled
     fireEvent.click(screen.getByTitle('Remove or pause player'));
@@ -227,9 +234,11 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // Add two players
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P1' } });
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P2' } });
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByLabelText('Paid online'));
     fireEvent.click(screen.getByText('Confirm'));
     // Pause P1
     const pauseBtn = screen.getAllByTitle('Remove or pause player')[0];
@@ -248,6 +257,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     for (let i = 1; i <= 4; i++) {
       fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `CourtP${i}` } });
       fireEvent.click(screen.getByText('Add'));
+      fireEvent.click(screen.getByLabelText('Paid online'));
       fireEvent.click(screen.getByText('Confirm'));
     }
     // Add a court
