@@ -40,6 +40,7 @@ function App() {
   const [hasPaid, setHasPaid] = useState(false);
   // Session players: static order, never reorders
   const [sessionPlayers, setSessionPlayers] = useState([]);
+  const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
   const [courts, setCourts] = useState([]); // Array of { number, players: [] }
 
   // Add court (empty, not auto-assigned)
@@ -138,9 +139,10 @@ function App() {
       if (idx !== -1) assignedIndices.add(idx);
     });
   });
-  // Next up: first 4 unassigned players
-  const nextUpPlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 4);
-  const generalQueue = sessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(4);
+  // Next up: first 4 unassigned and not paused players
+  const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
+  const nextUpPlayers = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 4);
+  const generalQueue = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(4);
 
   const handleAddPlayer = () => {
     if (playerName.trim()) {
@@ -172,6 +174,37 @@ function App() {
     setHasPaid(false);
   };
 
+  // Remove/pause player modal state
+  const [playerToAction, setPlayerToAction] = useState(null); // { name, paid, addedAt }
+  const [showPlayerActionModal, setShowPlayerActionModal] = useState(false);
+
+  const handleRemovePlayer = (player) => {
+    setPlayerToAction(player);
+    setShowPlayerActionModal(true);
+  };
+
+  const handleConfirmDeletePlayer = () => {
+    setSessionPlayers(sessionPlayers.filter(sp => sp.name !== playerToAction.name));
+    setPausedPlayers(pausedPlayers.filter(pp => pp.name !== playerToAction.name));
+    setShowPlayerActionModal(false);
+    setPlayerToAction(null);
+  };
+
+  const handleConfirmPausePlayer = () => {
+    setPausedPlayers([...pausedPlayers, playerToAction]);
+    setShowPlayerActionModal(false);
+    setPlayerToAction(null);
+  };
+
+  const handleCancelPlayerAction = () => {
+    setShowPlayerActionModal(false);
+    setPlayerToAction(null);
+  };
+
+  const handleEnablePausedPlayer = (player) => {
+    setPausedPlayers(pausedPlayers.filter(pp => pp.name !== player.name));
+  };
+
   return (
     <div className="app-container">
       <div className="sidebar">
@@ -195,23 +228,33 @@ function App() {
             .map((p, i) => {
               // Check if player is in a court
               const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
+              const isPaused = pausedPlayers.some(pp => pp.name === p.name);
               return (
-                <div className="session-player" key={p.name}>
-                  <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>}</span>
-                  <button
-                    className="remove-btn"
-                    title="Remove player"
-                    disabled={inCourt}
-                    onClick={() => {
-                      if (inCourt) {
-                        setToast(`${p.name} is currently in a court and cannot be removed.`);
-                        clearTimeout(toastTimeout.current);
-                        toastTimeout.current = setTimeout(() => setToast(null), 2500);
-                        return;
-                      }
-                      setSessionPlayers(sessionPlayers.filter(sp => sp.name !== p.name));
-                    }}
-                  >×</button>
+                <div className={`session-player${isPaused ? ' paused' : ''}`} key={p.name} style={isPaused ? { opacity: 0.5, background: '#f6f6fa' } : {}}>
+                  <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>} {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}</span>
+                  {isPaused ? (
+                    <button
+                      className="enable-btn"
+                      title="Enable player"
+                      style={{ marginLeft: 8, background: '#19c37d', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 15, padding: '4px 12px', cursor: 'pointer' }}
+                      onClick={() => handleEnablePausedPlayer(p)}
+                    >Enable</button>
+                  ) : (
+                    <button
+                      className="remove-btn"
+                      title="Remove or pause player"
+                      disabled={inCourt}
+                      onClick={() => {
+                        if (inCourt) {
+                          setToast(`${p.name} is currently in a court and cannot be removed or paused.`);
+                          clearTimeout(toastTimeout.current);
+                          toastTimeout.current = setTimeout(() => setToast(null), 2500);
+                          return;
+                        }
+                        handleRemovePlayer(p);
+                      }}
+                    >×</button>
+                  )}
                 </div>
               );
             })}
@@ -244,6 +287,26 @@ function App() {
           ))}
         </div>
       </div>
+
+      {/* Remove/Pause Player Modal */}
+      {showPlayerActionModal && playerToAction && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h4>Player Options</h4>
+            <div style={{ marginBottom: 18, fontSize: 16, color: '#333', textAlign: 'center' }}>
+              What would you like to do with <b>{playerToAction.name}</b>?
+            </div>
+            <div className="modal-actions" style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+              <button onClick={handleConfirmDeletePlayer} className="confirm-btn" style={{ background: '#e74c3c', color: '#fff', fontWeight: 700, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}>Delete Player</button>
+              <button onClick={handleConfirmPausePlayer} className="pause-btn" style={{ background: '#bbb', color: '#222', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}>Pause Player</button>
+              <button onClick={handleCancelPlayerAction} className="cancel-btn" style={{ background: '#eee', color: '#222', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '8px 24px', border: 'none', cursor: 'pointer' }}>Cancel</button>
+            </div>
+            <div style={{ marginTop: 12, fontSize: 13, color: '#888', textAlign: 'center' }}>
+              (Players can only be deleted or paused if not currently in a court)
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal for paid confirmation */}
       {showPaidModal && (
