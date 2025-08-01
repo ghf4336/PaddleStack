@@ -1,8 +1,12 @@
 
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import './App.css';
 
 function App() {
+  // Toast state
+  const [toast, setToast] = useState(null);
+  const toastTimeout = useRef();
   // Remove court handler with in-panel confirmation (must be inside App)
   const [courtToRemove, setCourtToRemove] = useState(null); // index of court to remove or null
   const handleRemoveCourt = (courtIdx) => {
@@ -34,6 +38,7 @@ function App() {
   const [playerName, setPlayerName] = useState('');
   const [showPaidModal, setShowPaidModal] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
+  // Session players: static order, never reorders
   const [sessionPlayers, setSessionPlayers] = useState([]);
   const [courts, setCourts] = useState([]); // Array of { number, players: [] }
 
@@ -53,23 +58,22 @@ function App() {
   const handleCompleteGame = (courtIdx) => {
     setCourts(prevCourts => {
       const court = prevCourts[courtIdx];
-      // Only complete if court is full
       if (!court.players || court.players.length !== 4) return prevCourts;
-      // Remove these players from the court and add them to the end of the queue
+      // Move finished players to end of sessionPlayers
       setSessionPlayers(prevPlayers => {
-        // Remove current court players from their current positions
-        const namesToRemove = court.players.map(p => p.name);
-        const filtered = prevPlayers.filter(p => !namesToRemove.includes(p.name));
-        // Add them to the end
-        return [...filtered, ...court.players];
+        const finishedNames = court.players.map(p => p.name);
+        // Remove finished players from their current positions
+        const filtered = prevPlayers.filter(p => !finishedNames.includes(p.name));
+        // Add finished players to the end, preserving their order
+        const finishedPlayers = prevPlayers.filter(p => finishedNames.includes(p.name));
+        return [...filtered, ...finishedPlayers];
       });
-      // The effect will reassign the next up players to the court
       // Clear the court's players immediately
       return prevCourts.map((c, idx) => idx === courtIdx ? { ...c, players: [] } : c);
     });
   };
 
-  // Assign players to free courts when possible and remove them from next up
+  // Assign players to free courts when possible, always in sessionPlayers order
   React.useEffect(() => {
     setCourts(prevCourts => {
       // Find all assigned player names (to courts)
@@ -81,25 +85,28 @@ function App() {
       });
 
       // Get unassigned players in order
-      const unassigned = sessionPlayers.filter(p => !assignedNames.has(p.name));
-      let unassignedIdx = 0;
+      const queue = sessionPlayers.filter(p => !assignedNames.has(p.name));
+      let queueIdx = 0;
 
-      // Only fill empty courts, leave others as-is
-      return prevCourts.map(court => {
+      // Assign players to courts in order
+      const newCourts = prevCourts.map(court => {
         if (court.players && court.players.length === 4) {
-          // Already full, leave as is
           return court;
         }
-        // Try to assign 4 unassigned players
-        const group = unassigned.slice(unassignedIdx, unassignedIdx + 4);
+        const group = [];
+        for (let i = 0; i < 4; i++) {
+          if (queueIdx < queue.length) {
+            group.push(queue[queueIdx]);
+            queueIdx++;
+          }
+        }
         if (group.length === 4) {
-          unassignedIdx += 4;
           return { ...court, players: group };
         } else {
-          // Not enough players, leave court empty
           return { ...court, players: [] };
         }
       });
+      return newCourts;
     });
   }, [sessionPlayers, courts.length]);
 
@@ -110,6 +117,10 @@ function App() {
     { name: 'Charlie', paid: true },
     { name: 'Diana', paid: true },
     { name: 'Eve', paid: false },
+    { name: 'adrian', paid: true },
+    { name: 'shelby', paid: true },
+    { name: 'Peter', paid: true },
+    { name: 'Jarred', paid: true },
     { name: 'Frank', paid: true }
   ];
 
@@ -177,15 +188,48 @@ function App() {
           Load Test Data
         </button>
         <div className="session-list">
-          {sessionPlayers.map((p, i) => (
-            <div className="session-player" key={i}>
-              <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>}</span>
-              <button className="remove-btn" title="Remove player" onClick={() => {
-                setSessionPlayers(sessionPlayers.filter((_, idx) => idx !== i));
-              }}>×</button>
-            </div>
-          ))}
+          {sessionPlayers.map((p, i) => {
+            // Check if player is in a court
+            const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
+            return (
+              <div className="session-player" key={i}>
+                <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>}</span>
+                <button
+                  className="remove-btn"
+                  title="Remove player"
+                  disabled={inCourt}
+                  onClick={() => {
+                    if (inCourt) {
+                      setToast(`${p.name} is currently in a court and cannot be removed.`);
+                      clearTimeout(toastTimeout.current);
+                      toastTimeout.current = setTimeout(() => setToast(null), 2500);
+                      return;
+                    }
+                    setSessionPlayers(sessionPlayers.filter((_, idx) => idx !== i));
+                  }}
+                >×</button>
+              </div>
+            );
+          })}
         </div>
+      {/* Toast message */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          bottom: 32,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: '#222',
+          color: '#fff',
+          padding: '14px 32px',
+          borderRadius: 12,
+          fontSize: 18,
+          fontWeight: 600,
+          zIndex: 1000,
+          boxShadow: '0 2px 12px #0003',
+          pointerEvents: 'none',
+        }}>{toast}</div>
+      )}
         <div className="general-queue">
           <h4>General Queue ({generalQueue.length})</h4>
           {generalQueue.map((p, i) => (
