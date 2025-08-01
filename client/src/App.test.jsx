@@ -1,3 +1,48 @@
+describe('End Session Feature', () => {
+  test('shows end session modal when button is clicked', () => {
+    render(<App />);
+    const btn = screen.getByText('End Session');
+    fireEvent.click(btn);
+    expect(screen.getByText(/End Session\?/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter PIN/i)).toBeInTheDocument();
+  });
+
+  test('blocks end session on wrong PIN', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('End Session'));
+    fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '0000' } });
+    fireEvent.click(screen.getByText('Yes, End Session'));
+    expect(screen.getByText(/Incorrect PIN/i)).toBeInTheDocument();
+    // Modal should still be open
+    expect(screen.getByText(/End Session\?/i)).toBeInTheDocument();
+  });
+
+  test('ends session and clears players/courts on correct PIN', () => {
+    render(<App />);
+    // Add a player and a court
+    fireEvent.click(screen.getByText('Add Player'));
+    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'ToClear' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.click(screen.getByText('Confirm'));
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // End session
+    fireEvent.click(screen.getByText('End Session'));
+    fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '1111' } });
+    fireEvent.click(screen.getByText('Yes, End Session'));
+    // Player and court should be gone
+    expect(screen.queryByText('ToClear')).not.toBeInTheDocument();
+    expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
+    // Modal should close
+    expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
+  });
+
+  test('cancel button closes the modal', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('End Session'));
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
+  });
+});
 describe('PaddleStack Player Phone Number', () => {
   test('adds a player with a phone number', async () => {
     render(<App />);

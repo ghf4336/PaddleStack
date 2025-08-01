@@ -10,7 +10,8 @@ function Sidebar({
   handleRemovePlayer,
   toast,
   toastTimeout,
-  generalQueue
+  generalQueue,
+  endSessionButton
 }) {
   return (
     <div className="sidebar" style={{ position: 'relative' }}>
@@ -86,6 +87,8 @@ function Sidebar({
           </div>
         ))}
       </div>
+      {/* End Session button slot, if provided */}
+      {endSessionButton}
     </div>
   );
 }

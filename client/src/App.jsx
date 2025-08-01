@@ -1,6 +1,52 @@
 
 
 import React, { useState, useRef } from 'react';
+// End Session Modal with PIN
+function EndSessionModal({ open, onClose, onConfirm }) {
+  const [pin, setPin] = React.useState("");
+  const [error, setError] = React.useState("");
+  React.useEffect(() => {
+    if (open) {
+      setPin("");
+      setError("");
+    }
+  }, [open]);
+  if (!open) return null;
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (pin === "1111") {
+      setError("");
+      onConfirm();
+    } else {
+      setError("Incorrect PIN. Please try again.");
+    }
+  }
+  return (
+    <div className="modal-overlay">
+      <div className="modal end-session-modal">
+        <h2>End Session?</h2>
+        <p>This will stop all games and clear all players, courts, and queue data. This action cannot be undone.</p>
+        <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
+          <label htmlFor="end-session-pin" style={{ display: 'block', marginBottom: 8 }}>Enter PIN to confirm:</label>
+          <input
+            id="end-session-pin"
+            type="password"
+            value={pin}
+            onChange={e => setPin(e.target.value)}
+            autoFocus
+            style={{ fontSize: '1.1em', padding: '6px 12px', borderRadius: 6, border: '1px solid #ccc', marginBottom: 8 }}
+            placeholder="Enter PIN"
+          />
+          {error && <div style={{ color: '#e74c3c', marginBottom: 8 }}>{error}</div>}
+          <div className="modal-actions">
+            <button className="danger" type="submit">Yes, End Session</button>
+            <button type="button" onClick={onClose}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 import './App.css';
 import Sidebar from './Sidebar';
 import Toast from './Toast';
@@ -18,6 +64,19 @@ function App() {
   const handleRemoveCourt = (courtIdx) => {
     setCourtToRemove(courtIdx);
   };
+  // End Session modal state
+  const [showEndSessionModal, setShowEndSessionModal] = useState(false);
+
+  function handleEndSession() {
+    setSessionPlayers([]);
+    setPausedPlayers([]);
+    setCourts([]);
+    setShowPaidModal(false);
+    setShowPlayerActionModal(false);
+    setPlayerToAction(null);
+    setToast(null);
+    setShowEndSessionModal(false);
+  }
 
   const handleConfirmRemoveCourt = () => {
     setCourts(prevCourts => {
@@ -238,6 +297,24 @@ function App() {
         toast={toast}
         toastTimeout={toastTimeout}
         generalQueue={generalQueue}
+        // End Session button slot
+        endSessionButton={
+          <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
+            <button
+              className="end-session-btn"
+              style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
+              onClick={() => setShowEndSessionModal(true)}
+              title="End session (clears all data)"
+            >
+              End Session
+            </button>
+          </div>
+        }
+      />
+      <EndSessionModal
+        open={showEndSessionModal}
+        onClose={() => setShowEndSessionModal(false)}
+        onConfirm={handleEndSession}
       />
       <Toast message={toast} />
 

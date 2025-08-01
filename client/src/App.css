@@ -1,3 +1,14 @@
+/* End Session button styles */
+.end-session-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+.end-session-modal .danger {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  margin-right: 1em;
+}
 .remove-btn {
   background: none;
   border: none;
@@ -170,7 +181,7 @@
   margin-bottom: 6px;
   font-size: 1rem;
 }
-.queue-dot {
+ .queue-dot {
   width: 10px;
   height: 10px;
   background: #3b82f6;
@@ -178,6 +189,7 @@
   display: inline-block;
   margin-right: 8px;
 }
+
 .queue-num {
   background: #fff;
   color: #3b82f6;
@@ -185,7 +197,6 @@
   padding: 2px 8px;
   font-size: 0.9em;
   margin-left: 8px;
-}
 }
 /* Modal styles */
 .modal-backdrop {
