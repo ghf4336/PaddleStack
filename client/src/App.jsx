@@ -125,7 +125,9 @@ function App() {
   ];
 
   const handleLoadTestData = () => {
-    setSessionPlayers(testPlayers);
+    // Add addedAt timestamps to test players
+    const now = Date.now();
+    setSessionPlayers(testPlayers.map((p, i) => ({ ...p, addedAt: now + i })));
   };
 
   // Calculate indices of players currently assigned to courts
@@ -158,7 +160,7 @@ function App() {
     }
     setSessionPlayers([
       ...sessionPlayers,
-      { name: newName, paid: hasPaid }
+      { name: newName, paid: hasPaid, addedAt: Date.now() }
     ]);
     setPlayerName('');
     setHasPaid(false);
@@ -188,29 +190,31 @@ function App() {
           Load Test Data
         </button>
         <div className="session-list">
-          {sessionPlayers.map((p, i) => {
-            // Check if player is in a court
-            const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
-            return (
-              <div className="session-player" key={i}>
-                <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>}</span>
-                <button
-                  className="remove-btn"
-                  title="Remove player"
-                  disabled={inCourt}
-                  onClick={() => {
-                    if (inCourt) {
-                      setToast(`${p.name} is currently in a court and cannot be removed.`);
-                      clearTimeout(toastTimeout.current);
-                      toastTimeout.current = setTimeout(() => setToast(null), 2500);
-                      return;
-                    }
-                    setSessionPlayers(sessionPlayers.filter((_, idx) => idx !== i));
-                  }}
-                >×</button>
-              </div>
-            );
-          })}
+          {[...sessionPlayers]
+            .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))
+            .map((p, i) => {
+              // Check if player is in a court
+              const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
+              return (
+                <div className="session-player" key={p.name}>
+                  <span>{p.name} {p.paid && <span className="paid-badge">Paid</span>}</span>
+                  <button
+                    className="remove-btn"
+                    title="Remove player"
+                    disabled={inCourt}
+                    onClick={() => {
+                      if (inCourt) {
+                        setToast(`${p.name} is currently in a court and cannot be removed.`);
+                        clearTimeout(toastTimeout.current);
+                        toastTimeout.current = setTimeout(() => setToast(null), 2500);
+                        return;
+                      }
+                      setSessionPlayers(sessionPlayers.filter(sp => sp.name !== p.name));
+                    }}
+                  >×</button>
+                </div>
+              );
+            })}
         </div>
       {/* Toast message */}
       {toast && (
