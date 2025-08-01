@@ -1,6 +1,30 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
+
+const PAID_OPTIONS = [
+  { value: 'online', label: 'Paid online', paid: true },
+  { value: 'cash', label: 'Paid cash', paid: true },
+  { value: 'later', label: 'Pay later', paid: false },
+];
 
 function PaidModal({ show, hasPaid, onPaidChange, onConfirm, onCancel }) {
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    // Reset selection when modal opens
+    if (show) setSelected(null);
+  }, [show]);
+
+  const handleRadioChange = (val) => {
+    setSelected(val);
+    const paid = val === 'online' || val === 'cash';
+    onPaidChange(paid);
+  };
+
+  const handleConfirm = () => {
+    if (selected) onConfirm();
+  };
+
   if (!show) return null;
   return (
     <div style={{
@@ -9,7 +33,7 @@ function PaidModal({ show, hasPaid, onPaidChange, onConfirm, onCancel }) {
       left: 0,
       width: '100%',
       zIndex: 10,
-      background: 'rgba(255,255,255,0.95)',
+      background: '#fff', // Opaque background
       boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
       borderRadius: 12,
       padding: 24,
@@ -19,16 +43,34 @@ function PaidModal({ show, hasPaid, onPaidChange, onConfirm, onCancel }) {
       minHeight: 120
     }}>
       <h4 style={{ marginBottom: 16 }}>Has the player paid?</h4>
-      <label style={{ fontSize: 16, marginBottom: 20 }}>
-        <input
-          type="checkbox"
-          checked={hasPaid}
-          onChange={e => onPaidChange(e.target.checked)}
-        />{' '}
-        Paid
-      </label>
+      <div style={{ display: 'flex', gap: 24, marginBottom: 8 }}>
+        {PAID_OPTIONS.slice(0,2).map(opt => (
+          <label key={opt.value} style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="radio"
+              name="paid-option"
+              value={opt.value}
+              checked={selected === opt.value}
+              onChange={() => handleRadioChange(opt.value)}
+            />
+            {opt.label}
+          </label>
+        ))}
+      </div>
+      <div style={{ marginBottom: 20 }}>
+        <label style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            type="radio"
+            name="paid-option"
+            value="later"
+            checked={selected === 'later'}
+            onChange={() => handleRadioChange('later')}
+          />
+          Pay later
+        </label>
+      </div>
       <div style={{ display: 'flex', gap: 12 }}>
-        <button onClick={onConfirm} className="confirm-btn">Confirm</button>
+        <button onClick={handleConfirm} className="confirm-btn" disabled={!selected}>Confirm</button>
         <button onClick={onCancel} className="cancel-btn">Cancel</button>
       </div>
     </div>
