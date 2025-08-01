@@ -203,6 +203,12 @@ function App() {
 
   const handleEnablePausedPlayer = (player) => {
     setPausedPlayers(pausedPlayers.filter(pp => pp.name !== player.name));
+    setSessionPlayers(prevPlayers => {
+      // Remove the player from their current position
+      const filtered = prevPlayers.filter(p => p.name !== player.name);
+      // Add them to the end
+      return [...filtered, { ...player, addedAt: Date.now() }];
+    });
   };
 
   return (
