@@ -1,3 +1,17 @@
+  it('adds a player with unpaid status', async () => {
+    render(<App />);
+    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'UnpaidPlayer' } });
+    fireEvent.click(screen.getByText('Add'));
+    // Paid modal appears, do not click 'Paid' (leave as unpaid)
+    fireEvent.click(screen.getByText('Confirm'));
+    // There may be multiple UnpaidPlayer elements, just check at least one exists
+    const unpaidPlayers = await screen.findAllByText('UnpaidPlayer');
+    expect(unpaidPlayers.length).toBeGreaterThan(0);
+    // Should show red dot for unpaid player
+    const unpaidDot = screen.getByTitle('Unpaid');
+    expect(unpaidDot).toBeInTheDocument();
+    expect(unpaidDot).toHaveStyle('background: #e74c3c');
+  });
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import App from './App';
@@ -151,11 +165,19 @@ describe('PaddleStack App', () => {
     // Next up should show Charlie, Diana, and any new players
     expect(screen.getAllByText('Charlie').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Diana').length).toBeGreaterThan(0);
-    // General queue should include Alice and Bob at the end
-    const queuePlayers = screen.getAllByText(/Alice|Bob|Charlie|Diana/).map(el => el.textContent);
-    // No duplicates
-    const unique = new Set(queuePlayers);
-    expect(unique.size).toBe(queuePlayers.length);
+    // General queue should include Alice and Bob at the end, and no duplicates
+    const generalQueueEls = screen.getAllByText((content, el) => {
+      return (
+        el.className && el.className.includes('queue-player') &&
+        ['Alice', 'Bob', 'Charlie', 'Diana'].some(name => content === name || content.includes(name))
+      );
+    });
+    const queueNames = generalQueueEls.map(el => el.textContent.trim().replace(/^\u2022\s*/, '').replace(/#\d+$/, '').trim());
+    // Should include Charlie and Diana
+    expect(queueNames).toEqual(expect.arrayContaining(['Charlie', 'Diana']));
+    // Should not have duplicates
+    const unique = new Set(queueNames);
+    expect(unique.size).toBe(queueNames.length);
   });
 });
 
@@ -179,7 +201,10 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // There may be multiple TestPlayer elements, just check at least one exists
     const testPlayers = await screen.findAllByText('TestPlayer');
     expect(testPlayers.length).toBeGreaterThan(0);
-    expect(screen.getByText('Paid')).toBeInTheDocument();
+    // Should show green dot for paid player
+    const paidDot = screen.getByTitle('Paid');
+    expect(paidDot).toBeInTheDocument();
+    expect(paidDot).toHaveStyle('background: #19c37d');
   });
 
   it('deletes a player not in a court', async () => {
