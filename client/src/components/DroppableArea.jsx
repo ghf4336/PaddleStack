@@ -7,14 +7,16 @@ function DroppableArea({ id, children, disabled = false }) {
     disabled: disabled,
   });
 
-  const style = {
-    backgroundColor: isOver ? 'rgba(25, 195, 125, 0.1)' : undefined,
-    borderColor: isOver ? '#19c37d' : undefined,
-  };
-
+  // If children is a React element, clone and add drop-highlight class when isOver
+  let childWithHighlight = children;
+  if (isOver && React.isValidElement(children)) {
+    childWithHighlight = React.cloneElement(children, {
+      className: (children.props.className || '') + ' drop-highlight',
+    });
+  }
   return (
-    <div ref={setNodeRef} style={style}>
-      {children}
+    <div ref={setNodeRef}>
+      {childWithHighlight}
     </div>
   );
 }

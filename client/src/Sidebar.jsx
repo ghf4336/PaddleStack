@@ -87,6 +87,7 @@ function Sidebar({
         style={{
           maxHeight: '320px',
           overflowY: 'auto',
+          overflowX: 'hidden', // Prevent horizontal scrollbar
           marginBottom: 56, // space for End Session button
           paddingBottom: 8,
         }}
