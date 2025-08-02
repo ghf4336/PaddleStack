@@ -25,7 +25,7 @@ function DraggablePlayer({ id, player, children, disabled = false }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={isDragging ? 'dragging-player' : ''}
+      className={`draggable-player${isDragging ? ' dragging-player' : ''}`}
       {...listeners}
       {...attributes}
     >

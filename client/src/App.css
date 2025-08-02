@@ -1,3 +1,8 @@
+/* Ensure touch drag works on tablets and mobile */
+.draggable-player,
+.dragging-player {
+  touch-action: none;
+}
 .ghost-player {
   opacity: 0.5 !important;
   border: 2px dashed #bbb !important;
