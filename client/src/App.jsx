@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
+import { useSensor, useSensors, TouchSensor } from '@dnd-kit/core';
 import { swapPlayers, parseDragId, reorderCourts } from './utils/dragDrop';
 // End Session Modal with PIN
 function EndSessionModal({ open, onClose, onConfirm, sessionPlayers }) {
@@ -460,8 +461,13 @@ function App() {
     dragOverlayContent = label;
   }
 
+  const sensors = useSensors(
+    useSensor(TouchSensor)
+  );
+
   return (
     <DndContext 
+      sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}

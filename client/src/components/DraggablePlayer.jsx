@@ -14,22 +14,6 @@ function DraggablePlayer({ id, player, children, disabled = false }) {
     disabled: disabled,
   });
 
-  // Touch event handlers for drag compatibility
-  const handleTouchStart = (e) => {
-    if (disabled) return;
-    if (listeners && listeners.onPointerDown) {
-      listeners.onPointerDown({
-        ...e,
-        pointerType: 'touch',
-        preventDefault: () => e.preventDefault(),
-      });
-    }
-  };
-  const handleTouchMove = (e) => {
-    if (isDragging) {
-      e.preventDefault();
-    }
-  };
 
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
@@ -44,8 +28,6 @@ function DraggablePlayer({ id, player, children, disabled = false }) {
       className={isDragging ? 'dragging-player' : ''}
       {...listeners}
       {...attributes}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
     >
       {children}
     </div>
