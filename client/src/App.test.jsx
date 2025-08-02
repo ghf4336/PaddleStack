@@ -166,7 +166,7 @@ describe('PaddleStack App', () => {
   });
   test('renders session player list and add player modal', () => {
     render(<App />);
-    expect(screen.getByText(/Session Players/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Players \(/).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Test Player' } });
     expect(screen.getByText(/Add New Player/i)).toBeInTheDocument();

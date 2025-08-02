@@ -22,7 +22,7 @@ function Sidebar({
   return (
     <div className="sidebar" style={{ position: 'relative' }}>
       <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 20 }}>👤➕</span> Session Players ({sessionPlayers.length})
+        <span style={{ fontSize: 20 }}>👤</span> Players ({sessionPlayers.length})
         <button className="add-btn" style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#11121a', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }} onClick={handleAddPlayer}>
           Add Player
         </button>

@@ -147,8 +147,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   padding: 24px;
   margin-bottom: 24px;
-  height: 400px;
-  min-height: 320px;
+  /* height removed so box wraps both groups */
   display: flex;
   flex-direction: column;
 }
