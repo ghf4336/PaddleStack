@@ -210,16 +210,16 @@ function App() {
 
   // Test data for quick loading
   const testPlayers = [
-    { name: 'Alice', paid: true },
-    { name: 'Bob', paid: false },
-    { name: 'Charlie', paid: true },
-    { name: 'Diana', paid: true },
-    { name: 'Eve', paid: false },
-    { name: 'adrian', paid: true },
-    { name: 'shelby', paid: true },
-    { name: 'Peter', paid: true },
-    { name: 'Jarred', paid: true },
-    { name: 'Frank', paid: true }
+    { name: 'Alice', paid: true, payment: 'online', phone: '555-1111' },
+    { name: 'Bob', paid: false, payment: 'unpaid', phone: '555-2222' },
+    { name: 'Charlie', paid: true, payment: 'cash', phone: '555-3333' },
+    { name: 'Diana', paid: true, payment: 'online', phone: '555-4444' },
+    { name: 'Eve', paid: false, payment: 'unpaid', phone: '555-5555' },
+    { name: 'adrian', paid: true, payment: 'cash', phone: '555-6666' },
+    { name: 'shelby', paid: true, payment: 'online', phone: '555-7777' },
+    { name: 'Peter', paid: true, payment: 'cash', phone: '555-8888' },
+    { name: 'Jarred', paid: true, payment: 'online', phone: '555-9999' },
+    { name: 'Frank', paid: true, payment: 'cash', phone: '555-0000' }
   ];
 
   const handleLoadTestData = () => {
