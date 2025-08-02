@@ -26,7 +26,7 @@ export function swapPlayers(sessionPlayers, sourceData, targetData, courts) {
 
   // Handle court-to-court swaps
   if (sourceData.type === 'court' && targetData.type === 'court') {
-    return swapCourtPlayers(newCourts, sourceData, targetData, sourcePlayer, targetPlayer);
+    return swapCourtPlayers(sessionPlayers, newCourts, sourceData, targetData, sourcePlayer, targetPlayer);
   }
 
   // Handle court-to-queue or queue-to-court swaps
@@ -90,7 +90,7 @@ function getPlayerFromPosition(positionData, nextUpPlayers, generalQueue, courts
 /**
  * Swaps two players both in courts
  */
-function swapCourtPlayers(courts, sourceData, targetData, sourcePlayer, targetPlayer) {
+ function swapCourtPlayers(sessionPlayers, courts, sourceData, targetData, sourcePlayer, targetPlayer) {
   const newCourts = courts.map(court => ({ ...court, players: [...(court.players || [])] }));
   // Swap the players in their respective courts
   if (newCourts[sourceData.courtIndex] && newCourts[sourceData.courtIndex].players) {
