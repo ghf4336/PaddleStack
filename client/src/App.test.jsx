@@ -29,13 +29,14 @@ describe('End Session Feature', () => {
     fireEvent.click(screen.getByText('End Session'));
     fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '1111' } });
     fireEvent.click(screen.getByText('Yes, End Session'));
-    // Now, the Download Player List UI appears; click End Session Now
+    // Wait for Download Player List UI
     const endSessionNowBtn = await screen.findByText('End Session Now');
     fireEvent.click(endSessionNowBtn);
-    // Wait for player and court to be gone
+    // Wait for player and court to be gone and modal to close
     await waitFor(() => {
-      expect(screen.queryAllByText('ToClear').length).toBe(0);
-      expect(screen.queryAllByText('Court 1').length).toBe(0);
+      // Player and court should be gone
+      expect(screen.queryByText('ToClear')).not.toBeInTheDocument();
+      expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
       // Modal should close
       expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
     });
@@ -374,7 +375,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     fireEvent.click(pauseBtn);
     fireEvent.click(screen.getByText('Pause Player'));
     // Enable P1
-    fireEvent.click(screen.getByText('Enable'));
+    fireEvent.click(screen.getByText('Continue'));
     // P1 should now be after P2 in the session list
     const playerNames = Array.from(screen.getAllByText(/P[12]/)).map(el => el.textContent);
     expect(playerNames.indexOf('P2')).toBeLessThan(playerNames.indexOf('P1'));
