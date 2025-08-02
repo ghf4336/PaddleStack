@@ -125,19 +125,22 @@ import '@testing-library/jest-dom';
 describe('PaddleStack App', () => {
   test('completing a game only moves that court\'s players to the back of the queue', () => {
     render(<App />);
-    // Load test data and add two courts
-    fireEvent.click(screen.getByText('Load Test Data'));
+    // Add 6 players: Alice, Bob, Charlie, Diana, Eve, Frank
+    ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    });
+    // Add two courts
     fireEvent.click(screen.getByText('+ Add Court'));
     fireEvent.click(screen.getByText('+ Add Court'));
-    // At this point:
-    // Court 1: Alice, Bob, Charlie, Diana
-    // Court 2: Eve, Frank, (empty, empty)
     // Add two more players to fill Court 2
     ['Gina', 'Henry'].forEach(name => {
-    fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
-    fireEvent.click(screen.getByText('Confirm'));
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
     });
     // Now Court 2 should be: Eve, Frank, Gina, Henry
     // Complete game on Court 1
@@ -196,17 +199,31 @@ describe('PaddleStack App', () => {
     });
   });
 
-  test('load test data populates session players', () => {
+  test('manually adding players populates session players', () => {
     render(<App />);
-    fireEvent.click(screen.getByText('Load Test Data'));
-    // Alice and Frank may appear in multiple places
+    // Add Alice
+    fireEvent.click(screen.getByText('Add Player'));
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Alice' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.click(screen.getByText('Confirm'));
+    // Add Frank
+    fireEvent.click(screen.getByText('Add Player'));
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Frank' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.click(screen.getByText('Confirm'));
     expect(screen.getAllByText('Alice').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Frank').length).toBeGreaterThan(0);
   });
 
   test('add court button adds a court panel', () => {
     render(<App />);
-    fireEvent.click(screen.getByText('Load Test Data'));
+    // Add 4 players to fill the court
+    ['Alice', 'Bob', 'Charlie', 'Diana'].forEach(name => {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    });
     fireEvent.click(screen.getByText('+ Add Court'));
     expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
   });
@@ -236,7 +253,13 @@ describe('PaddleStack App', () => {
 
   test('next up always shows up to 4 unassigned players', () => {
     render(<App />);
-    fireEvent.click(screen.getByText('Load Test Data'));
+    // Add 6 players
+    ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    });
     // Add a court to assign 4 players
     fireEvent.click(screen.getByText('+ Add Court'));
     // Next up should show the next 2 players (Eve, Frank)
@@ -258,7 +281,13 @@ describe('PaddleStack App', () => {
 
   test('removing a court returns its players to the end of the queue and removes the court', () => {
     render(<App />);
-    fireEvent.click(screen.getByText('Load Test Data'));
+    // Add 6 players manually
+    ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    });
     fireEvent.click(screen.getByText('+ Add Court'));
     // Court 1 should be filled with Alice, Bob, Charlie, Diana
     expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
@@ -277,15 +306,11 @@ describe('PaddleStack App', () => {
     expect(screen.getAllByText('Charlie').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Diana').length).toBeGreaterThan(0);
     // General queue should include Alice and Bob at the end, and no duplicates
-    const generalQueueEls = screen.getAllByText((content, el) => {
-      return (
-        el.className && el.className.includes('queue-player') &&
-        ['Alice', 'Bob', 'Charlie', 'Diana'].some(name => content === name || content.includes(name))
-      );
-    });
+    const generalQueueEls = Array.from(document.querySelectorAll('.queue-player'))
+      .filter(el => ['Alice', 'Bob', 'Charlie', 'Diana'].some(name => el.textContent.trim() === name || el.textContent.includes(name)));
     const queueNames = generalQueueEls.map(el => el.textContent.trim().replace(/^\u2022\s*/, '').replace(/#\d+$/, '').trim());
-    // Should include Charlie and Diana
-    expect(queueNames).toEqual(expect.arrayContaining(['Charlie', 'Diana']));
+    // Should include Alice and Bob
+    expect(queueNames).toEqual(expect.arrayContaining(['Alice', 'Bob']));
     // Should not have duplicates
     const unique = new Set(queueNames);
     expect(unique.size).toBe(queueNames.length);
