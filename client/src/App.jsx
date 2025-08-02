@@ -361,6 +361,45 @@ function App() {
     setOverId(event.over?.id || null);
   }, []);
 
+  // DragOverlay: show the tile being dragged under the mouse
+  const generalQueueStartNum = nextUpCount + 1;
+  let dragOverlayContent = null;
+  if (activeId) {
+    const dragData = parseDragId(activeId);
+    let player = null;
+    let label = null;
+    if (dragData.type === 'general') {
+      player = generalQueue[dragData.index];
+      if (player) {
+        label = (
+          <div className="queue-player ghost-player">
+            <span className="queue-dot" /> {player.name}
+            <span className="queue-num">#{generalQueueStartNum + dragData.index}</span>
+          </div>
+        );
+      }
+    } else if (dragData.type === 'nextup') {
+      player = nextUpPlayers[dragData.index];
+      if (player) {
+        label = (
+          <div className="nextup-card ghost-player">
+            <div className="nextup-num">#{1 + dragData.index}</div>
+            <div className="nextup-name">{player.name}</div>
+          </div>
+        );
+      }
+    } else if (dragData.type === 'court') {
+      const court = courts[dragData.courtIndex];
+      player = court && court.players ? court.players[dragData.index] : null;
+      label = (
+        <div className="queue-player ghost-player" style={{ minHeight: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ textAlign: 'center', width: '100%' }}>{player ? player.name : <span style={{ color: '#bbb' }}>Player {dragData.index + 1}</span>}</span>
+        </div>
+      );
+    }
+    dragOverlayContent = label;
+  }
+
   return (
     <DndContext 
       onDragStart={handleDragStart}
@@ -368,6 +407,7 @@ function App() {
       onDragCancel={handleDragCancel}
       onDragOver={handleDragOver}
     >
+      <DragOverlay>{dragOverlayContent}</DragOverlay>
       <div className="app-container">
         <Sidebar
           sessionPlayers={sessionPlayers}
