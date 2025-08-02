@@ -1,4 +1,7 @@
 import React from 'react';
+import DraggablePlayer from './components/DraggablePlayer';
+import DroppableArea from './components/DroppableArea';
+import { generateDragId } from './utils/dragDrop';
 
 function NextUpSection({ nextUpPlayers, startNum = 1 }) {
   return (
@@ -12,10 +15,20 @@ function NextUpSection({ nextUpPlayers, startNum = 1 }) {
               const idx = row * 2 + col;
               const p = nextUpPlayers[idx];
               return p ? (
-                <div className="nextup-card" key={col}>
-                  <div className="nextup-num">#{startNum + idx}</div>
-                  <div className="nextup-name">{p.name}</div>
-                </div>
+                <DroppableArea 
+                  key={col} 
+                  id={generateDragId('nextup', idx)}
+                >
+                  <DraggablePlayer 
+                    id={generateDragId('nextup', idx)}
+                    player={p}
+                  >
+                    <div className="nextup-card">
+                      <div className="nextup-num">#{startNum + idx}</div>
+                      <div className="nextup-name">{p.name}</div>
+                    </div>
+                  </DraggablePlayer>
+                </DroppableArea>
               ) : <div className="nextup-card empty" key={col} role="presentation"></div>;
             })}
           </div>

@@ -30,4 +30,10 @@ For a high level design please refer to the following file figama wireframe in t
 6# General queue:
 If there is more than 8 players waiting in the queue, the next 8 players should be displayed in the next up display. the rest of the players should be added into the general queue. The general queue should be displayed in a scrollable list below the next up display.
 
-7# moving players: any player can be moved from the geenral queue, next up queue or while in a court. This can be done by dragging the player name and dropping it into to another name. Both name should then swap places.This is to allow flexibility in managing the queue and players.
+7# moving players: any player can be moved from the geenral queue, next up queue or while in a court.
+ This can be done by dragging the player name and dropping it into to another name.
+  Both name should then swap places with each other. This is to allow flexibility in managing the queue and players.
+  The player list session which shows all the players and who has paid should stay the same. You shouldnt be able to drag or drop players there.
+  You should be able to swap a player from any queue including players that are currently on court
+  The CSS should stay the same. 
+  use an approicate drag and drop library if needed

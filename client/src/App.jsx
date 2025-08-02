@@ -1,6 +1,8 @@
 
 
 import React, { useState, useRef } from 'react';
+import { DndContext } from '@dnd-kit/core';
+import { swapPlayers, parseDragId } from './utils/dragDrop';
 // End Session Modal with PIN
 function EndSessionModal({ open, onClose, onConfirm, sessionPlayers }) {
   const [pin, setPin] = React.useState("");
@@ -319,64 +321,88 @@ function App() {
   if (typeof window !== 'undefined') {
     window.__PaidModalInSidebar = paidModalInSidebar;
   }
+
+  // Handle drag and drop
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return; // No valid drop target or dropped on itself
+    }
+
+    const sourceData = parseDragId(active.id);
+    const targetData = parseDragId(over.id);
+
+    const result = swapPlayers(sessionPlayers, sourceData, targetData, courts);
+
+    if (result.newSessionPlayers) {
+      setSessionPlayers(result.newSessionPlayers);
+    }
+
+    if (result.newCourts) {
+      setCourts(result.newCourts);
+    }
+  };
   return (
-    <div className="app-container">
-      <Sidebar
-        sessionPlayers={sessionPlayers}
-        courts={courts}
-        pausedPlayers={pausedPlayers}
-        handleAddPlayer={handleAddPlayer}
-        handleLoadTestData={handleLoadTestData}
-        handleEnablePausedPlayer={handleEnablePausedPlayer}
-        handleRemovePlayer={handleRemovePlayer}
-        toast={toast}
-        toastTimeout={toastTimeout}
-        generalQueue={generalQueue}
-        generalQueueStartNum={nextUpCount + 1}
-        // End Session button slot
-        endSessionButton={
-          <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
-            <button
-              className="end-session-btn"
-              style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
-              onClick={() => setShowEndSessionModal(true)}
-              title="End session (clears all data)"
-            >
-              End Session
-            </button>
-          </div>
-        }
-      />
-      <EndSessionModal
-        open={showEndSessionModal}
-        onClose={() => setShowEndSessionModal(false)}
-        onConfirm={handleEndSession}
-        sessionPlayers={sessionPlayers}
-      />
-      <Toast message={toast} />
-
-      <PlayerActionModal
-        show={showPlayerActionModal}
-        player={playerToAction}
-        onDelete={handleConfirmDeletePlayer}
-        onPause={handleConfirmPausePlayer}
-        onCancel={handleCancelPlayerAction}
-      />
-
-      {/* Main content: Next Up display and Courts */}
-      <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
-        <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} />
-        <CourtsPanel
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="app-container">
+        <Sidebar
+          sessionPlayers={sessionPlayers}
           courts={courts}
-          courtToRemove={courtToRemove}
-          handleRemoveCourt={handleRemoveCourt}
-          handleConfirmRemoveCourt={handleConfirmRemoveCourt}
-          handleCancelRemoveCourt={handleCancelRemoveCourt}
-          handleAddCourt={handleAddCourt}
-          handleCompleteGame={handleCompleteGame}
+          pausedPlayers={pausedPlayers}
+          handleAddPlayer={handleAddPlayer}
+          handleLoadTestData={handleLoadTestData}
+          handleEnablePausedPlayer={handleEnablePausedPlayer}
+          handleRemovePlayer={handleRemovePlayer}
+          toast={toast}
+          toastTimeout={toastTimeout}
+          generalQueue={generalQueue}
+          generalQueueStartNum={nextUpCount + 1}
+          // End Session button slot
+          endSessionButton={
+            <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
+              <button
+                className="end-session-btn"
+                style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
+                onClick={() => setShowEndSessionModal(true)}
+                title="End session (clears all data)"
+              >
+                End Session
+              </button>
+            </div>
+          }
         />
+        <EndSessionModal
+          open={showEndSessionModal}
+          onClose={() => setShowEndSessionModal(false)}
+          onConfirm={handleEndSession}
+          sessionPlayers={sessionPlayers}
+        />
+        <Toast message={toast} />
+
+        <PlayerActionModal
+          show={showPlayerActionModal}
+          player={playerToAction}
+          onDelete={handleConfirmDeletePlayer}
+          onPause={handleConfirmPausePlayer}
+          onCancel={handleCancelPlayerAction}
+        />
+
+        {/* Main content: Next Up display and Courts */}
+        <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
+          <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} />
+          <CourtsPanel
+            courts={courts}
+            courtToRemove={courtToRemove}
+            handleRemoveCourt={handleRemoveCourt}
+            handleConfirmRemoveCourt={handleConfirmRemoveCourt}
+            handleCancelRemoveCourt={handleCancelRemoveCourt}
+            handleAddCourt={handleAddCourt}
+            handleCompleteGame={handleCompleteGame}
+          />
+        </div>
       </div>
-    </div>
+    </DndContext>
   );
 }
 

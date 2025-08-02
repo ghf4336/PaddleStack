@@ -1,4 +1,7 @@
 import React from 'react';
+import DraggablePlayer from './components/DraggablePlayer';
+import DroppableArea from './components/DroppableArea';
+import { generateDragId } from './utils/dragDrop';
 
 function Sidebar({
   sessionPlayers,
@@ -90,10 +93,20 @@ function Sidebar({
       >
         <h4>General Queue ({generalQueue.length})</h4>
         {generalQueue.map((p, i) => (
-          <div className="queue-player" key={i}>
-            <span className="queue-dot" /> {p.name}
-            <span className="queue-num">#{generalQueueStartNum + i}</span>
-          </div>
+          <DroppableArea
+            key={i}
+            id={generateDragId('general', i)}
+          >
+            <DraggablePlayer
+              id={generateDragId('general', i)}
+              player={p}
+            >
+              <div className="queue-player">
+                <span className="queue-dot" /> {p.name}
+                <span className="queue-num">#{generalQueueStartNum + i}</span>
+              </div>
+            </DraggablePlayer>
+          </DroppableArea>
         ))}
       </div>
       {/* End Session button slot, if provided */}

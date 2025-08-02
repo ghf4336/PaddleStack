@@ -1,4 +1,7 @@
 import React from 'react';
+import DraggablePlayer from './components/DraggablePlayer';
+import DroppableArea from './components/DroppableArea';
+import { generateDragId } from './utils/dragDrop';
 
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame }) {
   return (
@@ -78,10 +81,20 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                 [0, 1, 2, 3].map(i => {
                   const p = court.players[i];
                   return (
-                    <div key={i} style={{ background: '#f6f6fa', borderRadius: 6, padding: '8px 10px', minHeight: 36, display: 'flex', alignItems: 'center', fontWeight: 500, fontSize: 15 }}>
-                      <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
-                      <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
-                    </div>
+                    <DroppableArea
+                      key={i}
+                      id={generateDragId('court', i, idx)}
+                    >
+                      <DraggablePlayer
+                        id={generateDragId('court', i, idx)}
+                        player={p}
+                      >
+                        <div style={{ background: '#f6f6fa', borderRadius: 6, padding: '8px 10px', minHeight: 36, display: 'flex', alignItems: 'center', fontWeight: 500, fontSize: 15 }}>
+                          <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
+                          <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                        </div>
+                      </DraggablePlayer>
+                    </DroppableArea>
                   );
                 })
               ) : (
