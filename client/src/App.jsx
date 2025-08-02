@@ -282,10 +282,10 @@ function App() {
       if (idx !== -1) assignedIndices.add(idx);
     });
   });
-  // Next up: first 4 unassigned and not paused players
+  // Next up: first 8 unassigned and not paused players (4 in next up, 4 in "2 games")
   const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
-  const nextUpPlayers = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 4);
-  const generalQueue = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(4);
+  const nextUpPlayers = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 8);
+  const generalQueue = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(8);
   const nextUpCount = nextUpPlayers.length;
 
   // Open modal to add player
@@ -434,6 +434,16 @@ function App() {
         label = (
           <div className="nextup-card ghost-player">
             <div className="nextup-num">#{1 + dragData.index}</div>
+            <div className="nextup-name">{player.name}</div>
+          </div>
+        );
+      }
+    } else if (dragData.type === 'nextup-2') {
+      player = nextUpPlayers[4 + dragData.index];
+      if (player) {
+        label = (
+          <div className="nextup-card ghost-player">
+            <div className="nextup-num">#{5 + dragData.index}</div>
             <div className="nextup-name">{player.name}</div>
           </div>
         );

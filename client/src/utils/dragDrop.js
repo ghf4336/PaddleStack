@@ -53,8 +53,9 @@ function getQueuePositions(sessionPlayers, courts) {
 
   // Get queue players (excluding those in courts)
   const queuePlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i));
-  const nextUpPlayers = queuePlayers.slice(0, 4);
-  const generalQueue = queuePlayers.slice(4);
+  // Next up section now includes first 8 players (first group: 0-3, second group: 4-7)
+  const nextUpPlayers = queuePlayers.slice(0, 8);
+  const generalQueue = queuePlayers.slice(8);
 
   return { nextUpPlayers, generalQueue, assignedIndices };
 }
@@ -65,19 +66,25 @@ function getQueuePositions(sessionPlayers, courts) {
 function getPlayerFromPosition(positionData, nextUpPlayers, generalQueue, courts) {
   const { type, index, courtIndex } = positionData;
 
-  switch (type) {
-    case 'nextup':
-      return nextUpPlayers[index] || null;
-    case 'general':
-      return generalQueue[index] || null;
-    case 'court':
-      if (courtIndex !== undefined && courts[courtIndex] && courts[courtIndex].players) {
-        return courts[courtIndex].players[index] || null;
-      }
-      return null;
-    default:
-      return null;
+  // Support both first and second group drag IDs for next up section
+  if (type === 'nextup') {
+    // First group: nextup-0, nextup-1, nextup-2, nextup-3
+    return nextUpPlayers[index] || null;
   }
+  if (type === 'nextup-2') {
+    // Second group: nextup-2-0, nextup-2-1, nextup-2-2, nextup-2-3
+    return nextUpPlayers[4 + index] || null;
+  }
+  if (type === 'general') {
+    return generalQueue[index] || null;
+  }
+  if (type === 'court') {
+    if (courtIndex !== undefined && courts[courtIndex] && courts[courtIndex].players) {
+      return courts[courtIndex].players[index] || null;
+    }
+    return null;
+  }
+  return null;
 }
 
 /**
@@ -184,7 +191,8 @@ export function generateCourtDragId(courtIndex) {
  */
 export function parseDragId(dragId) {
   const parts = dragId.split('-');
-  
+
+  // Court reordering
   if (parts[0] === 'court' && parts[1] === 'reorder' && parts.length === 3) {
     return {
       type: 'court-reorder',
@@ -192,7 +200,8 @@ export function parseDragId(dragId) {
       index: null
     };
   }
-  
+
+  // Court player
   if (parts[0] === 'court' && parts.length === 3) {
     return {
       type: 'court',
@@ -200,7 +209,35 @@ export function parseDragId(dragId) {
       index: parseInt(parts[2], 10)
     };
   }
-  
+
+  // Next up second group: nextup-2-x
+  if (parts[0] === 'nextup' && parts[1] === '2' && parts.length === 3) {
+    return {
+      type: 'nextup-2',
+      index: parseInt(parts[2], 10),
+      courtIndex: null
+    };
+  }
+
+  // Next up first group: nextup-x
+  if (parts[0] === 'nextup' && parts.length === 2) {
+    return {
+      type: 'nextup',
+      index: parseInt(parts[1], 10),
+      courtIndex: null
+    };
+  }
+
+  // General queue: general-x
+  if (parts[0] === 'general' && parts.length === 2) {
+    return {
+      type: 'general',
+      index: parseInt(parts[1], 10),
+      courtIndex: null
+    };
+  }
+
+  // Fallback
   return {
     type: parts[0],
     index: parseInt(parts[1], 10),
