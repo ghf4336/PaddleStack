@@ -152,8 +152,9 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   padding: 16px; /* slightly smaller padding */
   margin-bottom: 16px; /* slightly smaller margin */
-  width: 30%; /* slightly smaller width */
-  max-width: 480px; /* slightly smaller max width */
+  width: 320px; /* fixed width to prevent resizing */
+  max-width: 320px;
+  min-width: 280px;
   display: flex;
   flex-direction: column;
 }
