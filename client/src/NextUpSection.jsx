@@ -1,6 +1,6 @@
 import React from 'react';
 
-function NextUpSection({ nextUpPlayers }) {
+function NextUpSection({ nextUpPlayers, startNum = 1 }) {
   return (
     <div className="nextup-section">
       <h3>Next Up ({nextUpPlayers.length}/4)</h3>
@@ -13,7 +13,7 @@ function NextUpSection({ nextUpPlayers }) {
               const p = nextUpPlayers[idx];
               return p ? (
                 <div className="nextup-card" key={col}>
-                  <div className="nextup-num">#{idx + 1}</div>
+                  <div className="nextup-num">#{startNum + idx}</div>
                   <div className="nextup-name">{p.name}</div>
                 </div>
               ) : <div className="nextup-card empty" key={col} role="presentation"></div>;

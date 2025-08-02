@@ -11,6 +11,7 @@ function Sidebar({
   toast,
   toastTimeout,
   generalQueue,
+  generalQueueStartNum = 5,
   endSessionButton
 }) {
   return (
@@ -78,12 +79,20 @@ function Sidebar({
             );
           })}
       </div>
-      <div className="general-queue">
+      <div
+        className="general-queue"
+        style={{
+          maxHeight: '320px',
+          overflowY: 'auto',
+          marginBottom: 56, // space for End Session button
+          paddingBottom: 8,
+        }}
+      >
         <h4>General Queue ({generalQueue.length})</h4>
         {generalQueue.map((p, i) => (
           <div className="queue-player" key={i}>
             <span className="queue-dot" /> {p.name}
-            <span className="queue-num">#{i + 1}</span>
+            <span className="queue-num">#{generalQueueStartNum + i}</span>
           </div>
         ))}
       </div>

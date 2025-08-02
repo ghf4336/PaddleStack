@@ -240,6 +240,7 @@ function App() {
   const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
   const nextUpPlayers = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 4);
   const generalQueue = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(4);
+  const nextUpCount = nextUpPlayers.length;
 
   // Open modal to add player
   const handleAddPlayer = () => {
@@ -331,6 +332,7 @@ function App() {
         toast={toast}
         toastTimeout={toastTimeout}
         generalQueue={generalQueue}
+        generalQueueStartNum={nextUpCount + 1}
         // End Session button slot
         endSessionButton={
           <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
@@ -363,7 +365,7 @@ function App() {
 
       {/* Main content: Next Up display and Courts */}
       <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
-        <NextUpSection nextUpPlayers={nextUpPlayers} />
+        <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} />
         <CourtsPanel
           courts={courts}
           courtToRemove={courtToRemove}
