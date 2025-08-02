@@ -173,10 +173,25 @@ export function generateDragId(type, index, courtIndex = null) {
 }
 
 /**
+ * Generates a drag ID for court reordering
+ */
+export function generateCourtDragId(courtIndex) {
+  return `court-reorder-${courtIndex}`;
+}
+
+/**
  * Parses a drag ID back into its components
  */
 export function parseDragId(dragId) {
   const parts = dragId.split('-');
+  
+  if (parts[0] === 'court' && parts[1] === 'reorder' && parts.length === 3) {
+    return {
+      type: 'court-reorder',
+      courtIndex: parseInt(parts[2], 10),
+      index: null
+    };
+  }
   
   if (parts[0] === 'court' && parts.length === 3) {
     return {
@@ -191,4 +206,27 @@ export function parseDragId(dragId) {
     index: parseInt(parts[1], 10),
     courtIndex: null
   };
+}
+
+/**
+ * Reorders courts by moving source court to target position
+ * @param {Array} courts - Array of courts
+ * @param {number} sourceIndex - Index of court being moved
+ * @param {number} targetIndex - Index where court should be moved to
+ * @returns {Array} - New courts array with updated positions and renumbered
+ */
+export function reorderCourts(courts, sourceIndex, targetIndex) {
+  if (sourceIndex === targetIndex) {
+    return courts;
+  }
+
+  const newCourts = [...courts];
+  const [movedCourt] = newCourts.splice(sourceIndex, 1);
+  newCourts.splice(targetIndex, 0, movedCourt);
+
+  // Renumber all courts based on their new positions
+  return newCourts.map((court, index) => ({
+    ...court,
+    number: index + 1
+  }));
 }

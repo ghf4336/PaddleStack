@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { swapPlayers, parseDragId } from './utils/dragDrop';
+import { swapPlayers, parseDragId, reorderCourts } from './utils/dragDrop';
 // End Session Modal with PIN
 function EndSessionModal({ open, onClose, onConfirm, sessionPlayers }) {
   const [pin, setPin] = React.useState("");
@@ -384,6 +384,14 @@ function App() {
     const sourceData = parseDragId(active.id);
     const targetData = parseDragId(over.id);
 
+    // Handle court reordering
+    if (sourceData.type === 'court-reorder' && targetData.type === 'court-reorder') {
+      const newCourts = reorderCourts(courts, sourceData.courtIndex, targetData.courtIndex);
+      setCourts(newCourts);
+      return;
+    }
+
+    // Handle regular player swaps
     const result = swapPlayers(sessionPlayers, sourceData, targetData, courts);
 
     // Always update both states if either is changed
