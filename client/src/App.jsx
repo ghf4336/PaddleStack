@@ -158,20 +158,53 @@ function App() {
 
   // Complete game handler
   const handleCompleteGame = (courtIdx) => {
-    setCourts(prevCourts => {
-      const court = prevCourts[courtIdx];
-      if (!court.players || court.players.length !== 4) return prevCourts;
-      // Move finished players to end of sessionPlayers
-      setSessionPlayers(prevPlayers => {
-        const finishedNames = court.players.map(p => p.name);
-        // Remove finished players from their current positions
-        const filtered = prevPlayers.filter(p => !finishedNames.includes(p.name));
-        // Add finished players to the end, preserving their order
-        const finishedPlayers = prevPlayers.filter(p => finishedNames.includes(p.name));
-        return [...filtered, ...finishedPlayers];
+    // Batch update: move finished players to end, clear court, and reassign courts in one go
+    setSessionPlayers(prevPlayers => {
+      // Get finished players from the court
+      const court = courts[courtIdx];
+      if (!court.players || court.players.length !== 4) return prevPlayers;
+      const finishedNames = court.players.map(p => p.name);
+      // Remove finished players from their current positions
+      const filtered = prevPlayers.filter(p => !finishedNames.includes(p.name));
+      // Add finished players to the end, preserving their order
+      const finishedPlayers = prevPlayers.filter(p => finishedNames.includes(p.name));
+      const newQueue = [...filtered, ...finishedPlayers];
+
+      // Now, reassign courts immediately
+      setCourts(prevCourts => {
+        // Remove players from the completed court
+        const clearedCourts = prevCourts.map((c, idx) => idx === courtIdx ? { ...c, players: [] } : c);
+        // Find all assigned player names (to courts)
+        const assignedNames = new Set();
+        clearedCourts.forEach(court => {
+          (court.players || []).forEach(player => {
+            if (player && player.name) assignedNames.add(player.name);
+          });
+        });
+        // Get unassigned players in order
+        const queue = newQueue.filter(p => !assignedNames.has(p.name));
+        let queueIdx = 0;
+        // Assign players to courts in order
+        const newCourts = clearedCourts.map(court => {
+          if (court.players && court.players.length === 4) {
+            return court;
+          }
+          const group = [];
+          for (let i = 0; i < 4; i++) {
+            if (queueIdx < queue.length) {
+              group.push(queue[queueIdx]);
+              queueIdx++;
+            }
+          }
+          if (group.length === 4) {
+            return { ...court, players: group };
+          } else {
+            return { ...court, players: [] };
+          }
+        });
+        return newCourts;
       });
-      // Clear the court's players immediately
-      return prevCourts.map((c, idx) => idx === courtIdx ? { ...c, players: [] } : c);
+      return newQueue;
     });
   };
 
