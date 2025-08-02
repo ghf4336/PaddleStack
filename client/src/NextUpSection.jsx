@@ -3,7 +3,7 @@ import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId } from './utils/dragDrop';
 
-function NextUpSection({ nextUpPlayers, startNum = 1 }) {
+function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId }) {
   return (
     <div className="nextup-section">
       <h3>Next Up ({nextUpPlayers.length}/4)</h3>
@@ -18,6 +18,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1 }) {
                 <DroppableArea 
                   key={col} 
                   id={generateDragId('nextup', idx)}
+                  isDropTarget={overId === generateDragId('nextup', idx)}
                 >
                   <DraggablePlayer 
                     id={generateDragId('nextup', idx)}

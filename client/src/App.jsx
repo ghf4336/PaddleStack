@@ -142,6 +142,7 @@ function App() {
   const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
   const [courts, setCourts] = useState([]); // Array of { number, players: [] }
   const [activeId, setActiveId] = useState(null); // For drag overlay
+  const [overId, setOverId] = useState(null); // For drop target highlight
 
   // Add court (empty, not auto-assigned)
   const handleAddCourt = () => {
@@ -326,11 +327,13 @@ function App() {
   // Handle drag and drop
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
+    setOverId(null);
   };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
     setActiveId(null); // Clear active drag item
+    setOverId(null); // Clear drop target
 
     if (!over || active.id === over.id) {
       return; // No valid drop target or dropped on itself
@@ -352,12 +355,18 @@ function App() {
 
   const handleDragCancel = () => {
     setActiveId(null);
+    setOverId(null);
   };
+  const handleDragOver = React.useCallback((event) => {
+    setOverId(event.over?.id || null);
+  }, []);
+
   return (
     <DndContext 
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      onDragOver={handleDragOver}
     >
       <div className="app-container">
         <Sidebar
@@ -372,6 +381,8 @@ function App() {
           toastTimeout={toastTimeout}
           generalQueue={generalQueue}
           generalQueueStartNum={nextUpCount + 1}
+          activeId={activeId}
+          overId={overId}
           // End Session button slot
           endSessionButton={
             <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
@@ -404,7 +415,7 @@ function App() {
 
         {/* Main content: Next Up display and Courts */}
         <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
-          <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} />
+          <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} activeId={activeId} overId={overId} />
           <CourtsPanel
             courts={courts}
             courtToRemove={courtToRemove}
@@ -416,46 +427,6 @@ function App() {
           />
         </div>
       </div>
-      
-      <DragOverlay>
-        {activeId ? (
-          <div style={{ 
-            background: '#fff', 
-            borderRadius: '6px', 
-            padding: '8px 12px', 
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            border: '2px solid #2196f3',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}>
-            {(() => {
-              const dragData = parseDragId(activeId);
-              // Get queue positions
-              const assignedIndices = new Set();
-              courts.forEach(court => {
-                (court.players || []).forEach(player => {
-                  const idx = sessionPlayers.findIndex(p => p && player && p.name === player.name);
-                  if (idx !== -1) assignedIndices.add(idx);
-                });
-              });
-              const queuePlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i));
-              const nextUpPlayers = queuePlayers.slice(0, 4);
-              const generalQueue = queuePlayers.slice(4);
-              
-              let player = null;
-              if (dragData.type === 'nextup' && nextUpPlayers[dragData.index]) {
-                player = nextUpPlayers[dragData.index];
-              } else if (dragData.type === 'general' && generalQueue[dragData.index]) {
-                player = generalQueue[dragData.index];
-              } else if (dragData.type === 'court' && courts[dragData.courtIndex]?.players?.[dragData.index]) {
-                player = courts[dragData.courtIndex].players[dragData.index];
-              }
-              
-              return player ? `🏓 ${player.name}` : 'Player';
-            })()}
-          </div>
-        ) : null}
-      </DragOverlay>
     </DndContext>
   );
 }

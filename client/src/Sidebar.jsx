@@ -15,7 +15,9 @@ function Sidebar({
   toastTimeout,
   generalQueue,
   generalQueueStartNum = 5,
-  endSessionButton
+  endSessionButton,
+  activeId,
+  overId
 }) {
   return (
     <div className="sidebar" style={{ position: 'relative' }}>
@@ -97,6 +99,7 @@ function Sidebar({
           <DroppableArea
             key={i}
             id={generateDragId('general', i)}
+            isDropTarget={overId === generateDragId('general', i)}
           >
             <DraggablePlayer
               id={generateDragId('general', i)}

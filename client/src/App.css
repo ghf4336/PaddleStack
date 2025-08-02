@@ -280,28 +280,10 @@
 }
 
 /* Drop highlight styles for drag and drop */
+
+/* Drop highlight: clear border only */
 .drop-highlight {
-  background-color: #e3f2fd !important;
-  border: 2px solid #2196f3 !important;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3) !important;
-  transform: scale(1.02) !important;
-  transition: all 0.2s ease !important;
-}
-
-.drop-highlight .queue-player {
-  background-color: #bbdefb !important;
-  border-color: #1976d2 !important;
-}
-
-.drop-highlight .nextup-card {
-  background-color: #fff3e0 !important;
-  border-color: #ff9800 !important;
-  box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.3) !important;
-}
-
-/* Improve dragging visual feedback */
-.dragging {
-  opacity: 0.6 !important;
-  transform: rotate(2deg) !important;
-  z-index: 1000 !important;
+  border: 3px solid #2196f3 !important;
+  box-sizing: border-box !important;
+  transition: border 0.15s ease;
 }
