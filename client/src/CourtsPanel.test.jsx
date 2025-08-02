@@ -33,10 +33,9 @@ describe('CourtsPanel', () => {
     jest.useFakeTimers();
     const handleCompleteGame = jest.fn();
     const nextPlayersButtonState = { 0: true };
-    const renderResult = render(
+    const { getByText, rerender, container } = render(
       <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} nextPlayersButtonState={nextPlayersButtonState} />
     );
-    const { getByText, rerender, getAllByText } = renderResult;
     const btn = getByText('Next players');
     expect(btn.disabled).toBe(true);
     // Simulate timer passing
@@ -45,6 +44,11 @@ describe('CourtsPanel', () => {
     });
     rerender(
       <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} nextPlayersButtonState={{}} />
+    );
+    // Re-query getAllByText after rerender
+    const { getAllByText } = render(
+      <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} nextPlayersButtonState={{}} />,
+      { container }
     );
     const completeBtns = getAllByText('Complete Game');
     expect(completeBtns[0].disabled).toBe(false);
