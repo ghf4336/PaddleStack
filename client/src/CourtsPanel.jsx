@@ -3,7 +3,7 @@ import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId } from './utils/dragDrop';
 
-function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId }) {
+function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId, recentlyCompletedCourt, nextPlayersButtonState }) {
   return (
     <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -22,8 +22,26 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: 16
       }}>
-        {courts.map((court, idx) => (
-          <div key={court.number} className="court-card" style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: 20, minWidth: 220, minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative' }}>
+        {courts.map((court, idx) => {
+          const highlight = recentlyCompletedCourt === idx;
+          return (
+            <div
+              key={court.number}
+              className="court-card"
+              style={{
+                background: highlight ? '#19c37d' : '#fff',
+                borderRadius: 12,
+                boxShadow: highlight ? '0 0 0 4px #19c37d88, 0 2px 8px #0001' : '0 2px 8px #0001',
+                padding: 20,
+                minWidth: 220,
+                minHeight: 180,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                position: 'relative',
+                transition: 'background 0.3s, box-shadow 0.3s'
+              }}
+            >
             <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
               <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
               <span style={{ marginLeft: 12, background: '#19c37d', color: '#fff', fontWeight: 600, fontSize: 14, borderRadius: 8, padding: '2px 10px' }}>Active</span>
@@ -112,14 +130,28 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
             </div>
             <button
               className="complete-game-btn"
-              style={{ width: '100%', background: '#222', color: '#fff', fontWeight: 600, fontSize: 16, borderRadius: 8, padding: '10px 0', marginTop: 8, cursor: court.players && court.players.length === 4 ? 'pointer' : 'not-allowed', opacity: court.players && court.players.length === 4 ? 1 : 0.5, border: 'none' }}
+              style={{
+                width: '100%',
+                background: nextPlayersButtonState[idx] ? '#19c37d' : '#222',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: 16,
+                borderRadius: 8,
+                padding: '10px 0',
+                marginTop: 8,
+                cursor: nextPlayersButtonState[idx] ? 'not-allowed' : (court.players && court.players.length === 4 ? 'pointer' : 'not-allowed'),
+                opacity: nextPlayersButtonState[idx] ? 1 : (court.players && court.players.length === 4 ? 1 : 0.5),
+                border: 'none',
+                transition: 'background 0.3s'
+              }}
               onClick={() => handleCompleteGame(idx)}
-              disabled={!(court.players && court.players.length === 4)}
+              disabled={nextPlayersButtonState[idx] || !(court.players && court.players.length === 4)}
             >
-              Complete Game
+              {nextPlayersButtonState[idx] ? 'Next players' : 'Complete Game'}
             </button>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
