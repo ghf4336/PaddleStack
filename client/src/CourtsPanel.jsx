@@ -88,18 +88,16 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                       isDropTarget={overId === dragId}
                     >
                       {activeId === dragId ? (
-                        <div className="queue-player ghost-player" style={{ minHeight: 36 }}>
-                          <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
-                          <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                        <div className="queue-player ghost-player" style={{ minHeight: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ textAlign: 'center', width: '100%' }}>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
                         </div>
                       ) : (
                         <DraggablePlayer
                           id={dragId}
                           player={p}
                         >
-                          <div className="queue-player" style={{ minHeight: 36 }}>
-                            <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
-                            <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                          <div className="queue-player" style={{ minHeight: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ textAlign: 'center', width: '100%' }}>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
                           </div>
                         </DraggablePlayer>
                       )}
