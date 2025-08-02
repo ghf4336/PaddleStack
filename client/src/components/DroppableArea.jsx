@@ -15,7 +15,10 @@ function DroppableArea({ id, children, disabled = false, isDropTarget = false })
     });
   }
   return (
-    <div ref={setNodeRef}>
+    <div
+      ref={setNodeRef}
+      className={isDropTarget ? 'drop-highlight' : ''}
+    >
       {childWithHighlight}
     </div>
   );

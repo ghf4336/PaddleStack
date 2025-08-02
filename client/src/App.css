@@ -1,3 +1,27 @@
+.ghost-player {
+  opacity: 0.5 !important;
+  border: 2px dashed #bbb !important;
+  background: #f5f5f5 !important;
+  color: #222 !important;
+  pointer-events: none !important;
+}
+
+.dragging-player {
+  border: 3px dashed #ff9800 !important;
+  box-shadow: 0 0 8px 2px #ff980033 !important;
+  background: #fffde7 !important;
+  z-index: 1001 !important;
+  opacity: 1 !important;
+  color: #222 !important;
+}
+
+.drop-highlight {
+  border: 3px solid #2196f3 !important;
+  box-shadow: 0 0 8px 2px #2196f333 !important;
+  background: #e3f2fd !important;
+  box-sizing: border-box !important;
+  transition: border 0.15s ease, box-shadow 0.15s ease;
+}
 /* End Session button styles */
 .end-session-btn:hover {
   opacity: 1;

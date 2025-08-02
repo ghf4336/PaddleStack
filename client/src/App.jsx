@@ -424,6 +424,8 @@ function App() {
             handleCancelRemoveCourt={handleCancelRemoveCourt}
             handleAddCourt={handleAddCourt}
             handleCompleteGame={handleCompleteGame}
+            activeId={activeId}
+            overId={overId}
           />
         </div>
       </div>

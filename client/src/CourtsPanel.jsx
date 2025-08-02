@@ -3,7 +3,7 @@ import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId } from './utils/dragDrop';
 
-function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame }) {
+function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId }) {
   return (
     <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -79,21 +79,30 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', marginBottom: 12 }}>
               {court.players && court.players.length === 4 ? (
                 [0, 1, 2, 3].map(i => {
+                  const dragId = generateDragId('court', i, idx);
                   const p = court.players[i];
                   return (
                     <DroppableArea
                       key={i}
-                      id={generateDragId('court', i, idx)}
+                      id={dragId}
+                      isDropTarget={overId === dragId}
                     >
-                      <DraggablePlayer
-                        id={generateDragId('court', i, idx)}
-                        player={p}
-                      >
-                        <div style={{ background: '#f6f6fa', borderRadius: 6, padding: '8px 10px', minHeight: 36, display: 'flex', alignItems: 'center', fontWeight: 500, fontSize: 15 }}>
+                      {activeId === dragId ? (
+                        <div className="queue-player ghost-player" style={{ minHeight: 36 }}>
                           <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
                           <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
                         </div>
-                      </DraggablePlayer>
+                      ) : (
+                        <DraggablePlayer
+                          id={dragId}
+                          player={p}
+                        >
+                          <div className="queue-player" style={{ minHeight: 36 }}>
+                            <span style={{ color: '#19c37d', fontSize: 18, marginRight: 6 }}>●</span>
+                            <span>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                          </div>
+                        </DraggablePlayer>
+                      )}
                     </DroppableArea>
                   );
                 })

@@ -95,23 +95,33 @@ function Sidebar({
         }}
       >
         <h4>General Queue ({generalQueue.length})</h4>
-        {generalQueue.map((p, i) => (
-          <DroppableArea
-            key={i}
-            id={generateDragId('general', i)}
-            isDropTarget={overId === generateDragId('general', i)}
-          >
-            <DraggablePlayer
-              id={generateDragId('general', i)}
-              player={p}
+        {generalQueue.map((p, i) => {
+          const dragId = generateDragId('general', i);
+          return (
+            <DroppableArea
+              key={i}
+              id={dragId}
+              isDropTarget={overId === dragId}
             >
-              <div className="queue-player">
-                <span className="queue-dot" /> {p.name}
-                <span className="queue-num">#{generalQueueStartNum + i}</span>
-              </div>
-            </DraggablePlayer>
-          </DroppableArea>
-        ))}
+              {activeId === dragId ? (
+                <div className="queue-player ghost-player">
+                  <span className="queue-dot" /> {p.name}
+                  <span className="queue-num">#{generalQueueStartNum + i}</span>
+                </div>
+              ) : (
+                <DraggablePlayer
+                  id={dragId}
+                  player={p}
+                >
+                  <div className="queue-player">
+                    <span className="queue-dot" /> {p.name}
+                    <span className="queue-num">#{generalQueueStartNum + i}</span>
+                  </div>
+                </DraggablePlayer>
+              )}
+            </DroppableArea>
+          );
+        })}
       </div>
       {/* End Session button slot, if provided */}
       {endSessionButton}

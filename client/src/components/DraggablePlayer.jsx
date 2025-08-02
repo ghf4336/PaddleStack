@@ -15,7 +15,6 @@ function DraggablePlayer({ id, player, children, disabled = false }) {
 
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    opacity: isDragging ? 0.5 : 1,
     cursor: disabled ? 'default' : 'grab',
     zIndex: isDragging ? 1000 : 'auto',
   };
@@ -24,7 +23,7 @@ function DraggablePlayer({ id, player, children, disabled = false }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={isDragging ? 'dragging' : ''}
+      className={isDragging ? 'dragging-player' : ''}
       {...listeners}
       {...attributes}
     >

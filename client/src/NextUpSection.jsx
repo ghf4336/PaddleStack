@@ -14,21 +14,29 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId }) {
             {[0, 1].map(col => {
               const idx = row * 2 + col;
               const p = nextUpPlayers[idx];
+              const dragId = generateDragId('nextup', idx);
               return p ? (
                 <DroppableArea 
                   key={col} 
-                  id={generateDragId('nextup', idx)}
-                  isDropTarget={overId === generateDragId('nextup', idx)}
+                  id={dragId}
+                  isDropTarget={overId === dragId}
                 >
-                  <DraggablePlayer 
-                    id={generateDragId('nextup', idx)}
-                    player={p}
-                  >
-                    <div className="nextup-card">
+                  {activeId === dragId ? (
+                    <div className="nextup-card ghost-player">
                       <div className="nextup-num">#{startNum + idx}</div>
                       <div className="nextup-name">{p.name}</div>
                     </div>
-                  </DraggablePlayer>
+                  ) : (
+                    <DraggablePlayer 
+                      id={dragId}
+                      player={p}
+                    >
+                      <div className="nextup-card">
+                        <div className="nextup-num">#{startNum + idx}</div>
+                        <div className="nextup-name">{p.name}</div>
+                      </div>
+                    </DraggablePlayer>
+                  )}
                 </DroppableArea>
               ) : <div className="nextup-card empty" key={col} role="presentation"></div>;
             })}
