@@ -85,17 +85,31 @@ function getPlayerFromPosition(positionData, nextUpPlayers, generalQueue, courts
  */
 function swapCourtPlayers(courts, sourceData, targetData, sourcePlayer, targetPlayer) {
   const newCourts = courts.map(court => ({ ...court, players: [...(court.players || [])] }));
-  
   // Swap the players in their respective courts
   if (newCourts[sourceData.courtIndex] && newCourts[sourceData.courtIndex].players) {
     newCourts[sourceData.courtIndex].players[sourceData.index] = targetPlayer;
   }
-  
   if (newCourts[targetData.courtIndex] && newCourts[targetData.courtIndex].players) {
     newCourts[targetData.courtIndex].players[targetData.index] = sourcePlayer;
   }
 
-  return { newSessionPlayers: null, newCourts }; // sessionPlayers unchanged for court swaps
+  // If both players are in the same court, update sessionPlayers order to match court order
+  let newSessionPlayers = null;
+  if (sourceData.courtIndex === targetData.courtIndex) {
+    // Get the new order of players in the court
+    const courtPlayers = newCourts[sourceData.courtIndex].players;
+    // Find indices in sessionPlayers
+    const indices = courtPlayers.map(p => sessionPlayers.findIndex(sp => sp.name === p.name));
+    // If all indices are valid, reorder sessionPlayers
+    if (indices.every(idx => idx !== -1)) {
+      newSessionPlayers = [...sessionPlayers];
+      // Replace the players in sessionPlayers at those indices
+      indices.forEach((idx, i) => {
+        newSessionPlayers[idx] = courtPlayers[i];
+      });
+    }
+  }
+  return { newSessionPlayers, newCourts };
 }
 
 /**

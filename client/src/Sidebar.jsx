@@ -61,9 +61,9 @@ function Sidebar({
                   <button
                     className="enable-btn"
                     title="Enable player"
-                    style={{ marginLeft: 8, background: '#19c37d', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 15, padding: '4px 12px', cursor: 'pointer' }}
+                    style={{ marginLeft: 8, background: '#0ae04aff', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 15, padding: '4px 12px', cursor: 'pointer' }}
                     onClick={() => handleEnablePausedPlayer(p)}
-                  >Enable</button>
+                  >Continue</button>
                 ) : (
                   <button
                     className="remove-btn"

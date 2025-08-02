@@ -377,10 +377,10 @@ function App() {
 
     const result = swapPlayers(sessionPlayers, sourceData, targetData, courts);
 
+    // Always update both states if either is changed
     if (result.newSessionPlayers) {
       setSessionPlayers(result.newSessionPlayers);
     }
-
     if (result.newCourts) {
       setCourts(result.newCourts);
     }
