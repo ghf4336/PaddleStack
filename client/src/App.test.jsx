@@ -17,7 +17,7 @@ describe('End Session Feature', () => {
     expect(screen.getByText(/End Session\?/i)).toBeInTheDocument();
   });
 
-  test('ends session and clears players/courts on correct PIN', () => {
+  test('ends session and clears players/courts on correct PIN', async () => {
     render(<App />);
     // Add a player and a court
     fireEvent.click(screen.getByText('Add Player'));
@@ -29,11 +29,16 @@ describe('End Session Feature', () => {
     fireEvent.click(screen.getByText('End Session'));
     fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '1111' } });
     fireEvent.click(screen.getByText('Yes, End Session'));
-    // Player and court should be gone
-    expect(screen.queryByText('ToClear')).not.toBeInTheDocument();
-    expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
-    // Modal should close
-    expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
+    // Now, the Download Player List UI appears; click End Session Now
+    const endSessionNowBtn = await screen.findByText('End Session Now');
+    fireEvent.click(endSessionNowBtn);
+    // Wait for player and court to be gone
+    await waitFor(() => {
+      expect(screen.queryAllByText('ToClear').length).toBe(0);
+      expect(screen.queryAllByText('Court 1').length).toBe(0);
+      // Modal should close
+      expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
+    });
   });
 
   test('cancel button closes the modal', () => {
