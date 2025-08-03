@@ -22,7 +22,7 @@ function Sidebar({
   return (
     <div className="sidebar" style={{ position: 'relative' }}>
       <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 20 }}>👤</span> Players ({sessionPlayers.length})
+        <img src="/PaddleStack/logo_white.png" alt="Pickle Park Logo" style={{ height: 32, width: 'auto', verticalAlign: 'middle' }} /> Players ({sessionPlayers.length})
         <button className="add-btn" style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#11121a', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }} onClick={handleAddPlayer}>
           Add Player
         </button>
@@ -56,6 +56,9 @@ function Sidebar({
                   />
                   {p.name}
                   {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}
+                  {inCourt && (
+                    <span className="incourt-badge" style={{ background: '#2196f3', color: '#fff', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6, fontWeight: 600 }}>On Court</span>
+                  )}
                 </span>
                 {isPaused ? (
                   <button
