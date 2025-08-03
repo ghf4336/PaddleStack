@@ -392,8 +392,8 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     }
     // Add a court
     fireEvent.click(screen.getByText('+ Add Court'));
-    // The remove button for the first player should be disabled
-    const removeBtn = screen.getAllByTitle('Remove or pause player')[0];
-    expect(removeBtn).toBeDisabled();
+    // The remove button for the first player should not be present
+    const removeBtns = screen.queryAllByTitle('Remove or pause player');
+    expect(removeBtns.length).toBe(0);
   });
 });

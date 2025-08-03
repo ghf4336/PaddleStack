@@ -65,20 +65,13 @@ function Sidebar({
                     onClick={() => handleEnablePausedPlayer(p)}
                   >Continue</button>
                 ) : (
-                  <button
-                    className="remove-btn"
-                    title="Remove or pause player"
-                    disabled={inCourt}
-                    onClick={() => {
-                      if (inCourt) {
-                        if (toast && toastTimeout && toastTimeout.current) {
-                          clearTimeout(toastTimeout.current);
-                        }
-                        return;
-                      }
-                      handleRemovePlayer(p);
-                    }}
-                  >×</button>
+                  !inCourt && (
+                    <button
+                      className="remove-btn"
+                      title="Remove or pause player"
+                      onClick={() => handleRemovePlayer(p)}
+                    >×</button>
+                  )
                 )}
               </div>
             );
