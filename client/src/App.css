@@ -87,7 +87,8 @@
   flex-direction: column;
   align-items: stretch;
   gap: 16px;
-  height: 100%;
+  height: auto;
+  max-height: 100vh;
 }
 .add-player-row {
   display: flex;
@@ -144,14 +145,16 @@
   padding: 8px 10px;
   margin-top: 8px;
   overflow: hidden; /* Prevent scrollbars during drag operations */
+  height: auto;
+  max-height: 100vh;
 }
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: row;
   gap: 24px;
-  align-items: stretch;
-  height: 100%;
+  align-items: flex-start;
+  height: auto;
 }
 
 /* Courts Panel styles */
@@ -160,11 +163,12 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   padding: 20px 16px 16px 16px;
-  flex: 1;
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   min-width: 300px;
+  max-height: 100vh;
 }
 
 /* Next Up styles */
