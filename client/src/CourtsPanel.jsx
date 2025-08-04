@@ -6,11 +6,24 @@ import { generateDragId, generateCourtDragId } from './utils/dragDrop';
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId, recentlyCompletedCourt, nextPlayersButtonState }) {
   return (
     <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <h3 style={{ margin: 0 }}>Courts ({courts.length})</h3>
+      <div
+        className="courts-header bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 12,
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #22c55e, #16a34a)', // fallback for Tailwind classes
+          color: '#fff',
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+        }}
+      >
+        <h3 style={{ margin: 0, fontWeight: 600, fontSize: 18 }}>Courts ({courts.length})</h3>
         <button
           className="add-court-btn"
-          style={{ padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer' }}
+          style={{ padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer', background: '#11121a', color: '#fff', border: 'none', borderRadius: 8 }}
           onClick={handleAddCourt}
           disabled={courts.length >= 8}
         >

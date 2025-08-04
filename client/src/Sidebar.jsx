@@ -21,12 +21,29 @@ function Sidebar({
 }) {
   return (
     <div className="sidebar" style={{ position: 'relative' }}>
-      <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <img src="/PaddleStack/logo_white.png" alt="Pickle Park Logo" style={{ height: 32, width: 'auto', verticalAlign: 'middle' }} /> Players ({sessionPlayers.length})
-        <button className="add-btn" style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#11121a', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }} onClick={handleAddPlayer}>
+      <div
+        className="sidebar-header bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #22c55e, #16a34a)', // fallback for Tailwind classes
+          color: '#fff',
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+        }}
+      >
+        <img src="/PaddleStack/logo_white.png" alt="Pickle Park Logo" style={{ height: 32, width: 'auto', verticalAlign: 'middle' }} />
+        <span style={{ fontWeight: 600, fontSize: 18 }}>Players ({sessionPlayers.length})</span>
+        <button
+          className="add-btn"
+          style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#11121a', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }}
+          onClick={handleAddPlayer}
+        >
           Add Player
         </button>
-      </h3>
+      </div>
       <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
         Load Test Data
       </button>
