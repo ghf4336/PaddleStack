@@ -60,12 +60,20 @@
   padding: 0;
   margin: 0;
 }
+
+/* Top bar styling */
+.top-bar {
+  background: #fafbfc;
+  padding: 24px 24px 0 24px;
+  margin: 0;
+}
+
 .app-container {
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  height: calc(100vh - 24px);
   gap: 24px;
-  padding: 24px;
+  padding: 0 24px 24px 24px;
   box-sizing: border-box;
 }
 .sidebar {
@@ -79,6 +87,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 16px;
+  height: 100%;
 }
 .add-player-row {
   display: flex;
@@ -138,15 +147,24 @@
 }
 .main-content {
   flex: 1;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 24px;
-  min-width: 0;
   display: flex;
   flex-direction: row;
   gap: 24px;
-  align-items: flex-start;
+  align-items: stretch;
+  height: 100%;
+}
+
+/* Courts Panel styles */
+.courts-panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 20px 16px 16px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 300px;
 }
 
 /* Next Up styles */
@@ -161,6 +179,7 @@
   min-width: 280px;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 .nextup-desc {
   color: #888;
