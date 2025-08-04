@@ -521,8 +521,10 @@ function App() {
         />
 
         {/* Main content: Next Up display and Courts */}
-        <div className="main-content" style={{ display: 'flex', gap: '24px' }}>
-          <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} activeId={activeId} overId={overId} />
+        <div className="main-content" style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <NextUpSection nextUpPlayers={nextUpPlayers} startNum={1} activeId={activeId} overId={overId} />
+          </div>
           <CourtsPanel
             courts={courts}
             courtToRemove={courtToRemove}

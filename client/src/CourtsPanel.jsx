@@ -20,15 +20,24 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
           borderTopRightRadius: 12,
         }}
       >
-        <h3 style={{ margin: 0, fontWeight: 600, fontSize: 18 }}>Courts ({courts.length})</h3>
-        <button
-          className="add-court-btn"
-          style={{ padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer', background: '#11121a', color: '#fff', border: 'none', borderRadius: 8 }}
-          onClick={handleAddCourt}
-          disabled={courts.length >= 8}
-        >
-          + Add Court
-        </button>
+        {/* Removed duplicate Courts text, now only icon and label below */}
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="8" r="3" stroke="#fff" strokeWidth="2"/>
+              <path d="M10 2C6.13 2 3 5.13 3 9c0 5.25 7 9 7 9s7-3.75 7-9c0-3.87-3.13-7-7-7z" stroke="#fff" strokeWidth="2" fill="none"/>
+            </svg>
+            <span style={{ fontWeight: 600, fontSize: 18, color: '#fff' }}>Courts ({courts.length})</span>
+          </span>
+          <button
+            className="add-court-btn"
+            style={{ marginLeft: 'auto', padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer', background: '#fff', color: '#111', border: 'none', borderRadius: 8, boxShadow: '0 0 0 2px #111' }}
+            onClick={handleAddCourt}
+            disabled={courts.length >= 8}
+          >
+            + Add Court
+          </button>
+        </div>
       </div>
       <div className="courts-list" style={{
         display: 'grid',

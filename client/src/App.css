@@ -143,6 +143,10 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   padding: 24px;
   min-width: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: flex-start;
 }
 
 /* Next Up styles */
@@ -150,9 +154,9 @@
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 16px; /* slightly smaller padding */
-  margin-bottom: 16px; /* slightly smaller margin */
-  width: 320px; /* fixed width to prevent resizing */
+  padding: 20px 16px 16px 16px;
+  margin-bottom: 0;
+  width: 320px;
   max-width: 320px;
   min-width: 280px;
   display: flex;

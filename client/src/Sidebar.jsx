@@ -38,7 +38,7 @@ function Sidebar({
         <span style={{ fontWeight: 600, fontSize: 18 }}>Players ({sessionPlayers.length})</span>
         <button
           className="add-btn"
-          style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#11121a', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }}
+          style={{ marginLeft: 'auto', fontWeight: 600, fontSize: 16, background: '#fff', color: '#111', border: 'none', borderRadius: 8, padding: '6px 16px', cursor: 'pointer' }}
           onClick={handleAddPlayer}
         >
           Add Player
