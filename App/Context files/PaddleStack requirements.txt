@@ -1,0 +1,39 @@
+paddle stack requirements
+
+
+
+
+#design
+For a high level design please refer to the following file figama wireframe in the root folder.
+
+# What does the app do:
+# 1. User Registration: 
+- On the left pannel there should be an option to add a new player. Users can register by entering their name and click on the add button. A popup should then show up asking if the player has paid. The user needs to tick paid to proceed. 
+- The player should be added to the queue and session, and displayed in the right panel.
+
+# 2. Player  Management:
+- Underneath the add player button, there should be a list of players. the list should be scrollable and display the names of all registered players.
+- Each player in the list should have a button to remove them from the session. When clicked, the player should be removed from the queue and session and the list should update accordingly. 
+
+#3Next up Display:
+- On the right panel, there should be a section that displays the next players in line. This should be next to the session players list.
+- The next up display should show the names of the next players in line for the next two games. Each game will have 4 players, so the next up display should show the next 8 players in line.
+
+#4. Add courts:
+- There should be an option to add courts. The user can click on the add court button. this should sit on the top right corner of the screen.When a court it added, it should be displayed on the right plannel next to the next up display. The court name should start with "Court 1", "Court 2", etc. each court should be displaed in a separate box with the court name and a list of players assigned to that court.
+
+#5. Court pannel:
+- Each court should have a button to remove it from the session. When clicked, the court should be removed from the session and the list of courts should update accordingly. Each court should have a complte game button. When clicked, the game should be completed and the players assigned to that court should be removed from the session and added to the next up display. The next set of players should fill the court automatically.
+- each court should have a complete game button
+-should display who is on each court (just like the next up seccion)
+
+6# General queue:
+If there is more than 8 players waiting in the queue, the next 8 players should be displayed in the next up display. the rest of the players should be added into the general queue. The general queue should be displayed in a scrollable list below the next up display.
+
+7# moving players: any player can be moved from the geenral queue, next up queue or while in a court.
+ This can be done by dragging the player name and dropping it into to another name.
+  Both name should then swap places with each other. This is to allow flexibility in managing the queue and players.
+  The player list session which shows all the players and who has paid should stay the same. You shouldnt be able to drag or drop players there.
+  You should be able to swap a player from any queue including players that are currently on court
+  The CSS should stay the same. 
+  use an approicate drag and drop library if needed
