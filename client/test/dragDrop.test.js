@@ -1,4 +1,4 @@
-import { swapPlayers, generateDragId, parseDragId } from '../utils/dragDrop';
+import { swapPlayers, generateDragId, parseDragId } from '../src/utils/dragDrop';
 
 describe('Drag and Drop Utilities', () => {
   test('generateDragId creates correct IDs', () => {

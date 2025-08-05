@@ -1,4 +1,4 @@
-import { reorderCourts, generateCourtDragId, parseDragId } from '../utils/dragDrop';
+import { reorderCourts, generateCourtDragId, parseDragId } from '../src/utils/dragDrop';
 
 describe('Court Reordering', () => {
   test('reorderCourts should move court from source to target position and renumber', () => {
