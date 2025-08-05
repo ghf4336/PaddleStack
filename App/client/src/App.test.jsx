@@ -120,7 +120,7 @@ describe('PaddleStack Player Phone Number', () => {
   });
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
-import App from './App';dd
+import App from './App';
 import '@testing-library/jest-dom';
 
 describe('PaddleStack App', () => {

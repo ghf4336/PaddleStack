@@ -85,7 +85,8 @@ function EndSessionModal({ open, onClose, onConfirm, sessionPlayers }) {
   );
 }
 import './App.css';
-import Sidebar from './Sidebar';
+import PlayerList from './PlayerList';
+import GeneralQueue from './GeneralQueue';
 import Toast from './Toast';
 import PlayerActionModal from './PlayerActionModal';
 import PaidModal from './PaidModal';
@@ -486,8 +487,8 @@ function App() {
     >
       <DragOverlay>{dragOverlayContent}</DragOverlay>
       <div className="app-container" style={{ padding: '24px 24px 0 24px' }}>
-        <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '20px 0 20px 0', minWidth: 280, maxWidth: 340, marginRight: 24, display: 'inline-block', verticalAlign: 'top' }}>
-          <Sidebar
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', marginRight: 24, verticalAlign: 'top' }}>
+          <PlayerList
             sessionPlayers={sessionPlayers}
             courts={courts}
             pausedPlayers={pausedPlayers}
@@ -495,24 +496,21 @@ function App() {
             handleLoadTestData={handleLoadTestData}
             handleEnablePausedPlayer={handleEnablePausedPlayer}
             handleRemovePlayer={handleRemovePlayer}
-            toast={toast}
-            toastTimeout={toastTimeout}
+          />
+          <GeneralQueue
             generalQueue={generalQueue}
             generalQueueStartNum={nextUpCount + 1}
             activeId={activeId}
             overId={overId}
-            // End Session button slot
             endSessionButton={
-              <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
-                <button
-                  className="end-session-btn"
-                  style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
-                  onClick={() => setShowEndSessionModal(true)}
-                  title="End session (clears all data)"
-                >
-                  End Session
-                </button>
-              </div>
+              <button
+                className="end-session-btn"
+                style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
+                onClick={() => setShowEndSessionModal(true)}
+                title="End session (clears all data)"
+              >
+                End Session
+              </button>
             }
           />
         </div>
