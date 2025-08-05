@@ -1,3 +1,19 @@
+/* Sidebar box styling to match NextUp/Courts */
+.sidebar {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  width: 320px;
+  min-width: 280px;
+  padding: 20px 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  height: auto;
+  max-height: 100vh;
+  margin: 24px 0;
+}
 /* Sticky General Queue title */
 .sticky-queue-title {
   position: sticky;
@@ -86,19 +102,6 @@
   padding: 0 24px 24px 24px;
   box-sizing: border-box;
 }
-.sidebar {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  width: 320px;
-  min-width: 280px;
-  padding: 20px 16px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-  height: auto;
-  max-height: 100vh;
 }
 .add-player-row {
   display: flex;
@@ -150,10 +153,11 @@
   margin-left: 8px;
 }
 .general-queue {
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 8px 10px;
-  margin-top: 8px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 20px 16px 16px 16px;
+  margin: 24px 0;
   overflow: hidden; /* Prevent scrollbars during drag operations */
   height: auto;
   max-height: 100vh;
