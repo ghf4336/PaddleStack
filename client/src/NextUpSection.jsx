@@ -37,6 +37,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
             borderTopRightRadius: 12,
             fontWeight: 600,
             fontSize: 18,
+            margin: '-20px -16px 16px -16px', // Extend to container edges
           }}
         >
           <span style={{ marginRight: 8, display: 'flex', alignItems: 'center', height: 22 }}>
@@ -111,6 +112,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
             borderTopRightRadius: 12,
             fontWeight: 600,
             fontSize: 18,
+            margin: '-20px -16px 16px -16px', // Extend to container edges
           }}
         >
           <span style={{ marginRight: 8, display: 'flex', alignItems: 'center' }}>

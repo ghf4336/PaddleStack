@@ -18,6 +18,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
           color: '#fff',
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
+          margin: '-20px -16px 12px -16px', // Extend to container edges
         }}
       >
         {/* Removed duplicate Courts text, now only icon and label below */}

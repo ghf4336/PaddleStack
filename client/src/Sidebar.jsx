@@ -43,6 +43,7 @@ function Sidebar({
             color: '#fff',
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
+            margin: '-1px -1px 0 -1px', // Extend to edges
           }}
         >
           <img src="/PaddleStack/logo_white.png" alt="Pickle Park Logo" style={{ height: 32, width: 'auto', verticalAlign: 'middle' }} />
@@ -120,15 +121,30 @@ function Sidebar({
           marginBottom: 0,
         }}
       >
-        <h4 className="sticky-queue-title" style={{ padding: '16px 16px 12px 16px', margin: 0, background: '#fff', zIndex: 2, borderTopLeftRadius: 12, borderTopRightRadius: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div
+          className="general-queue-header bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '12px 16px',
+            background: 'linear-gradient(to right, #3b82f6, #2563eb)', // fallback for Tailwind classes
+            color: '#fff',
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            fontWeight: 600,
+            fontSize: 18,
+            margin: '-1px -1px 0 -1px', // Extend to edges
+          }}
+        >
           <span style={{ display: 'flex', alignItems: 'center', height: 22 }}>
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="11" cy="11" r="9" stroke="#222" strokeWidth="2" fill="none"/>
-              <path d="M11 6v5l4 2" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="11" cy="11" r="9" stroke="#fff" strokeWidth="2" fill="none"/>
+              <path d="M11 6v5l4 2" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </span>
           <span>General Queue ({generalQueue.length})</span>
-        </h4>
+        </div>
         <div
           className="general-queue"
           style={{
