@@ -56,9 +56,9 @@ function Sidebar({
             Add Player
           </button>
         </div>
-        {/* PaidModal will be rendered here if present */}
-        {/** @ts-ignore: PaidModal is injected as a prop by App.jsx for in-panel rendering */}
-        {typeof window !== 'undefined' && window.__PaidModalInSidebar}
+        {/* AddPlayerModal will be rendered here if present */}
+        {/** @ts-ignore: AddPlayerModal is injected as a prop by App.jsx for in-panel rendering */}
+        {typeof window !== 'undefined' && window.__AddPlayerModalInSidebar}
         <div className="session-list">
           {[...sessionPlayers]
             .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))

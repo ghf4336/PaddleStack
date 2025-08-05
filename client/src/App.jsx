@@ -10,9 +10,10 @@ import PlayerListSection from './PlayerListSection';
 import GeneralQueueSection from './GeneralQueueSection';
 import Toast from './Toast';
 import PlayerActionModal from './PlayerActionModal';
-import PaidModal from './PaidModal';
+import AddPlayerModal from "./PaidModal";
 import NextUpSection from './NextUpSection';
 import CourtsPanel from './CourtsPanel';
+import { testPlayers } from './testPlayers';
 
 function App() {
   // Toast state
@@ -30,7 +31,7 @@ function App() {
     setSessionPlayers([]);
     setPausedPlayers([]);
     setCourts([]);
-    setShowPaidModal(false);
+    setShowAddPlayerModal(false);
     setShowPlayerActionModal(false);
     setPlayerToAction(null);
     setToast(null);
@@ -59,7 +60,7 @@ function App() {
   const handleCancelRemoveCourt = () => {
     setCourtToRemove(null);
   };
-  const [showPaidModal, setShowPaidModal] = useState(false);
+  const [showAddPlayerModal, setShowAddPlayerModal] = useState(false);
   // Session players: static order, never reorders
   const [sessionPlayers, setSessionPlayers] = useState([]);
   const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
@@ -178,28 +179,6 @@ function App() {
   }, [sessionPlayers, courts.length]);
 
   // Test data for quick loading
-  const testPlayers = [
-    { name: 'Alice', paid: true, payment: 'online', phone: '555-1111' },
-    { name: 'Bob', paid: false, payment: 'unpaid', phone: '555-2222' },
-    { name: 'Charlie', paid: true, payment: 'cash', phone: '555-3333' },
-    { name: 'Diana', paid: true, payment: 'online', phone: '555-4444' },
-    { name: 'Eve', paid: false, payment: 'unpaid', phone: '555-5555' },
-    { name: 'adrian', paid: true, payment: 'cash', phone: '555-6666' },
-    { name: 'shelby', paid: true, payment: 'online', phone: '555-7777' },
-    { name: 'Peter', paid: true, payment: 'cash', phone: '555-8888' },
-    { name: 'Jarred', paid: true, payment: 'online', phone: '555-9999' },
-    { name: 'Frank', paid: true, payment: 'cash', phone: '555-0000' },
-    { name: 'Anita', paid: true, payment: 'online', phone: '555-1111' },
-    { name: 'john', paid: false, payment: 'unpaid', phone: '555-2222' },
-    { name: 'Anna', paid: true, payment: 'cash', phone: '555-3333' },
-    { name: 'Blake', paid: true, payment: 'online', phone: '555-4444' },
-    { name: 'harry', paid: false, payment: 'unpaid', phone: '555-5555' },
-    { name: 'Kobe', paid: true, payment: 'cash', phone: '555-6666' },
-    { name: 'Bruno', paid: true, payment: 'online', phone: '555-7777' },
-    { name: 'Sam', paid: true, payment: 'cash', phone: '555-8888' },
-    { name: 'Eric', paid: true, payment: 'online', phone: '555-9999' },
-    { name: 'Tim', paid: true, payment: 'cash', phone: '555-0000' }
-  ];
 
   const handleLoadTestData = () => {
     // Add addedAt timestamps to test players
@@ -223,10 +202,10 @@ function App() {
 
   // Open modal to add player
   const handleAddPlayer = () => {
-    setShowPaidModal(true);
+    setShowAddPlayerModal(true);
   };
 
-  // Confirm from PaidModal
+  // Confirm from AddPlayerModal
   const handleConfirmAdd = ({ name, phone, payment }) => {
     // Ensure unique name
     let baseName = name.trim();
@@ -242,11 +221,11 @@ function App() {
       ...sessionPlayers,
       { name: newName, phone: phone || '', paid, payment, addedAt: Date.now() }
     ]);
-    setShowPaidModal(false);
+    setShowAddPlayerModal(false);
   };
 
   const handleCancelAdd = () => {
-    setShowPaidModal(false);
+    setShowAddPlayerModal(false);
   };
 
   // Remove/pause player modal state
@@ -286,17 +265,17 @@ function App() {
     });
   };
 
-  // Render PaidModal inside Sidebar using a portal-like prop
-  const paidModalInSidebar = (
-    <PaidModal
-      show={showPaidModal}
+  // Render AddPlayerModal inside Sidebar using a portal-like prop
+  const AddPlayerModalInSidebar = (
+    <AddPlayerModal
+      show={showAddPlayerModal}
       onPaidChange={() => {}}
       onConfirm={handleConfirmAdd}
       onCancel={handleCancelAdd}
     />
   );
   if (typeof window !== 'undefined') {
-    window.__PaidModalInSidebar = paidModalInSidebar;
+    window.__AddPlayerModalInSidebar = AddPlayerModalInSidebar;
   }
 
   // Handle drag and drop

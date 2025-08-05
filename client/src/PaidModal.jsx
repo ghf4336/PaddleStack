@@ -8,7 +8,7 @@ const PAID_OPTIONS = [
   { value: 'later', label: 'Pay later', paid: false },
 ];
 
-function PaidModal({ show, onPaidChange, onConfirm, onCancel }) {
+function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
   const [playerName, setPlayerName] = useState('');
   const [phone, setPhone] = useState('');
   const [payment, setPayment] = useState('');
@@ -171,4 +171,4 @@ function PaidModal({ show, onPaidChange, onConfirm, onCancel }) {
   );
 }
 
-export default PaidModal;
+export default AddPlayerModal;
