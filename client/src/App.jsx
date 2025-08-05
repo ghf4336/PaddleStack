@@ -85,7 +85,8 @@ function EndSessionModal({ open, onClose, onConfirm, sessionPlayers }) {
   );
 }
 import './App.css';
-import Sidebar from './Sidebar';
+import PlayerListSection from './PlayerListSection';
+import GeneralQueueSection from './GeneralQueueSection';
 import Toast from './Toast';
 import PlayerActionModal from './PlayerActionModal';
 import PaidModal from './PaidModal';
@@ -486,34 +487,35 @@ function App() {
     >
       <DragOverlay>{dragOverlayContent}</DragOverlay>
       <div className="app-container">
-        <Sidebar
-          sessionPlayers={sessionPlayers}
-          courts={courts}
-          pausedPlayers={pausedPlayers}
-          handleAddPlayer={handleAddPlayer}
-          handleLoadTestData={handleLoadTestData}
-          handleEnablePausedPlayer={handleEnablePausedPlayer}
-          handleRemovePlayer={handleRemovePlayer}
-          toast={toast}
-          toastTimeout={toastTimeout}
-          generalQueue={generalQueue}
-          generalQueueStartNum={nextUpCount + 1}
-          activeId={activeId}
-          overId={overId}
-          // End Session button slot
-          endSessionButton={
-            <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
-              <button
-                className="end-session-btn"
-                style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
-                onClick={() => setShowEndSessionModal(true)}
-                title="End session (clears all data)"
-              >
-                End Session
-              </button>
-            </div>
-          }
-        />
+        <div className="sidebar" style={{ position: 'relative', padding: 0, background: 'none', boxShadow: 'none', border: 'none' }}>
+          <PlayerListSection
+            sessionPlayers={sessionPlayers}
+            courts={courts}
+            pausedPlayers={pausedPlayers}
+            handleAddPlayer={handleAddPlayer}
+            handleLoadTestData={handleLoadTestData}
+            handleEnablePausedPlayer={handleEnablePausedPlayer}
+            handleRemovePlayer={handleRemovePlayer}
+          />
+          <GeneralQueueSection
+            generalQueue={generalQueue}
+            generalQueueStartNum={nextUpCount + 1}
+            activeId={activeId}
+            overId={overId}
+            endSessionButton={
+              <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
+                <button
+                  className="end-session-btn"
+                  style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
+                  onClick={() => setShowEndSessionModal(true)}
+                  title="End session (clears all data)"
+                >
+                  End Session
+                </button>
+              </div>
+            }
+          />
+        </div>
         <EndSessionModal
           open={showEndSessionModal}
           onClose={() => setShowEndSessionModal(false)}
