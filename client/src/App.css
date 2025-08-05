@@ -57,24 +57,25 @@
 }
 /* End Session button styles */
 .end-session-btn {
-  background: #fee2e2;
+  background: #f7f7fa;
   border: none;
-  color: #ef4444;
-  font-size: 1em;
-  font-weight: bold;
+  color: #b0b0b0;
+  font-size: 0.98em;
+  font-weight: 500;
   cursor: pointer;
   width: 100%;
   padding: 4px 0;
-  border-radius: 6%;
+  border-radius: 6px;
   transition: background 0.2s, opacity 0.2s;
 }
 .end-session-btn:hover {
-  
+  background: #ededf3;
+  color: #ef4444;
   opacity: 1;
   text-decoration: underline;
 }
 .end-session-tile {
-  background: #fee2e2;
+  background: #f7f7fa;
   border-radius: 6px;
   margin-top: 8px;
   padding: 0;
