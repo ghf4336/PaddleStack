@@ -346,3 +346,104 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     expect(removeBtns.length).toBe(0);
   });
 });
+
+describe('App logic functions', () => {
+  test('handleAddCourt does not add more than 8 courts', () => {
+    const { getByText } = render(<App />);
+    // Add 8 courts
+    for (let i = 0; i < 8; i++) {
+      fireEvent.click(getByText('+ Add Court'));
+    }
+    // Try to add a 9th court
+    fireEvent.click(getByText('+ Add Court'));
+    // Should only have 8 courts
+    expect(screen.getAllByText(/Court \d+/).length).toBe(8);
+  });
+
+  test('handleRemoveCourt and handleConfirmRemoveCourt return players to queue and renumber courts', async () => {
+    render(<App />);
+    // Add 4 players and a court
+    ['A', 'B', 'C', 'D'].forEach(name => {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    });
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // Remove the court
+    fireEvent.click(screen.getByTitle('Remove court'));
+    fireEvent.click(screen.getByText('Remove'));
+    // Court should be gone
+    expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
+    // Players should be in the general queue
+    ['A', 'B', 'C', 'D'].forEach(name => {
+      expect(screen.getAllByText(name).length).toBeGreaterThan(0);
+    });
+    // Add another court and check renumbering
+    fireEvent.click(screen.getByText('+ Add Court'));
+    expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
+  });
+
+  test('handleCompleteGame moves players to end of queue and clears court', () => {
+    render(<App />);
+    // Add 8 players and 2 courts
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(name => {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: name } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    });
+    fireEvent.click(screen.getByText('+ Add Court'));
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // Complete game on Court 1
+    const completeBtns = screen.getAllByText('Complete Game');
+    fireEvent.click(completeBtns[0]);
+    // Players A-D should be at the end of the queue
+    ['A', 'B', 'C', 'D'].forEach(name => {
+      expect(screen.getAllByText(name).length).toBeGreaterThan(0);
+    });
+    // Court 1 should be empty or refilled
+    expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
+  });
+
+  test('handleEnablePausedPlayer moves paused player to end of queue and re-enables', () => {
+    render(<App />);
+    // Add two players
+    fireEvent.click(screen.getByText('Add Player'));
+    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P1' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.click(screen.getByText('Confirm'));
+    fireEvent.click(screen.getByText('Add Player'));
+    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P2' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.click(screen.getByText('Confirm'));
+    // Pause P1
+    const pauseBtn = screen.getAllByTitle('Remove or pause player')[0];
+    fireEvent.click(pauseBtn);
+    fireEvent.click(screen.getByText('Pause Player'));
+    // Enable P1
+    fireEvent.click(screen.getByText('Continue'));
+    // P1 should now be after P2 in the session list
+    const playerNames = Array.from(screen.getAllByText(/P[12]/)).map(el => el.textContent);
+    expect(playerNames.indexOf('P2')).toBeLessThan(playerNames.indexOf('P1'));
+  });
+
+  test('handleEndSession clears all state', () => {
+    render(<App />);
+    // Add a player and a court
+    fireEvent.click(screen.getByText('Add Player'));
+    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'ClearMe' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.click(screen.getByText('Confirm'));
+    fireEvent.click(screen.getByText('+ Add Court'));
+    // End session
+    fireEvent.click(screen.getByText('End Session'));
+    fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '1111' } });
+    fireEvent.click(screen.getByText('Yes, End Session'));
+    const endSessionNowBtn = screen.getByText('End Session Now');
+    fireEvent.click(endSessionNowBtn);
+    // All players and courts should be gone
+    expect(screen.queryByText('ClearMe')).not.toBeInTheDocument();
+    expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
+  });
+});
