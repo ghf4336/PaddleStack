@@ -56,9 +56,6 @@ function Sidebar({
             Add Player
           </button>
         </div>
-        <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
-          Load Test Data
-        </button>
         {/* PaidModal will be rendered here if present */}
         {/** @ts-ignore: PaidModal is injected as a prop by App.jsx for in-panel rendering */}
         {typeof window !== 'undefined' && window.__PaidModalInSidebar}

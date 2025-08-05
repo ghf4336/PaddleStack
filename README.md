@@ -33,7 +33,7 @@ npm run dev
 ```
 cd server
 npm install
-npm start
+npm run dev
 ```
 
 ## Court Reordering Usage
@@ -56,5 +56,10 @@ See `Context files/PaddleStack requirements.txt` for feature details.
 
 To remove load data button
 {/* <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
-  Load Test Data
-</button> */} comment that out
+        Load Test Data
+      </button> 
+        */} comment that out
+        
+Deployment to Pages
+CD client
+ npm run deploy
