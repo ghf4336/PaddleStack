@@ -503,10 +503,9 @@ function App() {
             activeId={activeId}
             overId={overId}
             endSessionButton={
-              <div style={{ position: 'absolute', bottom: 16, left: 0, width: '100%', textAlign: 'center' }}>
+              <div className="queue-player end-session-tile">
                 <button
                   className="end-session-btn"
-                  style={{ opacity: 0.5, fontSize: '0.9em', background: 'none', color: '#e74c3c', border: 'none', cursor: 'pointer', padding: 0, margin: 0 }}
                   onClick={() => setShowEndSessionModal(true)}
                   title="End session (clears all data)"
                 >
