@@ -1,3 +1,13 @@
+/* Sticky General Queue title */
+.sticky-queue-title {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+  padding: 12px 16px;
+  margin: 0;
+  border-bottom: 1px solid #eee;
+}
 /* Ensure touch drag works on tablets and mobile */
 .draggable-player,
 .dragging-player {

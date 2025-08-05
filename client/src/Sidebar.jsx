@@ -120,17 +120,25 @@ function Sidebar({
           marginBottom: 0,
         }}
       >
+        <h4 className="sticky-queue-title" style={{ padding: '16px 16px 12px 16px', margin: 0, background: '#fff', zIndex: 2, borderTopLeftRadius: 12, borderTopRightRadius: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ display: 'flex', alignItems: 'center', height: 22 }}>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="9" stroke="#222" strokeWidth="2" fill="none"/>
+              <path d="M11 6v5l4 2" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
+          <span>General Queue ({generalQueue.length})</span>
+        </h4>
         <div
           className="general-queue"
           style={{
-            maxHeight: '320px',
+            maxHeight: '272px', // 320px minus header height
             overflowY: 'auto',
             overflowX: 'hidden', // Prevent horizontal scrollbar
             marginBottom: 0,
             paddingBottom: 8,
           }}
         >
-          <h4 style={{ padding: '12px 16px', margin: 0 }}>General Queue ({generalQueue.length})</h4>
           {generalQueue.map((p, i) => {
             const dragId = generateDragId('general', i);
             return (
