@@ -106,7 +106,7 @@
 /* Layout */
 #root {
   min-height: 100vh;
-  background: #fafbfc;
+  background: linear-gradient(135deg, #eafff2 0%, #d6f5e6 100%);
   padding: 0;
   margin: 0;
   display: flex;
