@@ -10,7 +10,7 @@ import PlayerListSection from './PlayerListSection';
 import GeneralQueueSection from './GeneralQueueSection';
 import Toast from './Toast';
 import PlayerActionModal from './PlayerActionModal';
-import AddPlayerModal from "./PaidModal";
+import AddPlayerModal from "./AddPlayerModal";
 import NextUpSection from './NextUpSection';
 import CourtsPanel from './CourtsPanel';
 import { testPlayers } from './testPlayers';
