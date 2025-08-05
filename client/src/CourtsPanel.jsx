@@ -32,7 +32,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
           </span>
           <button
             className="add-court-btn"
-            style={{ marginLeft: 'auto', padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer', background: '#fff', color: '#111', border: 'none', borderRadius: 8, boxShadow: '0 0 0 2px #111' }}
+            style={{ marginLeft: 'auto', padding: '6px 16px', fontWeight: 600, fontSize: 16, opacity: courts.length >= 8 ? 0.5 : 1, cursor: courts.length >= 8 ? 'not-allowed' : 'pointer', background: '#fff', color: '#111827', border: 'none', borderRadius: 6 }}
             onClick={handleAddCourt}
             disabled={courts.length >= 8}
           >
