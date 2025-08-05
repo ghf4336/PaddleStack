@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
-import CourtsPanel from './CourtsPanel';
+import CourtsPanel from '../src/CourtsPanel';
 
 describe('CourtsPanel', () => {
   const defaultProps = {

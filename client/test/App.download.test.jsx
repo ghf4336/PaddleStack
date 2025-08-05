@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import App from './App';
+import App from '../src/App';
 
 // Helper to add a player with phone/payment
 function addPlayer({ name, phone = '', payment = 'online' }) {

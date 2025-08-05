@@ -1,16 +1,16 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import NextUpSection from './NextUpSection';
+import NextUpSection from '../src/NextUpSection';
 
 // Mock the drag and drop components
-jest.mock('./components/DraggablePlayer', () => {
+jest.mock('../src/components/DraggablePlayer', () => {
   return function MockDraggablePlayer({ children, id, player }) {
     return <div data-testid={`draggable-${id}`} data-player={player?.name}>{children}</div>;
   };
 });
 
-jest.mock('./components/DroppableArea', () => {
+jest.mock('../src/components/DroppableArea', () => {
   return function MockDroppableArea({ children, id, isDropTarget }) {
     return (
       <div 

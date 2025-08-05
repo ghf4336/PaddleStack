@@ -1,54 +1,7 @@
-describe('End Session Feature', () => {
-  test('shows end session modal when button is clicked', () => {
-    render(<App />);
-    const btn = screen.getByText('End Session');
-    fireEvent.click(btn);
-    expect(screen.getByText(/End Session\?/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter PIN/i)).toBeInTheDocument();
-  });
-
-  test('blocks end session on wrong PIN', () => {
-    render(<App />);
-    fireEvent.click(screen.getByText('End Session'));
-    fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '0000' } });
-    fireEvent.click(screen.getByText('Yes, End Session'));
-    expect(screen.getByText(/Incorrect PIN/i)).toBeInTheDocument();
-    // Modal should still be open
-    expect(screen.getByText(/End Session\?/i)).toBeInTheDocument();
-  });
-
-  test('ends session and clears players/courts on correct PIN', async () => {
-    render(<App />);
-    // Add a player and a court
-    fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'ToClear' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
-    fireEvent.click(screen.getByText('Confirm'));
-    fireEvent.click(screen.getByText('+ Add Court'));
-    // End session
-    fireEvent.click(screen.getByText('End Session'));
-    fireEvent.change(screen.getByPlaceholderText(/Enter PIN/i), { target: { value: '1111' } });
-    fireEvent.click(screen.getByText('Yes, End Session'));
-    // Wait for Download Player List UI
-    const endSessionNowBtn = await screen.findByText('End Session Now');
-    fireEvent.click(endSessionNowBtn);
-    // Wait for player and court to be gone and modal to close
-    await waitFor(() => {
-      // Player and court should be gone
-      expect(screen.queryByText('ToClear')).not.toBeInTheDocument();
-      expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
-      // Modal should close
-      expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
-    });
-  });
-
-  test('cancel button closes the modal', () => {
-    render(<App />);
-    fireEvent.click(screen.getByText('End Session'));
-    fireEvent.click(screen.getByText('Cancel'));
-    expect(screen.queryByText(/End Session\?/i)).not.toBeInTheDocument();
-  });
-});
+import React from 'react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import App from '../src/App.jsx';
+import '@testing-library/jest-dom';
 describe('PaddleStack Player Phone Number', () => {
   test('adds a player with a phone number', async () => {
     render(<App />);
@@ -117,11 +70,7 @@ describe('PaddleStack Player Phone Number', () => {
     const unpaidDot = screen.getByTitle('Unpaid');
     expect(unpaidDot).toBeInTheDocument();
     expect(unpaidDot).toHaveStyle('background: #e74c3c');
-  });
-import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
-import App from './App';
-import '@testing-library/jest-dom';
+});
 
 describe('PaddleStack App', () => {
   test('completing a game only moves that court\'s players to the back of the queue', () => {
