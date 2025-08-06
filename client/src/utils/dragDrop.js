@@ -6,11 +6,12 @@
  * @param {Object} sourceData - { type: 'nextup'|'general'|'court', index: number, courtIndex?: number }
  * @param {Object} targetData - { type: 'nextup'|'general'|'court', index: number, courtIndex?: number }
  * @param {Array} courts - Array of courts
+ * @param {Array} pausedPlayers - Array of paused players to exclude from queue calculations
  * @returns {Object} - { newSessionPlayers, newCourts }
  */
-export function swapPlayers(sessionPlayers, sourceData, targetData, courts) {
+export function swapPlayers(sessionPlayers, sourceData, targetData, courts, pausedPlayers = []) {
   // Get the current queue positions
-  const { nextUpPlayers, generalQueue, assignedIndices } = getQueuePositions(sessionPlayers, courts);
+  const { nextUpPlayers, generalQueue, assignedPlayerNames } = getQueuePositions(sessionPlayers, courts, pausedPlayers);
   
   // Find the actual players to swap
   const sourcePlayer = getPlayerFromPosition(sourceData, nextUpPlayers, generalQueue, courts);
@@ -41,23 +42,24 @@ export function swapPlayers(sessionPlayers, sourceData, targetData, courts) {
 /**
  * Gets current queue positions for all players
  */
-function getQueuePositions(sessionPlayers, courts) {
-  // Calculate indices of players currently assigned to courts
-  const assignedIndices = new Set();
+function getQueuePositions(sessionPlayers, courts, pausedPlayers = []) {
+  // Calculate which players are currently assigned to courts
+  const assignedPlayerNames = new Set();
   courts.forEach(court => {
     (court.players || []).forEach(player => {
-      const idx = sessionPlayers.findIndex(p => p && player && p.name === player.name);
-      if (idx !== -1) assignedIndices.add(idx);
+      if (player && player.name) assignedPlayerNames.add(player.name);
     });
   });
 
-  // Get queue players (excluding those in courts)
-  const queuePlayers = sessionPlayers.filter((_, i) => !assignedIndices.has(i));
+  // Get unassigned and unpausedPlayers players in order
+  const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
+  const unassignedUnpausedPlayers = unpausedSessionPlayers.filter(p => !assignedPlayerNames.has(p.name));
+  
   // Next up section now includes first 8 players (first group: 0-3, second group: 4-7)
-  const nextUpPlayers = queuePlayers.slice(0, 8);
-  const generalQueue = queuePlayers.slice(8);
+  const nextUpPlayers = unassignedUnpausedPlayers.slice(0, 8);
+  const generalQueue = unassignedUnpausedPlayers.slice(8);
 
-  return { nextUpPlayers, generalQueue, assignedIndices };
+  return { nextUpPlayers, generalQueue, assignedPlayerNames };
 }
 
 /**

@@ -446,4 +446,144 @@ describe('App logic functions', () => {
     expect(screen.queryByText('ClearMe')).not.toBeInTheDocument();
     expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
   });
+
+  test('paused players should not be assigned to courts when game is completed', async () => {
+    render(<App />);
+    
+    // Add 6 players
+    for (let i = 1; i <= 6; i++) {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    }
+    
+    // Pause Player5
+    const pauseBtn = screen.getAllByTitle('Remove or pause player')[4]; // Player5 is at index 4
+    fireEvent.click(pauseBtn);
+    fireEvent.click(screen.getByText('Pause Player'));
+    
+    // Add a court - should auto-assign Player1-4
+    fireEvent.click(screen.getByText('+ Add Court'));
+    
+    // Verify Player5 is paused and not on court
+    expect(screen.getByText('Player5')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5').closest('.session-player');
+    expect(player5Element).toHaveClass('paused');
+    
+    // Player6 should be in Next Up, Player5 should not be anywhere in courts
+    const courtElement = screen.getByText('Court 1').closest('.court-card');
+    expect(courtElement).not.toHaveTextContent('Player5');
+    
+    // Complete the game
+    const completeBtn = screen.getByText('Complete Game');
+    fireEvent.click(completeBtn);
+    
+    // Player5 should still be paused and NOT assigned to the court
+    expect(screen.getByText('Player5')).toBeInTheDocument();
+    const player5ElementAfter = screen.getByText('Player5').closest('.session-player');
+    expect(player5ElementAfter).toHaveClass('paused');
+    
+    // Court should have Player6 and not Player5
+    const courtElementAfter = screen.getByText('Court 1').closest('.court-card');
+    expect(courtElementAfter).toHaveTextContent('Player6');
+    expect(courtElementAfter).not.toHaveTextContent('Player5');
+  });
+
+  test('no player duplication when completing game with paused players', async () => {
+    render(<App />);
+    
+    // Add exactly 5 players as described in the user's scenario
+    for (let i = 1; i <= 5; i++) {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    }
+    
+    // Pause Player5 first (before adding court)
+    const pauseBtn = screen.getAllByTitle('Remove or pause player')[4]; // Player5 is at index 4
+    fireEvent.click(pauseBtn);
+    fireEvent.click(screen.getByText('Pause Player'));
+    
+    // Add a court - should auto-assign Player1-4, Player5 is paused so not assigned
+    fireEvent.click(screen.getByText('+ Add Court'));
+    
+    // Verify Player5 is paused
+    expect(screen.getByText('Player5')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5').closest('.session-player');
+    expect(player5Element).toHaveClass('paused');
+    
+    // Complete the game
+    const completeBtn = screen.getByText('Complete Game');
+    fireEvent.click(completeBtn);
+    
+    // Check that no player appears duplicated anywhere
+    // Count all occurrences of each player name in the entire document
+    const allText = document.body.textContent;
+    for (let i = 1; i <= 5; i++) {
+      const playerName = `Player${i}`;
+      const matches = allText.match(new RegExp(playerName, 'g')) || [];
+      
+      // Player should appear exactly once in session list, might appear once more in other places like Next Up
+      // But definitely should not appear more than 2 times total
+      expect(matches.length).toBeLessThanOrEqual(2);
+      
+      // More specifically, in the session list it should appear exactly once
+      const sessionPlayerElements = Array.from(document.querySelectorAll('.session-player'))
+        .filter(el => el.textContent.includes(playerName));
+      expect(sessionPlayerElements.length).toBe(1);
+    }
+    
+    // Player5 should still be paused after game completion
+    const player5ElementAfter = screen.getByText('Player5').closest('.session-player');
+    expect(player5ElementAfter).toHaveClass('paused');
+  });
+
+  test('no player duplication when drag and drop with paused players', async () => {
+    render(<App />);
+    
+    // Add 6 players as described in the user's scenario
+    for (let i = 1; i <= 6; i++) {
+      fireEvent.click(screen.getByText('Add Player'));
+      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.click(screen.getByText('Confirm'));
+    }
+    
+    // Pause Player5 first (before adding court)
+    const pauseBtn = screen.getAllByTitle('Remove or pause player')[4]; // Player5 is at index 4
+    fireEvent.click(pauseBtn);
+    fireEvent.click(screen.getByText('Pause Player'));
+    
+    // Add a court - should auto-assign Player1-4, Player6 should be in Next Up
+    fireEvent.click(screen.getByText('+ Add Court'));
+    
+    // Complete the game to move court players to end of queue
+    const completeBtn = screen.getByText('Complete Game');
+    fireEvent.click(completeBtn);
+    
+    // Wait for game completion to process
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Verify that Player5 is still paused and no duplications occurred
+    expect(screen.getByText('Player5')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5').closest('.session-player');
+    expect(player5Element).toHaveClass('paused');
+    
+    // Check that no player appears duplicated anywhere
+    const afterText = document.body.textContent;
+    for (let i = 1; i <= 6; i++) {
+      const playerName = `Player${i}`;
+      const matches = afterText.match(new RegExp(playerName, 'g')) || [];
+      
+      // No player should appear more than 2 times
+      expect(matches.length).toBeLessThanOrEqual(2);
+      
+      // Each player should appear exactly once in session list
+      const sessionPlayerElements = Array.from(document.querySelectorAll('.session-player'))
+        .filter(el => el.textContent.includes(playerName));
+      expect(sessionPlayerElements.length).toBe(1);
+    }
+  });
 });

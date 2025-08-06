@@ -92,52 +92,23 @@ function App() {
       setRecentlyCompletedCourt(null);
       setNextPlayersButtonState(prev => ({ ...prev, [courtIdx]: false }));
     }, 10000);
+    
+    // Get finished players from the court
+    const court = courts[courtIdx];
+    if (!court.players || court.players.length !== 4) return;
+    const finishedNames = court.players.map(p => p.name);
+    
     setSessionPlayers(prevPlayers => {
-      // Get finished players from the court
-      const court = courts[courtIdx];
-      if (!court.players || court.players.length !== 4) return prevPlayers;
-      const finishedNames = court.players.map(p => p.name);
       // Remove finished players from their current positions
       const filtered = prevPlayers.filter(p => !finishedNames.includes(p.name));
       // Add finished players to the end, preserving their order
       const finishedPlayers = prevPlayers.filter(p => finishedNames.includes(p.name));
-      const newQueue = [...filtered, ...finishedPlayers];
+      return [...filtered, ...finishedPlayers];
+    });
 
-      // Now, reassign courts immediately
-      setCourts(prevCourts => {
-        // Remove players from the completed court
-        const clearedCourts = prevCourts.map((c, idx) => idx === courtIdx ? { ...c, players: [] } : c);
-        // Find all assigned player names (to courts)
-        const assignedNames = new Set();
-        clearedCourts.forEach(court => {
-          (court.players || []).forEach(player => {
-            if (player && player.name) assignedNames.add(player.name);
-          });
-        });
-        // Get unassigned players in order
-        const queue = newQueue.filter(p => !assignedNames.has(p.name));
-        let queueIdx = 0;
-        // Assign players to courts in order
-        const newCourts = clearedCourts.map(court => {
-          if (court.players && court.players.length === 4) {
-            return court;
-          }
-          const group = [];
-          for (let i = 0; i < 4; i++) {
-            if (queueIdx < queue.length) {
-              group.push(queue[queueIdx]);
-              queueIdx++;
-            }
-          }
-          if (group.length === 4) {
-            return { ...court, players: group };
-          } else {
-            return { ...court, players: [] };
-          }
-        });
-        return newCourts;
-      });
-      return newQueue;
+    // Clear the completed court - the useEffect will handle reassignment
+    setCourts(prevCourts => {
+      return prevCourts.map((c, idx) => idx === courtIdx ? { ...c, players: [] } : c);
     });
   };
 
@@ -152,8 +123,8 @@ function App() {
         });
       });
 
-      // Get unassigned players in order
-      const queue = sessionPlayers.filter(p => !assignedNames.has(p.name));
+      // Get unassigned players in order, excluding paused players
+      const queue = sessionPlayers.filter(p => !assignedNames.has(p.name) && !pausedPlayers.some(pp => pp.name === p.name));
       let queueIdx = 0;
 
       // Assign players to courts in order
@@ -176,7 +147,7 @@ function App() {
       });
       return newCourts;
     });
-  }, [sessionPlayers, courts.length]);
+  }, [sessionPlayers, courts.length, pausedPlayers]);
 
   // Test data for quick loading
 
@@ -186,18 +157,19 @@ function App() {
     setSessionPlayers(testPlayers.map((p, i) => ({ ...p, addedAt: now + i })));
   };
 
-  // Calculate indices of players currently assigned to courts
-  const assignedIndices = new Set();
+  // Calculate which players are currently assigned to courts and get queue players
+  const assignedPlayerNames = new Set();
   courts.forEach(court => {
     (court.players || []).forEach(player => {
-      const idx = sessionPlayers.findIndex(p => p && player && p.name === player.name);
-      if (idx !== -1) assignedIndices.add(idx);
+      if (player && player.name) assignedPlayerNames.add(player.name);
     });
   });
+  
   // Next up: first 8 unassigned and not paused players (4 in next up, 4 in "2 games")
   const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
-  const nextUpPlayers = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(0, 8);
-  const generalQueue = unpausedSessionPlayers.filter((_, i) => !assignedIndices.has(i)).slice(8);
+  const unassignedUnpausedPlayers = unpausedSessionPlayers.filter(p => !assignedPlayerNames.has(p.name));
+  const nextUpPlayers = unassignedUnpausedPlayers.slice(0, 8);
+  const generalQueue = unassignedUnpausedPlayers.slice(8);
   const nextUpCount = nextUpPlayers.length;
 
   // Open modal to add player
@@ -304,7 +276,7 @@ function App() {
     }
 
     // Handle regular player swaps
-    const result = swapPlayers(sessionPlayers, sourceData, targetData, courts);
+    const result = swapPlayers(sessionPlayers, sourceData, targetData, courts, pausedPlayers);
 
     // Always update both states if either is changed
     if (result.newSessionPlayers) {
