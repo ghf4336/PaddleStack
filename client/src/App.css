@@ -104,9 +104,17 @@
   background: #fee2e2;
 }
 /* Layout */
-#root {
+
+body {
   min-height: 100vh;
   background: linear-gradient(135deg, #eafff2 0%, #d6f5e6 100%);
+  padding: 0;
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100vw;
   padding: 0;
   margin: 0;
   display: flex;
