@@ -35,7 +35,7 @@ const mockPlayers = [
 ];
 
 describe('NextUpSection', () => {
-  it('swaps players within the second group (Next up In 2 Games) when dragged and dropped', () => {
+  it('swaps players within the second group (Next Up In 2 Games) when dragged and dropped', () => {
     // Setup: 8 players, drag Player 5 (index 0 in second group) over Player 8 (index 3 in second group)
     const propsWithDrag = {
       ...defaultProps,
@@ -84,7 +84,7 @@ describe('NextUpSection', () => {
   it('renders the second group section with correct title', () => {
     render(<NextUpSection {...defaultProps} />);
     
-    expect(screen.getByText(/Next up In 2 Games \(4\/4\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Next Up In 2 Games \(4\/4\)/)).toBeInTheDocument();
     expect(screen.getByText('These players will play in 2 games')).toBeInTheDocument();
   });
 
@@ -141,7 +141,7 @@ describe('NextUpSection', () => {
     const partialPlayers = mockPlayers.slice(0, 6);
     render(<NextUpSection {...defaultProps} nextUpPlayers={partialPlayers} />);
     
-    expect(screen.getByText(/Next up In 2 Games \(2\/4\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Next Up In 2 Games \(2\/4\)/)).toBeInTheDocument();
     expect(screen.getByText('Player 5')).toBeInTheDocument();
     expect(screen.getByText('Player 6')).toBeInTheDocument();
     
@@ -243,7 +243,7 @@ describe('NextUpSection', () => {
     render(<NextUpSection {...defaultProps} nextUpPlayers={[]} />);
     
     expect(screen.getByText(/Next Up \(0\/4\)/)).toBeInTheDocument();
-    expect(screen.getByText(/Next up In 2 Games \(0\/4\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Next Up In 2 Games \(0\/4\)/)).toBeInTheDocument();
     
     // Should have 8 empty slots total (4 in each group)
     const emptySlots = screen.getAllByRole('presentation');
@@ -287,18 +287,10 @@ describe('NextUpSection', () => {
   it('properly displays the structure for both groups', () => {
     render(<NextUpSection {...defaultProps} />);
 
-    // Check for headings by text content, regardless of tag level
-    const mainHeading = screen.queryByText(/Next Up/);
-    const subHeading = screen.queryByText(/Next up In 2 Games/);
 
-    expect(mainHeading).toBeInTheDocument();
-    expect(subHeading).toBeInTheDocument();
-
-    // Optionally, check heading tags if needed
-    // const h3 = document.querySelector('h3');
-    // const h4 = document.querySelector('h4');
-    // expect(h3).not.toBeNull();
-    // expect(h4).not.toBeNull();
+    // Use exact text for headings based on mock data (4 players in each group)
+    expect(screen.getByText('Next Up (4/4)')).toBeInTheDocument();
+    expect(screen.getByText('Next Up In 2 Games (4/4)')).toBeInTheDocument();
 
     // Check both description texts exist
     expect(screen.getByText('The following players will be playing next')).toBeInTheDocument();
@@ -328,7 +320,7 @@ describe('NextUpSection', () => {
     render(<NextUpSection {...defaultProps} nextUpPlayers={partialPlayers} />);
     
     expect(screen.getByText(/Next Up \(3\/4\)/)).toBeInTheDocument();
-    expect(screen.getByText(/Next up In 2 Games \(0\/4\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Next Up In 2 Games \(0\/4\)/)).toBeInTheDocument();
   });
 
   it('maintains separate numbering between groups', () => {

@@ -121,7 +121,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
               <path d="M11 6v5l4 2" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </span>
-          <span>Next up In 2 Games ({secondGroup.length}/4)</span>
+          <span>Next Up In 2 Games ({secondGroup.length}/4)</span>
         </div>
         <div className="nextup-desc">These players will play in 2 games</div>
         <div className="nextup-grid">
