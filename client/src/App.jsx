@@ -30,6 +30,7 @@ function App() {
   function handleEndSession() {
     setSessionPlayers([]);
     setPausedPlayers([]);
+    setDeletedPlayers([]);
     setCourts([]);
     setShowAddPlayerModal(false);
     setShowPlayerActionModal(false);
@@ -64,6 +65,7 @@ function App() {
   // Session players: static order, never reorders
   const [sessionPlayers, setSessionPlayers] = useState([]);
   const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
+  const [deletedPlayers, setDeletedPlayers] = useState([]); // Array of soft-deleted players
   const [courts, setCourts] = useState([]); // Array of { number, players: [] }
   const [activeId, setActiveId] = useState(null); // For drag overlay
   const [overId, setOverId] = useState(null); // For drop target highlight
@@ -210,6 +212,8 @@ function App() {
   };
 
   const handleConfirmDeletePlayer = () => {
+    // Soft delete: move player to deletedPlayers and remove from active arrays
+    setDeletedPlayers(prev => [...prev, playerToAction]);
     setSessionPlayers(sessionPlayers.filter(sp => sp.name !== playerToAction.name));
     setPausedPlayers(pausedPlayers.filter(pp => pp.name !== playerToAction.name));
     setShowPlayerActionModal(false);
@@ -392,6 +396,7 @@ function App() {
           onClose={() => setShowEndSessionModal(false)}
           onConfirm={handleEndSession}
           sessionPlayers={sessionPlayers}
+          deletedPlayers={deletedPlayers}
         />
         <Toast message={toast} />
 
