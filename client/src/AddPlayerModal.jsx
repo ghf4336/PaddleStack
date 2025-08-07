@@ -89,7 +89,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
         </label>
         <input
           type="tel"
-          placeholder="(555) 123-4567"
+          placeholder="0221111111"
           value={phone}
           onChange={e => setPhone(e.target.value)}
           style={{
@@ -159,10 +159,11 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
             padding: '10px 24px',
             fontWeight: 600,
             fontSize: 16,
-            cursor: playerName.trim() && payment ? 'pointer' : 'not-allowed',
-            opacity: playerName.trim() && payment ? 1 : 0.7
+            cursor: 'pointer',
+            opacity: playerName.trim() && payment ? 1 : 0.7,
+            boxShadow: touched && !(playerName.trim() && payment) ? '0 0 0 2px #e74c3c55' : 'none',
+            transition: 'box-shadow 0.2s'
           }}
-          disabled={!(playerName.trim() && payment)}
         >Confirm</button>
       </div>
     </div>
