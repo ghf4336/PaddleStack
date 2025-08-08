@@ -56,13 +56,13 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
       minHeight: 120
     }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-        <span style={{ fontSize: 22, marginRight: 8 }}>👤➕</span>
+        <span style={{ fontSize: 22, marginRight: 8 }}>✚</span>
         <h3 style={{ margin: 0, fontWeight: 600, fontSize: 20 }}>Add New Player</h3>
         <button onClick={onCancel} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Close">×</button>
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
-          Player Name *
+          <span style={{ marginRight: 4 }}>👤</span> Player Name *
         </label>
         <input
           type="text"
