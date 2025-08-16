@@ -324,7 +324,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     fireEvent.click(pauseBtn);
     fireEvent.click(screen.getByText('Pause Player'));
     // Enable P1
-    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(screen.getByText('Play'));
     // P1 should now be after P2 in the session list
     const playerNames = Array.from(screen.getAllByText(/P[12]/)).map(el => el.textContent);
     expect(playerNames.indexOf('P2')).toBeLessThan(playerNames.indexOf('P1'));
@@ -422,7 +422,7 @@ describe('App logic functions', () => {
     fireEvent.click(pauseBtn);
     fireEvent.click(screen.getByText('Pause Player'));
     // Enable P1
-    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(screen.getByText('Play'));
     // P1 should now be after P2 in the session list
     const playerNames = Array.from(screen.getAllByText(/P[12]/)).map(el => el.textContent);
     expect(playerNames.indexOf('P2')).toBeLessThan(playerNames.indexOf('P1'));

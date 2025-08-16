@@ -82,14 +82,17 @@ function PlayerListSection({
                     title="Enable player"
                     style={{ marginLeft: 8, background: '#0ae04aff', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 15, padding: '4px 12px', cursor: 'pointer' }}
                     onClick={() => handleEnablePausedPlayer(p)}
-                  >Continue</button>
+                  >Play</button>
                 ) : (
                   !inCourt && (
                     <button
                       className="remove-btn"
                       title="Remove or pause player"
                       onClick={() => handleRemovePlayer(p)}
-                    >×</button>
+                    >
+                      <span style={{ fontSize: '0.9em', marginRight: '4px' }}>⏸</span>
+                      <span>×</span>
+                    </button>
                   )
                 )}
               </div>
