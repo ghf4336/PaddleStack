@@ -1,9 +1,37 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId, generateCourtDragId } from './utils/dragDrop';
 
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId, recentlyCompletedCourt, nextPlayersButtonState }) {
+  // Track courts that have "Just Started" status locally for 5 seconds after Complete Game is clicked
+  const [justStartedMap, setJustStartedMap] = useState({}); // { [idx]: timestamp }
+  const justStartedTimers = useRef({});
+
+  const markJustStarted = (idx) => {
+    // clear existing timer if any
+    if (justStartedTimers.current[idx]) {
+      clearTimeout(justStartedTimers.current[idx]);
+    }
+    setJustStartedMap(prev => ({ ...prev, [idx]: Date.now() }));
+    // remove after 60s
+    justStartedTimers.current[idx] = setTimeout(() => {
+      setJustStartedMap(prev => {
+        const copy = { ...prev };
+        delete copy[idx];
+        return copy;
+      });
+      delete justStartedTimers.current[idx];
+    }, 60000);
+  };
+
+  useEffect(() => {
+    return () => {
+      // cleanup timers on unmount
+      Object.values(justStartedTimers.current).forEach(t => clearTimeout(t));
+    };
+  }, []);
+
   return (
     <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
       <div
@@ -100,15 +128,27 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                     </DraggablePlayer>
                     <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
                     {court.players && court.players.length === 4 ? (
-                      <span style={{
-                        marginLeft: 12,
-                        background: '#19c37d',
-                        color: '#fff',
-                        fontWeight: 600,
-                        fontSize: 14,
-                        borderRadius: 8,
-                        padding: '2px 10px'
-                      }}>Active</span>
+                      justStartedMap[idx] ? (
+                        <span style={{
+                          marginLeft: 12,
+                          background: '#fde68a', // Next-up orange
+                          color: '#f59e42',
+                          fontWeight: 600,
+                          fontSize: 14,
+                          borderRadius: 8,
+                          padding: '2px 10px'
+                        }}>Just Started</span>
+                      ) : (
+                        <span style={{
+                          marginLeft: 12,
+                          background: '#19c37d',
+                          color: '#fff',
+                          fontWeight: 600,
+                          fontSize: 14,
+                          borderRadius: 8,
+                          padding: '2px 10px'
+                        }}>Active</span>
+                      )
                     ) : (
                       <span style={{
                         marginLeft: 12,
@@ -238,7 +278,10 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                         border: 'none',
                         transition: 'background 0.3s'
                       }}
-                      onClick={() => handleCompleteGame(idx)}
+                      onClick={() => {
+                        handleCompleteGame(idx);
+                        markJustStarted(idx);
+                      }}
                       disabled={nextPlayersButtonState[idx] || !(court.players && court.players.length === 4)}
                     >
                       {nextPlayersButtonState[idx] ? 'Next players' : 'Complete Game'}

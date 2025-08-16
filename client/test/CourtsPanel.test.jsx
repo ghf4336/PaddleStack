@@ -113,4 +113,25 @@ describe('CourtsPanel waiting status logic', () => {
     expect(status.style.backgroundColor).toBe('rgb(25, 195, 125)');
     expect(status.style.color).toBe('rgb(255, 255, 255)');
   });
+
+  it('shows "Just Started" after completing a full court for 60 seconds', () => {
+    jest.useFakeTimers();
+    const courts = [ { number: 1, players: [{}, {}, {}, {}] } ];
+    const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
+    const btn = getByText('Complete Game');
+    fireEvent.click(btn);
+    // Should show Just Started immediately
+    const justStarted = getByText('Just Started');
+    expect(justStarted).toBeTruthy();
+    expect(justStarted.style.backgroundColor).toBe('rgb(253, 230, 138)');
+    expect(justStarted.style.color).toBe('rgb(245, 158, 66)');
+
+    // After 60s should revert to Active
+    act(() => {
+      jest.advanceTimersByTime(60000);
+    });
+    const active = getByText('Active');
+    expect(active).toBeTruthy();
+    jest.useRealTimers();
+  });
 });
