@@ -3,7 +3,7 @@ import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId, generateCourtDragId } from './utils/dragDrop';
 
-function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId, recentlyCompletedCourt, nextPlayersButtonState }) {
+function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId }) {
   // Track courts that have "Just Started" status locally for 60 seconds after Complete Game is clicked
   // Use a stable court id (court.number) as the key so timers remain correct if the courts array is reordered
   // Use Set-based state for boolean membership to avoid timestamp render inconsistencies when many courts update
@@ -14,7 +14,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
   const [recentlyCompletedSet, setRecentlyCompletedSet] = useState(new Set()); // Set<courtId>
   const recentlyCompletedTimers = useRef({});
 
-  // Track temporarily disabled Complete Game buttons (so they can't be clicked again for 5s)
+  // Track temporarily disabled Complete Game buttons (so they can't be clicked again for 10s)
   const [disabledButtonsSet, setDisabledButtonsSet] = useState(new Set()); // Set<courtId>
   const disabledButtonsTimers = useRef({});
 
@@ -60,7 +60,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
       copy.add(courtId);
       return copy;
     });
-    // remove after 5s
+    // remove after 10s
     recentlyCompletedTimers.current[courtId] = setTimeout(() => {
       setRecentlyCompletedSet(prev => {
         const copy = new Set(prev);
@@ -68,10 +68,10 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
         return copy;
       });
       delete recentlyCompletedTimers.current[courtId];
-    }, 5000);
+    }, 10000);
   };
 
-  const disableButtonTemporarily = (courtId, ms = 5000) => {
+  const disableButtonTemporarily = (courtId, ms = 10000) => {
     if (disabledButtonsTimers.current[courtId]) {
       clearTimeout(disabledButtonsTimers.current[courtId]);
     }
@@ -339,8 +339,8 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                         borderRadius: 8,
                         padding: '10px 0',
                         marginTop: 8,
-                        cursor: nextPlayersButtonState[idx] ? 'not-allowed' : (court.players && court.players.length === 4 ? 'pointer' : 'not-allowed'),
-                        opacity: completedRecently ? 1 : (court.players && court.players.length === 4 ? 1 : 0.5),
+                        cursor: disabledButtonsSet.has(courtId) ? 'not-allowed' : (court.players && court.players.length === 4 ? 'pointer' : 'not-allowed'),
+                        opacity: completedRecently || disabledButtonsSet.has(courtId) ? 1 : (court.players && court.players.length === 4 ? 1 : 0.5),
                         border: 'none',
                         transition: 'background 0.3s'
                       }}
@@ -348,12 +348,12 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                         handleCompleteGame(idx);
                         markJustStarted(courtId);
                         markRecentlyCompleted(courtId);
-                        disableButtonTemporarily(courtId, 5000);
+                        disableButtonTemporarily(courtId);
                       }}
                       // Disabled if externally driven, temporarily disabled set, OR during the recently-completed visual period
-                      disabled={nextPlayersButtonState[idx] || completedRecently || disabledButtonsSet.has(courtId) || !(court.players && court.players.length === 4)}
+                      disabled={completedRecently || disabledButtonsSet.has(courtId) || !(court.players && court.players.length === 4)}
                     >
-                      {nextPlayersButtonState[idx] ? 'Next players' : 'Complete Game'}
+                      {disabledButtonsSet.has(courtId) ? 'Next players' : 'Complete Game'}
                     </button>
                   </div>
               )}

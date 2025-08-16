@@ -81,24 +81,12 @@ function App() {
   };
 
   // Complete game handler
-  const [recentlyCompletedCourt, setRecentlyCompletedCourt] = React.useState(null);
-  const [nextPlayersButtonState, setNextPlayersButtonState] = React.useState({}); // { [courtIdx]: true/false }
-
   const handleCompleteGame = (courtIdx) => {
     // Batch update: move finished players to end, clear court, and reassign courts in one go
-    setRecentlyCompletedCourt(courtIdx);
-    setNextPlayersButtonState(prev => ({ ...prev, [courtIdx]: true }));
-    // clear after 5s to match CourtsPanel recently-completed visual duration
-    setTimeout(() => {
-      setRecentlyCompletedCourt(null);
-      setNextPlayersButtonState(prev => ({ ...prev, [courtIdx]: false }));
-    }, 5000);
-    
-    // Get finished players from the court
     const court = courts[courtIdx];
-    if (!court.players || court.players.length !== 4) return;
+    if (!court || !court.players || court.players.length !== 4) return;
     const finishedNames = court.players.map(p => p.name);
-    
+
     setSessionPlayers(prevPlayers => {
       // Remove finished players from their current positions
       const filtered = prevPlayers.filter(p => !finishedNames.includes(p.name));
@@ -422,8 +410,6 @@ function App() {
             handleCompleteGame={handleCompleteGame}
             activeId={activeId}
             overId={overId}
-            recentlyCompletedCourt={recentlyCompletedCourt}
-            nextPlayersButtonState={nextPlayersButtonState}
           />
         </div>
       </div>

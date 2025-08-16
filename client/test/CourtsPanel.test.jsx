@@ -16,8 +16,7 @@ describe('CourtsPanel', () => {
     handleCompleteGame: jest.fn(),
     activeId: null,
     overId: null,
-    recentlyCompletedCourt: null,
-    nextPlayersButtonState: {}
+    recentlyCompletedCourt: null
   };
 
   it('renders courts and complete game buttons', () => {
@@ -32,25 +31,13 @@ describe('CourtsPanel', () => {
   it('disables button and shows Next players after complete', () => {
     jest.useFakeTimers();
     const handleCompleteGame = jest.fn();
-    const nextPlayersButtonState = { 0: true };
-    const { getByText, rerender, container } = render(
-      <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} nextPlayersButtonState={nextPlayersButtonState} />
-    );
-    const btn = getByText('Next players');
-    expect(btn.disabled).toBe(true);
-    // Simulate timer passing
-    act(() => {
-      jest.advanceTimersByTime(10000);
-    });
-    rerender(
-      <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} nextPlayersButtonState={{}} />
-    );
-    // Re-query getAllByText after rerender
-    const { getAllByText } = render(
-      <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} nextPlayersButtonState={{}} />,
-      { container }
-    );
+    const { getAllByText } = render(<CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />);
     const completeBtns = getAllByText('Complete Game');
+    // click complete -> it should disable for 10s
+    fireEvent.click(completeBtns[0]);
+    expect(completeBtns[0].disabled).toBe(true);
+    act(() => { jest.advanceTimersByTime(10000); });
+    // After 10s it should re-enable
     expect(completeBtns[0].disabled).toBe(false);
     jest.useRealTimers();
   });
@@ -77,7 +64,6 @@ describe('CourtsPanel waiting status logic', () => {
     activeId: null,
     overId: null,
     recentlyCompletedCourt: null,
-    nextPlayersButtonState: [false],
   };
 
   it('shows "Waiting" with blue background when court has less than 4 players', () => {
@@ -137,7 +123,7 @@ describe('CourtsPanel waiting status logic', () => {
 });
 
 describe('recently completed sync', () => {
-  it('makes card and button green for 5s for multiple courts and clears together', () => {
+  it('makes card and button green for 10s for multiple courts and clears together', () => {
     jest.useFakeTimers();
     const props = {
       courtToRemove: null,
@@ -149,7 +135,6 @@ describe('recently completed sync', () => {
       activeId: null,
       overId: null,
       recentlyCompletedCourt: null,
-      nextPlayersButtonState: {},
       courts: [
         { number: 1, players: [{}, {}, {}, {}] },
         { number: 2, players: [{}, {}, {}, {}] }
@@ -174,9 +159,9 @@ describe('recently completed sync', () => {
     expect(completeBtns[0].style.backgroundColor).toBe('rgb(25, 195, 125)');
     expect(completeBtns[1].style.backgroundColor).toBe('rgb(25, 195, 125)');
 
-    // advance timers by 5s: both should clear together
+    // advance timers by 10s: both should clear together
     act(() => {
-      jest.advanceTimersByTime(5000);
+      jest.advanceTimersByTime(10000);
     });
 
     // after timeout, cards revert to white and buttons revert to dark
@@ -185,7 +170,7 @@ describe('recently completed sync', () => {
     expect(completeBtns[0].style.backgroundColor).toBe('rgb(34, 34, 34)');
     expect(completeBtns[1].style.backgroundColor).toBe('rgb(34, 34, 34)');
 
-    // 'Just Started' label lasts 60s, so after 5s it should still be present
+    // 'Just Started' label lasts 60s, so after 10s it should still be present
     const justStartedLabels = getAllByText('Just Started');
     expect(justStartedLabels.length).toBeGreaterThan(0);
 
