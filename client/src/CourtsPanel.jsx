@@ -4,7 +4,7 @@ import DroppableArea from './components/DroppableArea';
 import { generateDragId, generateCourtDragId } from './utils/dragDrop';
 
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId }) {
-  // Track courts that have "Just Started" status locally for 60 seconds after Complete Game is clicked
+  // Track courts that have "Starting" status locally for 60 seconds after Complete Game is clicked
   // Use a stable court id (court.number) as the key so timers remain correct if the courts array is reordered
   // Use Set-based state for boolean membership to avoid timestamp render inconsistencies when many courts update
   const [justStartedSet, setJustStartedSet] = useState(new Set()); // Set<courtId>
@@ -202,7 +202,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                           fontSize: 14,
                           borderRadius: 8,
                           padding: '2px 10px'
-                        }}>Just Started</span>
+                        }}>Starting</span>
                       ) : (
                         <span style={{
                           marginLeft: 12,

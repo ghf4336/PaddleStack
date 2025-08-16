@@ -100,14 +100,14 @@ describe('CourtsPanel waiting status logic', () => {
     expect(status.style.color).toBe('rgb(255, 255, 255)');
   });
 
-  it('shows "Just Started" after completing a full court for 60 seconds', () => {
+  it('shows "Starting" after completing a full court for 60 seconds', () => {
     jest.useFakeTimers();
     const courts = [ { number: 1, players: [{}, {}, {}, {}] } ];
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const btn = getByText('Complete Game');
     fireEvent.click(btn);
-    // Should show Just Started immediately
-    const justStarted = getByText('Just Started');
+    // Should show Starting immediately
+    const justStarted = getByText('Starting');
     expect(justStarted).toBeTruthy();
     expect(justStarted.style.backgroundColor).toBe('rgb(253, 230, 138)');
     expect(justStarted.style.color).toBe('rgb(245, 158, 66)');
@@ -170,8 +170,8 @@ describe('recently completed sync', () => {
     expect(completeBtns[0].style.backgroundColor).toBe('rgb(34, 34, 34)');
     expect(completeBtns[1].style.backgroundColor).toBe('rgb(34, 34, 34)');
 
-    // 'Just Started' label lasts 60s, so after 10s it should still be present
-    const justStartedLabels = getAllByText('Just Started');
+    // 'Starting' label lasts 60s, so after 10s it should still be present
+    const justStartedLabels = getAllByText('Starting');
     expect(justStartedLabels.length).toBeGreaterThan(0);
 
     jest.useRealTimers();
