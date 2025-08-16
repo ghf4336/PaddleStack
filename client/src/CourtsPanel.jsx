@@ -99,7 +99,27 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                       <span style={{ marginRight: 8, color: '#999', fontSize: 16, cursor: 'grab' }}>⋮⋮</span>
                     </DraggablePlayer>
                     <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
-                    <span style={{ marginLeft: 12, background: '#19c37d', color: '#fff', fontWeight: 600, fontSize: 14, borderRadius: 8, padding: '2px 10px' }}>Active</span>
+                    {court.players && court.players.length === 4 ? (
+                      <span style={{
+                        marginLeft: 12,
+                        background: '#19c37d',
+                        color: '#fff',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        borderRadius: 8,
+                        padding: '2px 10px'
+                      }}>Active</span>
+                    ) : (
+                      <span style={{
+                        marginLeft: 12,
+                        background: '#3b82f6', // General queue blue
+                        color: '#fff',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        borderRadius: 8,
+                        padding: '2px 10px'
+                      }}>Waiting</span>
+                    )}
                     <button
                         className="remove-court-btn"
                         title="Remove court"

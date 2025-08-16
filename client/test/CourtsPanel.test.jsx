@@ -65,3 +65,52 @@ describe('CourtsPanel', () => {
     expect(handleCompleteGame).toHaveBeenCalledWith(0);
   });
 });
+
+describe('CourtsPanel waiting status logic', () => {
+  const baseProps = {
+    courtToRemove: null,
+    handleRemoveCourt: jest.fn(),
+    handleConfirmRemoveCourt: jest.fn(),
+    handleCancelRemoveCourt: jest.fn(),
+    handleAddCourt: jest.fn(),
+    handleCompleteGame: jest.fn(),
+    activeId: null,
+    overId: null,
+    recentlyCompletedCourt: null,
+    nextPlayersButtonState: [false],
+  };
+
+  it('shows "Waiting" with blue background when court has less than 4 players', () => {
+    const courts = [
+      { number: 1, players: [{ name: 'A' }, { name: 'B' }, { name: 'C' }] },
+    ];
+    const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
+    const status = getByText('Waiting');
+    expect(status).toBeTruthy();
+    // Inline style should have converted to rgb in JSDOM
+    expect(status.style.backgroundColor).toBe('rgb(59, 130, 246)');
+    expect(status.style.color).toBe('rgb(255, 255, 255)');
+  });
+
+  it('shows "Waiting" with blue background when court has no players', () => {
+    const courts = [
+      { number: 2, players: [] },
+    ];
+    const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
+    const status = getByText('Waiting');
+    expect(status).toBeTruthy();
+    expect(status.style.backgroundColor).toBe('rgb(59, 130, 246)');
+    expect(status.style.color).toBe('rgb(255, 255, 255)');
+  });
+
+  it('shows "Active" with green background when court has 4 players', () => {
+    const courts = [
+      { number: 3, players: [{}, {}, {}, {}] },
+    ];
+    const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
+    const status = getByText('Active');
+    expect(status).toBeTruthy();
+    expect(status.style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(status.style.color).toBe('rgb(255, 255, 255)');
+  });
+});
