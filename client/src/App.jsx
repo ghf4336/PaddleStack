@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { useSensor, useSensors, PointerSensor, TouchSensor } from '@dnd-kit/core';
@@ -90,10 +88,11 @@ function App() {
     // Batch update: move finished players to end, clear court, and reassign courts in one go
     setRecentlyCompletedCourt(courtIdx);
     setNextPlayersButtonState(prev => ({ ...prev, [courtIdx]: true }));
+    // clear after 5s to match CourtsPanel recently-completed visual duration
     setTimeout(() => {
       setRecentlyCompletedCourt(null);
       setNextPlayersButtonState(prev => ({ ...prev, [courtIdx]: false }));
-    }, 10000);
+    }, 5000);
     
     // Get finished players from the court
     const court = courts[courtIdx];

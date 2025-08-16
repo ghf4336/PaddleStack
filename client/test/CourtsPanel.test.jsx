@@ -135,3 +135,60 @@ describe('CourtsPanel waiting status logic', () => {
     jest.useRealTimers();
   });
 });
+
+describe('recently completed sync', () => {
+  it('makes card and button green for 5s for multiple courts and clears together', () => {
+    jest.useFakeTimers();
+    const props = {
+      courtToRemove: null,
+      handleRemoveCourt: jest.fn(),
+      handleConfirmRemoveCourt: jest.fn(),
+      handleCancelRemoveCourt: jest.fn(),
+      handleAddCourt: jest.fn(),
+      handleCompleteGame: jest.fn(),
+      activeId: null,
+      overId: null,
+      recentlyCompletedCourt: null,
+      nextPlayersButtonState: {},
+      courts: [
+        { number: 1, players: [{}, {}, {}, {}] },
+        { number: 2, players: [{}, {}, {}, {}] }
+      ]
+    };
+
+    const { getAllByText, getByText } = render(<CourtsPanel {...props} />);
+    const completeBtns = getAllByText('Complete Game');
+    // click both Complete buttons rapidly
+    fireEvent.click(completeBtns[0]);
+    fireEvent.click(completeBtns[1]);
+
+    // card backgrounds should be green immediately
+    const card1 = getByText('Court 1').closest('.court-card');
+    const card2 = getByText('Court 2').closest('.court-card');
+    expect(card1).toBeTruthy();
+    expect(card2).toBeTruthy();
+    expect(card1.style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(card2.style.backgroundColor).toBe('rgb(25, 195, 125)');
+
+    // buttons should also be green
+    expect(completeBtns[0].style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(completeBtns[1].style.backgroundColor).toBe('rgb(25, 195, 125)');
+
+    // advance timers by 5s: both should clear together
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    // after timeout, cards revert to white and buttons revert to dark
+    expect(card1.style.backgroundColor).toBe('rgb(255, 255, 255)');
+    expect(card2.style.backgroundColor).toBe('rgb(255, 255, 255)');
+    expect(completeBtns[0].style.backgroundColor).toBe('rgb(34, 34, 34)');
+    expect(completeBtns[1].style.backgroundColor).toBe('rgb(34, 34, 34)');
+
+    // 'Just Started' label lasts 60s, so after 5s it should still be present
+    const justStartedLabels = getAllByText('Just Started');
+    expect(justStartedLabels.length).toBeGreaterThan(0);
+
+    jest.useRealTimers();
+  });
+});

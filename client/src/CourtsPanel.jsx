@@ -4,24 +4,39 @@ import DroppableArea from './components/DroppableArea';
 import { generateDragId, generateCourtDragId } from './utils/dragDrop';
 
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId, recentlyCompletedCourt, nextPlayersButtonState }) {
-  // Track courts that have "Just Started" status locally for 5 seconds after Complete Game is clicked
-  const [justStartedMap, setJustStartedMap] = useState({}); // { [idx]: timestamp }
+  // Track courts that have "Just Started" status locally for 60 seconds after Complete Game is clicked
+  // Use a stable court id (court.number) as the key so timers remain correct if the courts array is reordered
+  // Use Set-based state for boolean membership to avoid timestamp render inconsistencies when many courts update
+  const [justStartedSet, setJustStartedSet] = useState(new Set()); // Set<courtId>
   const justStartedTimers = useRef({});
 
-  const markJustStarted = (idx) => {
+  // Track recently completed courts locally so multiple courts can be highlighted simultaneously
+  const [recentlyCompletedSet, setRecentlyCompletedSet] = useState(new Set()); // Set<courtId>
+  const recentlyCompletedTimers = useRef({});
+
+  // Track temporarily disabled Complete Game buttons (so they can't be clicked again for 5s)
+  const [disabledButtonsSet, setDisabledButtonsSet] = useState(new Set()); // Set<courtId>
+  const disabledButtonsTimers = useRef({});
+
+  const markJustStarted = (courtId) => {
     // clear existing timer if any
-    if (justStartedTimers.current[idx]) {
-      clearTimeout(justStartedTimers.current[idx]);
+    if (justStartedTimers.current[courtId]) {
+      clearTimeout(justStartedTimers.current[courtId]);
     }
-    setJustStartedMap(prev => ({ ...prev, [idx]: Date.now() }));
+    // add to set
+    setJustStartedSet(prev => {
+      const copy = new Set(prev);
+      copy.add(courtId);
+      return copy;
+    });
     // remove after 60s
-    justStartedTimers.current[idx] = setTimeout(() => {
-      setJustStartedMap(prev => {
-        const copy = { ...prev };
-        delete copy[idx];
+    justStartedTimers.current[courtId] = setTimeout(() => {
+      setJustStartedSet(prev => {
+        const copy = new Set(prev);
+        copy.delete(courtId);
         return copy;
       });
-      delete justStartedTimers.current[idx];
+      delete justStartedTimers.current[courtId];
     }, 60000);
   };
 
@@ -29,8 +44,51 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
     return () => {
       // cleanup timers on unmount
       Object.values(justStartedTimers.current).forEach(t => clearTimeout(t));
+      Object.values(recentlyCompletedTimers.current).forEach(t => clearTimeout(t));
+      Object.values(disabledButtonsTimers.current).forEach(t => clearTimeout(t));
     };
   }, []);
+
+  const markRecentlyCompleted = (courtId) => {
+    // clear existing timer if any
+    if (recentlyCompletedTimers.current[courtId]) {
+      clearTimeout(recentlyCompletedTimers.current[courtId]);
+    }
+    // add to set
+    setRecentlyCompletedSet(prev => {
+      const copy = new Set(prev);
+      copy.add(courtId);
+      return copy;
+    });
+    // remove after 5s
+    recentlyCompletedTimers.current[courtId] = setTimeout(() => {
+      setRecentlyCompletedSet(prev => {
+        const copy = new Set(prev);
+        copy.delete(courtId);
+        return copy;
+      });
+      delete recentlyCompletedTimers.current[courtId];
+    }, 5000);
+  };
+
+  const disableButtonTemporarily = (courtId, ms = 5000) => {
+    if (disabledButtonsTimers.current[courtId]) {
+      clearTimeout(disabledButtonsTimers.current[courtId]);
+    }
+    setDisabledButtonsSet(prev => {
+      const copy = new Set(prev);
+      copy.add(courtId);
+      return copy;
+    });
+    disabledButtonsTimers.current[courtId] = setTimeout(() => {
+      setDisabledButtonsSet(prev => {
+        const copy = new Set(prev);
+        copy.delete(courtId);
+        return copy;
+      });
+      delete disabledButtonsTimers.current[courtId];
+    }, ms);
+  };
 
   return (
     <div className="courts-panel" style={{ minWidth: 320, flex: 1 }}>
@@ -74,7 +132,14 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
         gap: 16
       }}>
         {courts.map((court, idx) => {
-          const highlight = recentlyCompletedCourt === idx;
+          // prefer a stable court id for per-court timers/state
+          const courtId = court.number;
+          // Use only the internal per-court recentlyCompletedSet (keyed by courtId) as the source of truth
+          // This avoids mismatches with the externally-provided `recentlyCompletedCourt` prop when multiple
+          // courts are completed at the same time.
+          const highlight = recentlyCompletedSet.has(courtId);
+           // Use the same computed highlight for the button so both card and button clear at the same time
+           const completedRecently = highlight;
           const courtDragId = generateCourtDragId(idx);
           const isCourtBeingDragged = activeId === courtDragId;
           const isCourtDropTarget = overId === courtDragId;
@@ -128,7 +193,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                     </DraggablePlayer>
                     <span style={{ fontWeight: 700, fontSize: 18 }}>Court {court.number}</span>
                     {court.players && court.players.length === 4 ? (
-                      justStartedMap[idx] ? (
+                      justStartedSet.has(courtId) ? (
                         <span style={{
                           marginLeft: 12,
                           background: '#fde68a', // Next-up orange
@@ -266,7 +331,8 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                       className="complete-game-btn"
                       style={{
                         width: '100%',
-                        background: nextPlayersButtonState[idx] ? '#19c37d' : '#222',
+                        // Visual state driven only by completedRecently so it stays in sync with the card
+                        background: completedRecently ? '#19c37d' : '#222',
                         color: '#fff',
                         fontWeight: 600,
                         fontSize: 16,
@@ -274,15 +340,18 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                         padding: '10px 0',
                         marginTop: 8,
                         cursor: nextPlayersButtonState[idx] ? 'not-allowed' : (court.players && court.players.length === 4 ? 'pointer' : 'not-allowed'),
-                        opacity: nextPlayersButtonState[idx] ? 1 : (court.players && court.players.length === 4 ? 1 : 0.5),
+                        opacity: completedRecently ? 1 : (court.players && court.players.length === 4 ? 1 : 0.5),
                         border: 'none',
                         transition: 'background 0.3s'
                       }}
                       onClick={() => {
                         handleCompleteGame(idx);
-                        markJustStarted(idx);
+                        markJustStarted(courtId);
+                        markRecentlyCompleted(courtId);
+                        disableButtonTemporarily(courtId, 5000);
                       }}
-                      disabled={nextPlayersButtonState[idx] || !(court.players && court.players.length === 4)}
+                      // Disabled if externally driven, temporarily disabled set, OR during the recently-completed visual period
+                      disabled={nextPlayersButtonState[idx] || completedRecently || disabledButtonsSet.has(courtId) || !(court.players && court.players.length === 4)}
                     >
                       {nextPlayersButtonState[idx] ? 'Next players' : 'Complete Game'}
                     </button>
