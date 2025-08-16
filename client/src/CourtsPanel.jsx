@@ -103,7 +103,24 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                     <button
                         className="remove-court-btn"
                         title="Remove court"
-                        style={{ marginLeft: 'auto', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 18, width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        style={{
+                          marginLeft: 'auto',
+                          background: 'none', // No background
+                          color: '#e74c3c', // X is red
+                          border: 'none',
+                          borderRadius: 8,
+                          fontWeight: 700,
+                          fontSize: 22,
+                          width: 36,
+                          height: 36,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: 'none',
+                          outline: 'none',
+                          padding: 0
+                        }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRemoveCourt(idx);
