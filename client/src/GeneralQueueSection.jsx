@@ -65,7 +65,7 @@ function GeneralQueueSection({
             >
               {activeId === dragId ? (
                 <div className="queue-player ghost-player">
-                  <span className="queue-dot" /> {p.name}
+                  <span>{p.name}</span>
                   <span className="queue-num">#{generalQueueStartNum + i}</span>
                 </div>
               ) : (
@@ -74,7 +74,7 @@ function GeneralQueueSection({
                   player={p}
                 >
                   <div className="queue-player">
-                    <span className="queue-dot" /> {p.name}
+                    <span>{p.name}</span>
                     <span className="queue-num">#{generalQueueStartNum + i}</span>
                   </div>
                 </DraggablePlayer>

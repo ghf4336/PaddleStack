@@ -74,11 +74,11 @@ function Sidebar({
                         width: 10,
                         height: 10,
                         borderRadius: '50%',
-                        background: p.paid ? '#19c37d' : '#e74c3c',
+                        background: '#bbb',
                         marginRight: 8,
                         verticalAlign: 'middle',
                       }}
-                      title={p.paid ? 'Paid' : 'Unpaid'}
+                      title={p.paid ? 'Paid' : 'Payment status unknown'}
                     />
                     {p.name}
                     {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}
@@ -171,7 +171,7 @@ function Sidebar({
                     player={p}
                   >
                     <div className="queue-player">
-                      <span className="queue-dot" /> {p.name}
+                      <span>{p.name}</span>
                       <span className="queue-num">#{generalQueueStartNum + i}</span>
                     </div>
                   </DraggablePlayer>

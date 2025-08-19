@@ -298,7 +298,7 @@ function App() {
       if (player) {
         label = (
           <div className="queue-player ghost-player">
-            <span className="queue-dot" /> {player.name}
+            <span>{player.name}</span>
             <span className="queue-num">#{generalQueueStartNum + dragData.index}</span>
           </div>
         );

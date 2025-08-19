@@ -56,21 +56,6 @@ describe('PaddleStack Player Phone Number', () => {
     // (If phone is ever shown in UI, add an assertion here)
   });
 });
-  it('adds a player with unpaid status', async () => {
-    render(<App />);
-    fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'UnpaidPlayer' } });
-    fireEvent.change(screen.getByPlaceholderText('0221111111'), { target: { value: '555-111-2222' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'later' } });
-    fireEvent.click(screen.getByText('Confirm'));
-    // There may be multiple UnpaidPlayer elements, just check at least one exists
-    const unpaidPlayers = await screen.findAllByText('UnpaidPlayer');
-    expect(unpaidPlayers.length).toBeGreaterThan(0);
-    // Should show red dot for unpaid player
-    const unpaidDot = screen.getByTitle('Unpaid');
-    expect(unpaidDot).toBeInTheDocument();
-    expect(unpaidDot).toHaveStyle('background: #e74c3c');
-});
 
 describe('PaddleStack App', () => {
   test('completing a game only moves that court\'s players to the back of the queue', () => {
@@ -286,10 +271,6 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // There may be multiple TestPlayer elements, just check at least one exists
     const testPlayers = await screen.findAllByText('TestPlayer');
     expect(testPlayers.length).toBeGreaterThan(0);
-    // Should show green dot for paid player
-    const paidDot = screen.getByTitle('Paid');
-    expect(paidDot).toBeInTheDocument();
-    expect(paidDot).toHaveStyle('background: #19c37d');
   });
 
   it('deletes a player not in a court', async () => {

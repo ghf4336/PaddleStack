@@ -13,7 +13,7 @@ A simple, web browser-based Pickleball queue system.
 ### Player Queue System
 - **Next Up Queue**: Priority players ready for the next available court
 - **General Queue**: Main player queue with automatic assignment
-- **Paid Status Tracking**: Visual indicators for paid/unpaid players
+- **Paid Status Tracking**: Visual indicator for payment status (paid / unknown)
 - **Pause/Resume**: Temporarily pause players from game rotation
 
 ## Structure

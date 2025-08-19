@@ -291,14 +291,7 @@ body {
   margin-bottom: 6px;
   font-size: 1rem;
 }
- .queue-dot {
-  width: 10px;
-  height: 10px;
-  background: #3b82f6;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 8px;
-}
+
 
 .queue-num {
   background: #fff;

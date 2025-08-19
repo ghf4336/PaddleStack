@@ -58,18 +58,6 @@ function PlayerListSection({
             return (
               <div className={`session-player${isPaused ? ' paused' : ''}`} key={p.name} style={isPaused ? { opacity: 0.5, background: '#f6f6fa' } : {}}>
                 <span>
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      background: p.paid ? '#19c37d' : '#e74c3c',
-                      marginRight: 8,
-                      verticalAlign: 'middle',
-                    }}
-                    title={p.paid ? 'Paid' : 'Unpaid'}
-                  />
                   {p.name}
                   {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}
                   {inCourt && (

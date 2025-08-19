@@ -30,8 +30,8 @@ function EndSessionModal({ open, onClose, onConfirm, sessionPlayers, deletedPlay
     
     const lines = [
       'Name\tPayment Type\tPhone Number',
-      ...sessionPlayers.map(p => `${p.name}\t${p.payment || (p.paid ? 'paid' : 'unpaid')}\t${p.phone || ''}`),
-      ...deletedPlayers.map(p => `${p.name} (deleted)\t${p.payment || (p.paid ? 'paid' : 'unpaid')}\t${p.phone || ''}`)
+  ...sessionPlayers.map(p => `${p.name}\t${p.payment || (p.paid ? 'paid' : 'unknown')}\t${p.phone || ''}`),
+  ...deletedPlayers.map(p => `${p.name} (deleted)\t${p.payment || (p.paid ? 'paid' : 'unknown')}\t${p.phone || ''}`)
     ];
     const text = lines.join('\r\n');
     const blob = new Blob([text], { type: 'text/plain' });

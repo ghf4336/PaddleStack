@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 const PAID_OPTIONS = [
   { value: 'online', label: 'Paid online', paid: true },
   { value: 'cash', label: 'Paid cash', paid: true },
-  { value: 'later', label: 'Pay later', paid: false },
 ];
 
 function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
