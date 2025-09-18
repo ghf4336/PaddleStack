@@ -36,7 +36,12 @@ function Welcome({ onStartManually, onPlayersUploaded }) {
   return (
     <div className="welcome-container">
       <div className="welcome-content">
-        <h1 className="welcome-title">Pickle Park</h1>
+        <img
+          src="/PaddleStack/logo_white.png"
+          alt="Pickle Park logo"
+          className="welcome-logo"
+          style={{ width: '260px', maxWidth: '90%', marginBottom: '18px' }}
+        />
         <p className="welcome-subtitle">Organize your players and courts effortlessly</p>
         
         <div className="welcome-buttons">

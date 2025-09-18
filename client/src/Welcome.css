@@ -1,3 +1,11 @@
+/* Logo image styling */
+.welcome-logo {
+  display: block;
+  margin: 0 auto 18px auto;
+  width: 260px;
+  max-width: 90%;
+  height: auto;
+}
 /* Welcome page styles */
 .welcome-container {
   min-height: 100vh;

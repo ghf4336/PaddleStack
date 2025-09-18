@@ -13,7 +13,9 @@ describe('Welcome Component', () => {
   test('renders welcome page with correct title and subtitle', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
-    expect(screen.getByText('Pickle Park')).toBeInTheDocument();
+  // Check for the logo image instead of the text
+  const logo = screen.getByAltText('Pickle Park logo');
+  expect(logo).toBeInTheDocument();
     expect(screen.getByText('Organize your players and courts effortlessly')).toBeInTheDocument();
   });
 
@@ -64,9 +66,9 @@ describe('Welcome Component', () => {
   test('renders with correct semantic structure', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
-    // Check for h1 title
-    const title = screen.getByRole('heading', { level: 1 });
-    expect(title).toHaveTextContent('Pickle Park');
+  // Check for the logo image instead of the h1 title
+  const logo = screen.getByAltText('Pickle Park logo');
+  expect(logo).toBeInTheDocument();
 
     // Check for buttons
     const buttons = screen.getAllByRole('button');
@@ -109,10 +111,10 @@ describe('Welcome Component', () => {
     const content = container.querySelector('.welcome-content');
     expect(content).toBeInTheDocument();
 
-    // Check title
-    const title = container.querySelector('.welcome-title');
-    expect(title).toBeInTheDocument();
-    expect(title).toHaveTextContent('Pickle Park');
+  // Check logo image instead of title
+  const logo = container.querySelector('img.welcome-logo');
+  expect(logo).toBeInTheDocument();
+  expect(logo).toHaveAttribute('alt', 'Pickle Park logo');
 
     // Check subtitle
     const subtitle = container.querySelector('.welcome-subtitle');
