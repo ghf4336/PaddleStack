@@ -14,9 +14,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData([], [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Alice\tonline\t555-1111\tORIGINAL\tNo\r\n' +
+      'Bob\tcash\t555-2222\tORIGINAL\tNo'
     );
   });
 
@@ -28,9 +28,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], []);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Charlie\tonline\t555-3333\tNEW\r\n' +
-      'Diana\tcash\t\tNEW'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
+      'Diana\tcash\t\tNEW\tYes'
     );
   });
 
@@ -47,10 +47,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\r\n' +
-      'Charlie\tonline\t555-3333\tNEW'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Bob\tcash\t555-2222\tORIGINAL\tNo\r\n' +
+      'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'Charlie\tonline\t555-3333\tNEW\tYes'
     );
   });
 
@@ -66,9 +66,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData([], deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL\r\n' +
-      'Bob (deleted)\tcash\t555-2222\tDELETED'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Alice\tonline\t555-1111\tORIGINAL\tNo\r\n' +
+      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes'
     );
   });
 
@@ -83,8 +83,8 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Alice\tcash\t555-9999\tUPDATED\tYes'
     );
   });
 
@@ -99,8 +99,8 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Alice\tonline\t555-1111\tORIGINAL\tYes'
     );
   });
 
@@ -122,11 +122,11 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\r\n' +
-      'Diana\tonline\t555-4444\tNEW\r\n' +
-      'Charlie (deleted)\tonline\t555-3333\tDELETED'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Bob\tcash\t555-2222\tORIGINAL\tNo\r\n' +
+      'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'Diana\tonline\t555-4444\tNEW\tYes\r\n' +
+      'Charlie (deleted)\tonline\t555-3333\tDELETED\tYes'
     );
   });
 
@@ -148,11 +148,11 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\r\n' +
-      'Charlie\tonline\t555-3333\tNEW\r\n' +
-      'Diana\tcash\t555-4444\tNEW\r\n' +
-      'Bob (deleted)\tcash\t555-2222\tDELETED'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
+      'Diana\tcash\t555-4444\tNEW\tYes\r\n' +
+      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes'
     );
   });
 
@@ -164,9 +164,37 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], []);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\r\n' +
-      'Alice\tpaid\t555-1111\tNEW\r\n' +
-      'Bob\tunknown\t555-2222\tNEW'
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'Alice\tpaid\t555-1111\tNEW\tYes\r\n' +
+      'Bob\tunknown\t555-2222\tNEW\tYes'
+    );
+  });
+
+  test('correctly marks Played column based on session participation', () => {
+    const uploadedPlayers = [
+      { name: 'UploadedOnly', payment: 'online', phone: '555-1111', paid: true },
+      { name: 'PlayedAndUpdated', payment: 'online', phone: '555-2222', paid: true },
+      { name: 'PlayedUnchanged', payment: 'cash', phone: '555-3333', paid: false }
+    ];
+
+    const sessionPlayers = [
+      { name: 'PlayedAndUpdated', payment: 'cash', phone: '555-9999', paid: true }, // Updated and played
+      { name: 'PlayedUnchanged', payment: 'cash', phone: '555-3333', paid: false }, // Played but unchanged
+      { name: 'NewPlayer', payment: 'online', phone: '555-4444', paid: true } // New player
+    ];
+
+    const deletedPlayers = [
+      { name: 'DeletedPlayer', payment: 'cash', phone: '555-5555', paid: false } // Deleted (was in session)
+    ];
+
+    const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
+    expect(result).toBe(
+      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
+      'UploadedOnly\tonline\t555-1111\tORIGINAL\tNo\r\n' +
+      'PlayedUnchanged\tcash\t555-3333\tORIGINAL\tYes\r\n' +
+      'PlayedAndUpdated\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'NewPlayer\tonline\t555-4444\tNEW\tYes\r\n' +
+      'DeletedPlayer (deleted)\tcash\t555-5555\tDELETED\tYes'
     );
   });
 });

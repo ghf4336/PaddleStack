@@ -68,15 +68,24 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
 
   if (allPlayers.length === 0) return '';
 
+  // Create sets for quick lookup of session participants
+  const sessionPlayerNames = new Set(sessionPlayers.map(p => p.name.toLowerCase()));
+  const deletedPlayerNames = new Set(deletedPlayers.map(p => p.name.toLowerCase()));
+
   // Create the download content
   const lines = [
-    'Name\tPayment Type\tPhone Number\tStatus',
+    'Name\tPayment Type\tPhone Number\tStatus\tPlayed',
     ...allPlayers.map(p => {
       const status = p.source === 'deleted' ? 'DELETED' :
                     p.source === 'new' ? 'NEW' :
                     p.source === 'updated' ? 'UPDATED' : 'ORIGINAL';
       const name = p.source === 'deleted' ? `${p.name} (deleted)` : p.name;
-      return `${name}\t${p.payment || (p.paid ? 'paid' : 'unknown')}\t${p.phone || ''}\t${status}`;
+      
+      // Determine if player participated in this session
+      // A player "played" if they were in sessionPlayers OR were deleted (since deleted players were in the session)
+      const played = sessionPlayerNames.has(p.name.toLowerCase()) || deletedPlayerNames.has(p.name.toLowerCase()) ? 'Yes' : 'No';
+      
+      return `${name}\t${p.payment || (p.paid ? 'paid' : 'unknown')}\t${p.phone || ''}\t${status}\t${played}`;
     })
   ];
 
