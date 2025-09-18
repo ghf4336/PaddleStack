@@ -33,6 +33,7 @@ function App() {
     setSessionPlayers([]);
     setPausedPlayers([]);
     setDeletedPlayers([]);
+    setUploadedPlayers([]);
     setCourts([]);
     setShowAddPlayerModal(false);
     setShowPlayerActionModal(false);
@@ -44,6 +45,10 @@ function App() {
 
   const handleStartManually = () => {
     setShowWelcome(false);
+  };
+
+  const handlePlayersUploaded = (players) => {
+    setUploadedPlayers(players);
   };
 
   const handleConfirmRemoveCourt = () => {
@@ -73,6 +78,7 @@ function App() {
   const [sessionPlayers, setSessionPlayers] = useState([]);
   const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
   const [deletedPlayers, setDeletedPlayers] = useState([]); // Array of soft-deleted players
+  const [uploadedPlayers, setUploadedPlayers] = useState([]); // Array of players from uploaded file
   const [courts, setCourts] = useState([]); // Array of { number, players: [] }
   const [activeId, setActiveId] = useState(null); // For drag overlay
   const [overId, setOverId] = useState(null); // For drop target highlight
@@ -244,6 +250,7 @@ function App() {
       onPaidChange={() => {}}
       onConfirm={handleConfirmAdd}
       onCancel={handleCancelAdd}
+      uploadedPlayers={uploadedPlayers}
     />
   );
   if (typeof window !== 'undefined') {
@@ -351,7 +358,7 @@ function App() {
 
   // Show welcome page if showWelcome is true
   if (showWelcome) {
-    return <Welcome onStartManually={handleStartManually} />;
+    return <Welcome onStartManually={handleStartManually} onPlayersUploaded={handlePlayersUploaded} />;
   }
 
   return (

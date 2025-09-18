@@ -1,9 +1,32 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './Welcome.css';
+import { uploadAndParsePlayerFile } from './utils/fileUpload';
 
-function Welcome({ onStartManually }) {
+function Welcome({ onStartManually, onPlayersUploaded }) {
+  const fileInputRef = useRef(null);
+
   const handleAddPlayersClick = () => {
-    // Do nothing for now as requested
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const uploadedPlayers = await uploadAndParsePlayerFile(file);
+      if (uploadedPlayers.length > 0) {
+        onPlayersUploaded(uploadedPlayers);
+        onStartManually(); // Start the session after successful upload
+      } else {
+        alert('No valid players found in the file. Please check the file format.');
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+
+    // Reset file input
+    event.target.value = '';
   };
 
   const handleAddPlayersManuallyClick = () => {
@@ -30,6 +53,15 @@ function Welcome({ onStartManually }) {
             Add Players Manually
           </button>
         </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".txt"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
       </div>
     </div>
   );

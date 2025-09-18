@@ -5,11 +5,13 @@ const PAID_OPTIONS = [
   { value: 'cash', label: 'Paid cash', paid: true },
 ];
 
-function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
+function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlayers = [] }) {
   const [playerName, setPlayerName] = useState('');
   const [phone, setPhone] = useState('');
   const [payment, setPayment] = useState('');
   const [touched, setTouched] = useState(false);
+  const [filteredPlayers, setFilteredPlayers] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -17,8 +19,24 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
       setPhone('');
       setPayment('');
       setTouched(false);
+      setFilteredPlayers([]);
+      setShowDropdown(false);
     }
   }, [show]);
+
+  // Filter uploaded players based on name input
+  useEffect(() => {
+    if (playerName.trim() && uploadedPlayers.length > 0) {
+      const filtered = uploadedPlayers.filter(player =>
+        player.name.toLowerCase().includes(playerName.toLowerCase())
+      );
+      setFilteredPlayers(filtered);
+      setShowDropdown(filtered.length > 0);
+    } else {
+      setFilteredPlayers([]);
+      setShowDropdown(false);
+    }
+  }, [playerName, uploadedPlayers]);
 
   // Notify parent of paid status
   useEffect(() => {
@@ -33,6 +51,22 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
     if (playerName.trim() && payment) {
       onConfirm({ name: playerName.trim(), phone: phone.trim(), payment });
     }
+  };
+
+  const handlePlayerSelect = (player) => {
+    setPlayerName(player.name);
+    setPhone(player.phone || '');
+    setPayment(player.payment || '');
+    setShowDropdown(false);
+  };
+
+  const handleNameChange = (e) => {
+    setPlayerName(e.target.value);
+  };
+
+  const handleNameBlur = () => {
+    // Delay hiding dropdown to allow for click selection
+    setTimeout(() => setShowDropdown(false), 150);
   };
 
   if (!show) return null;
@@ -59,7 +93,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
         <h3 style={{ margin: 0, fontWeight: 600, fontSize: 20 }}>Add New Player</h3>
         <button onClick={onCancel} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Close">×</button>
       </div>
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 12, position: 'relative' }}>
         <label style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
           <span style={{ marginRight: 4 }}>👤</span> Player Name *
         </label>
@@ -67,7 +101,13 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
           type="text"
           placeholder="Enter player name"
           value={playerName}
-          onChange={e => setPlayerName(e.target.value)}
+          onChange={handleNameChange}
+          onBlur={handleNameBlur}
+          onFocus={() => {
+            if (filteredPlayers.length > 0) {
+              setShowDropdown(true);
+            }
+          }}
           style={{
             width: '100%',
             padding: '10px 12px',
@@ -80,6 +120,45 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel }) {
         />
         {touched && !playerName.trim() && (
           <span style={{ color: '#e74c3c', fontSize: 13 }}>Name is required</span>
+        )}
+
+        {/* Player dropdown */}
+        {showDropdown && filteredPlayers.length > 0 && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            background: '#fff',
+            border: '1px solid #d1d5db',
+            borderRadius: 8,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            zIndex: 1000,
+            maxHeight: 200,
+            overflowY: 'auto'
+          }}>
+            {filteredPlayers.map((player, index) => (
+              <div
+                key={index}
+                onClick={() => handlePlayerSelect(player)}
+                style={{
+                  padding: '10px 12px',
+                  cursor: 'pointer',
+                  borderBottom: index < filteredPlayers.length - 1 ? '1px solid #f0f0f0' : 'none',
+                  backgroundColor: 'transparent',
+                  fontSize: 14
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+              >
+                <div style={{ fontWeight: 500 }}>{player.name}</div>
+                <div style={{ fontSize: 12, color: '#666' }}>
+                  {player.payment && `${player.payment}`}
+                  {player.phone && ` • ${player.phone}`}
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
       <div style={{ marginBottom: 12 }}>
