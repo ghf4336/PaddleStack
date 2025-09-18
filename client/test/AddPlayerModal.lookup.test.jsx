@@ -10,7 +10,8 @@ describe('AddPlayerModal player lookup features', () => {
     onPaidChange: jest.fn(),
     onConfirm: jest.fn(),
     onCancel: jest.fn(),
-    uploadedPlayers: []
+    uploadedPlayers: [],
+    existingNames: []
   };
 
   beforeEach(() => {
@@ -289,5 +290,127 @@ describe('AddPlayerModal player lookup features', () => {
       const dropdownItems = screen.getAllByText(/Player \d+/);
       expect(dropdownItems.length).toBe(10);
     });
+  });
+
+  test('should successfully add a player with a unique name', async () => {
+    const user = userEvent.setup();
+    const existingNames = ['Alice', 'Bob'];
+    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+
+    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const paymentSelect = screen.getByRole('combobox');
+    const confirmBtn = screen.getByText('Confirm');
+
+    await user.type(nameInput, 'Charlie');
+    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+
+    // Should not show duplicate error
+    expect(screen.queryByText('A player with this name already exists')).not.toBeInTheDocument();
+    
+    // Confirm button should be enabled
+    expect(confirmBtn).toHaveStyle({ opacity: '1' });
+
+    fireEvent.click(confirmBtn);
+
+    // Should call onConfirm with the new player data
+    expect(defaultProps.onConfirm).toHaveBeenCalledWith({
+      name: 'Charlie',
+      phone: '',
+      payment: 'online'
+    });
+  });
+
+  test('should show error when trying to add a player with duplicate name', async () => {
+    const user = userEvent.setup();
+    const existingNames = ['Alice', 'Bob'];
+    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+
+    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const paymentSelect = screen.getByRole('combobox');
+    const confirmBtn = screen.getByText('Confirm');
+
+    await user.type(nameInput, 'Alice');
+    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+
+    // Should show duplicate error
+    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+    
+    // Name input should have red border
+    expect(nameInput).toHaveStyle({ border: '1.5px solid #e74c3c' });
+    
+    // Confirm button should be disabled
+    expect(confirmBtn).toHaveStyle({ opacity: '0.7' });
+
+    // Should not call onConfirm
+    fireEvent.click(confirmBtn);
+    expect(defaultProps.onConfirm).not.toHaveBeenCalled();
+  });
+
+  test('should clear duplicate error when name is changed to unique', async () => {
+    const user = userEvent.setup();
+    const existingNames = ['Alice', 'Bob'];
+    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+
+    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const paymentSelect = screen.getByRole('combobox');
+    const confirmBtn = screen.getByText('Confirm');
+
+    // First type duplicate name
+    await user.type(nameInput, 'Alice');
+    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+
+    // Should show error
+    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+    expect(confirmBtn).toHaveStyle({ opacity: '0.7' });
+
+    // Clear and type unique name
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Charlie');
+
+    // Error should be cleared
+    expect(screen.queryByText('A player with this name already exists')).not.toBeInTheDocument();
+    
+    // Border should be normal
+    expect(nameInput).toHaveStyle({ border: '1.5px solid #d1d5db' });
+    
+    // Confirm button should be enabled
+    expect(confirmBtn).toHaveStyle({ opacity: '1' });
+
+    fireEvent.click(confirmBtn);
+    expect(defaultProps.onConfirm).toHaveBeenCalledWith({
+      name: 'Charlie',
+      phone: '',
+      payment: 'online'
+    });
+  });
+
+  test('should handle case-insensitive duplicate names', async () => {
+    const user = userEvent.setup();
+    const existingNames = ['Alice', 'Bob'];
+    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+
+    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const paymentSelect = screen.getByRole('combobox');
+
+    await user.type(nameInput, 'alice'); // lowercase
+    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+
+    // Should show duplicate error (case-insensitive check)
+    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+  });
+
+  test('should trim whitespace when checking for duplicates', async () => {
+    const user = userEvent.setup();
+    const existingNames = ['Alice', 'Bob'];
+    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+
+    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const paymentSelect = screen.getByRole('combobox');
+
+    await user.type(nameInput, '  Alice  '); // with whitespace
+    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+
+    // Should show duplicate error (trims whitespace)
+    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
   });
 });

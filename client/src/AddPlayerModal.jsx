@@ -5,13 +5,14 @@ const PAID_OPTIONS = [
   { value: 'cash', label: 'Paid cash', paid: true },
 ];
 
-function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlayers = [] }) {
+function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlayers = [], existingNames = [] }) {
   const [playerName, setPlayerName] = useState('');
   const [phone, setPhone] = useState('');
   const [payment, setPayment] = useState('');
   const [touched, setTouched] = useState(false);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [duplicateError, setDuplicateError] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -21,6 +22,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       setTouched(false);
       setFilteredPlayers([]);
       setShowDropdown(false);
+      setDuplicateError(false);
     }
   }, [show]);
 
@@ -38,6 +40,15 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
     }
   }, [playerName, uploadedPlayers]);
 
+  // Check for duplicate names
+  useEffect(() => {
+    if (playerName.trim() && existingNames.length > 0) {
+      setDuplicateError(existingNames.some(name => name.toLowerCase() === playerName.trim().toLowerCase()));
+    } else {
+      setDuplicateError(false);
+    }
+  }, [playerName, existingNames]);
+
   // Notify parent of paid status
   useEffect(() => {
     if (onPaidChange) {
@@ -48,8 +59,9 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
   const handleConfirm = () => {
     setTouched(true);
-    if (playerName.trim() && payment) {
-      onConfirm({ name: playerName.trim(), phone: phone.trim(), payment });
+    const trimmedName = playerName.trim();
+    if (trimmedName && payment && !duplicateError) {
+      onConfirm({ name: trimmedName, phone: phone.trim(), payment });
     }
   };
 
@@ -111,7 +123,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
           style={{
             width: '100%',
             padding: '10px 12px',
-            border: touched && !playerName.trim() ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
+            border: touched && !playerName.trim() || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
             borderRadius: 8,
             fontSize: 16,
             outline: 'none',
@@ -120,6 +132,9 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         />
         {touched && !playerName.trim() && (
           <span style={{ color: '#e74c3c', fontSize: 13 }}>Name is required</span>
+        )}
+        {duplicateError && (
+          <span style={{ color: '#e74c3c', fontSize: 13 }}>A player with this name already exists</span>
         )}
 
         {/* Player dropdown */}
@@ -238,8 +253,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             fontWeight: 600,
             fontSize: 16,
             cursor: 'pointer',
-            opacity: playerName.trim() && payment ? 1 : 0.7,
-            boxShadow: touched && !(playerName.trim() && payment) ? '0 0 0 2px #e74c3c55' : 'none',
+            opacity: playerName.trim() && payment && !duplicateError ? 1 : 0.7,
+            boxShadow: touched && !(playerName.trim() && payment && !duplicateError) ? '0 0 0 2px #e74c3c55' : 'none',
             transition: 'box-shadow 0.2s'
           }}
         >Confirm</button>

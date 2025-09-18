@@ -183,19 +183,10 @@ function App() {
 
   // Confirm from AddPlayerModal
   const handleConfirmAdd = ({ name, phone, payment }) => {
-    // Ensure unique name
-    let baseName = name.trim();
-    let newName = baseName;
-    let count = 2;
-    const existingNames = sessionPlayers.map(p => p.name);
-    while (existingNames.includes(newName)) {
-      newName = `${baseName} (${count})`;
-      count++;
-    }
     const paid = payment === 'online' || payment === 'cash';
     setSessionPlayers([
       ...sessionPlayers,
-      { name: newName, phone: phone || '', paid, payment, addedAt: Date.now() }
+      { name: name.trim(), phone: phone || '', paid, payment, addedAt: Date.now() }
     ]);
     setShowAddPlayerModal(false);
   };
@@ -251,6 +242,7 @@ function App() {
       onConfirm={handleConfirmAdd}
       onCancel={handleCancelAdd}
       uploadedPlayers={uploadedPlayers}
+      existingNames={sessionPlayers.map(p => p.name)}
     />
   );
   if (typeof window !== 'undefined') {
