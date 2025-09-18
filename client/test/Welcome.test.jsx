@@ -20,14 +20,14 @@ describe('Welcome Component', () => {
   test('renders both action buttons', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
-    expect(screen.getByText('Add Players')).toBeInTheDocument();
+    expect(screen.getByText('Upload Players')).toBeInTheDocument();
     expect(screen.getByText('Add Players Manually')).toBeInTheDocument();
   });
 
   test('buttons have correct CSS classes', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
-    const primaryButton = screen.getByText('Add Players');
+    const primaryButton = screen.getByText('Upload Players');
     const secondaryButton = screen.getByText('Add Players Manually');
 
     expect(primaryButton).toHaveClass('welcome-btn', 'primary');
@@ -45,14 +45,14 @@ describe('Welcome Component', () => {
   test('Add Players button click does nothing', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
-    const addPlayersButton = screen.getByText('Add Players');
+    const addPlayersButton = screen.getByText('Upload Players');
     fireEvent.click(addPlayersButton);
 
     // Verify that onStartManually was NOT called
     expect(mockOnStartManually).not.toHaveBeenCalled();
   });
 
-  test('Add Players Manually button calls onStartManually prop', () => {
+  test('Upload Players Manually button calls onStartManually prop', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
     const addPlayersManuallyButton = screen.getByText('Add Players Manually');
@@ -71,14 +71,14 @@ describe('Welcome Component', () => {
     // Check for buttons
     const buttons = screen.getAllByRole('button');
     expect(buttons).toHaveLength(2);
-    expect(buttons[0]).toHaveTextContent('Add Players');
+    expect(buttons[0]).toHaveTextContent('Upload Players');
     expect(buttons[1]).toHaveTextContent('Add Players Manually');
   });
 
   test('buttons are clickable and have proper event handlers', () => {
     render(<Welcome onStartManually={mockOnStartManually} />);
 
-    const primaryButton = screen.getByText('Add Players');
+    const primaryButton = screen.getByText('Upload Players');
     const secondaryButton = screen.getByText('Add Players Manually');
 
     // Both buttons should be enabled

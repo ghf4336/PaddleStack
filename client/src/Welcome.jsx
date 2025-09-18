@@ -44,7 +44,7 @@ function Welcome({ onStartManually, onPlayersUploaded }) {
             className="welcome-btn primary"
             onClick={handleAddPlayersClick}
           >
-            Add Players
+            Upload Players
           </button>
           <button 
             className="welcome-btn secondary"

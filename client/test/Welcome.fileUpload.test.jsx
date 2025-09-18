@@ -17,7 +17,7 @@ describe('Welcome component file upload', () => {
     fileUpload.uploadAndParsePlayerFile = jest.fn();
   });
 
-  test('should render Add Players button', () => {
+  test('should render upload Players button', () => {
     render(
       <Welcome 
         onStartManually={mockOnStartManually} 
@@ -25,7 +25,7 @@ describe('Welcome component file upload', () => {
       />
     );
 
-    expect(screen.getByText('Add Players')).toBeInTheDocument();
+    expect(screen.getByText('Upload Players')).toBeInTheDocument();
   });
 
   test('should trigger file input when Add Players button is clicked', () => {
@@ -37,12 +37,12 @@ describe('Welcome component file upload', () => {
     );
 
     const fileInput = document.querySelector('input[type="file"]');
-    const addPlayersButton = screen.getByText('Add Players');
+    const uploadPlayersButton = screen.getByText('Upload Players');
 
     // Mock the click method
     jest.spyOn(fileInput, 'click').mockImplementation(() => {});
 
-    fireEvent.click(addPlayersButton);
+    fireEvent.click(uploadPlayersButton);
 
     expect(fileInput.click).toHaveBeenCalled();
   });
