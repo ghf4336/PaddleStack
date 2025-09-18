@@ -3,6 +3,7 @@ import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { useSensor, useSensors, PointerSensor, TouchSensor } from '@dnd-kit/core';
 import { swapPlayers, parseDragId, reorderCourts } from './utils/dragDrop';
 import EndSessionModal from './EndSessionModal';
+import Welcome from './Welcome';
 import './App.css';
 import PlayerListSection from './PlayerListSection';
 import GeneralQueueSection from './GeneralQueueSection';
@@ -14,6 +15,9 @@ import CourtsPanel from './CourtsPanel';
 import { testPlayers } from './testPlayers';
 
 function App() {
+  // Welcome page state
+  const [showWelcome, setShowWelcome] = useState(true);
+  
   // Toast state
   const [toast, setToast] = useState(null);
   const toastTimeout = useRef();
@@ -35,7 +39,12 @@ function App() {
     setPlayerToAction(null);
     setToast(null);
     setShowEndSessionModal(false);
+    setShowWelcome(true); // Return to welcome page
   }
+
+  const handleStartManually = () => {
+    setShowWelcome(false);
+  };
 
   const handleConfirmRemoveCourt = () => {
     setCourts(prevCourts => {
@@ -339,6 +348,11 @@ function App() {
     useSensor(PointerSensor),
     useSensor(TouchSensor)
   );
+
+  // Show welcome page if showWelcome is true
+  if (showWelcome) {
+    return <Welcome onStartManually={handleStartManually} />;
+  }
 
   return (
     <DndContext 

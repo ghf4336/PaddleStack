@@ -2,9 +2,19 @@ import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import App from '../src/App.jsx';
 import '@testing-library/jest-dom';
+
+// Helper to bypass the welcome page if present
+function bypassWelcome() {
+  const manualBtn = screen.queryByText('Add Players Manually');
+  if (manualBtn) {
+    fireEvent.click(manualBtn);
+  }
+}
+
 describe('PaddleStack Player Phone Number', () => {
   test('adds a player with a phone number', async () => {
     render(<App />);
+    bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'PhoneUser' } });
     fireEvent.change(screen.getByPlaceholderText('0221111111'), { target: { value: '123-456-7890' } });
@@ -27,6 +37,7 @@ describe('PaddleStack Player Phone Number', () => {
 
   test('adds a player without a phone number', async () => {
     render(<App />);
+    bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'NoPhoneUser' } });
     // Leave phone blank
@@ -40,6 +51,7 @@ describe('PaddleStack Player Phone Number', () => {
   test('phone number is stored in sessionPlayers state', async () => {
     // This test will check the phone number is stored by adding a player and then triggering a test data load to inspect the state
     render(<App />);
+    bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'StatePhoneUser' } });
     fireEvent.change(screen.getByPlaceholderText('0221111111'), { target: { value: '999-888-7777' } });
@@ -60,6 +72,7 @@ describe('PaddleStack Player Phone Number', () => {
 describe('PaddleStack App', () => {
   test('completing a game only moves that court\'s players to the back of the queue', () => {
     render(<App />);
+    bypassWelcome();
     // Add 6 players: Alice, Bob, Charlie, Diana, Eve, Frank
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -100,6 +113,7 @@ describe('PaddleStack App', () => {
   });
   test('renders session player list and add player modal', () => {
     render(<App />);
+    bypassWelcome();
     expect(screen.getAllByText(/Players \(/).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Test Player' } });
@@ -108,6 +122,7 @@ describe('PaddleStack App', () => {
 
   test('adds a player and shows in session list', () => {
     render(<App />);
+    bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Alice' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
@@ -119,6 +134,7 @@ describe('PaddleStack App', () => {
 
   test('removes a player from session list', async () => {
     render(<App />);
+    bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Bob' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
@@ -136,6 +152,7 @@ describe('PaddleStack App', () => {
 
   test('manually adding players populates session players', () => {
     render(<App />);
+    bypassWelcome();
     // Add Alice
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Alice' } });
@@ -152,6 +169,7 @@ describe('PaddleStack App', () => {
 
   test('add court button adds a court panel', () => {
     render(<App />);
+    bypassWelcome();
     // Add 4 players to fill the court
     ['Alice', 'Bob', 'Charlie', 'Diana'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -165,6 +183,7 @@ describe('PaddleStack App', () => {
 
   test('court only fills when 4 players are available', () => {
     render(<App />);
+    bypassWelcome();
     // Add 3 players
     ['A', 'B', 'C'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -188,6 +207,7 @@ describe('PaddleStack App', () => {
 
   test('next up always shows up to 4 unassigned players', () => {
     render(<App />);
+    bypassWelcome();
     // Add 6 players
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -216,6 +236,7 @@ describe('PaddleStack App', () => {
 
   test('removing a court returns its players to the end of the queue and removes the court', () => {
     render(<App />);
+    bypassWelcome();
     // Add 6 players manually
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -264,6 +285,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
 
   it('adds a player with paid status', async () => {
     render(<App />);
+    bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'TestPlayer' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
@@ -275,6 +297,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
 
   it('deletes a player not in a court', async () => {
     render(<App />);
+    bypassWelcome();
     // Add player
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'DeleteMe' } });
@@ -291,6 +314,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
 
   it('pauses and enables a player, sending them to the back of the queue', async () => {
     render(<App />);
+    bypassWelcome();
     // Add two players
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'P1' } });
@@ -313,6 +337,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
 
   it('shows remove button disabled if player is in a court', async () => {
     render(<App />);
+    bypassWelcome();
     // Add 4 players
     for (let i = 1; i <= 4; i++) {
       fireEvent.click(screen.getByText('Add Player'));
@@ -331,6 +356,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
 describe('App logic functions', () => {
   test('handleAddCourt does not add more than 8 courts', () => {
     const { getByText } = render(<App />);
+    bypassWelcome();
     // Add 8 courts
     for (let i = 0; i < 8; i++) {
       fireEvent.click(getByText('+ Add Court'));
@@ -343,6 +369,7 @@ describe('App logic functions', () => {
 
   test('handleRemoveCourt and handleConfirmRemoveCourt return players to queue and renumber courts', async () => {
     render(<App />);
+    bypassWelcome();
     // Add 4 players and a court
     ['A', 'B', 'C', 'D'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -367,6 +394,7 @@ describe('App logic functions', () => {
 
   test('handleCompleteGame moves players to end of queue and clears court', () => {
     render(<App />);
+    bypassWelcome();
     // Add 8 players and 2 courts
     ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
@@ -389,6 +417,7 @@ describe('App logic functions', () => {
 
   test('handleEnablePausedPlayer moves paused player to end of queue and re-enables', () => {
     render(<App />);
+    bypassWelcome();
     // Add two players
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P1' } });
@@ -411,6 +440,7 @@ describe('App logic functions', () => {
 
   test('handleEndSession clears all state', () => {
     render(<App />);
+    bypassWelcome();
     // Add a player and a court
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'ClearMe' } });
@@ -430,6 +460,7 @@ describe('App logic functions', () => {
 
   test('paused players should not be assigned to courts when game is completed', async () => {
     render(<App />);
+    bypassWelcome();
     
     // Add 6 players
     for (let i = 1; i <= 6; i++) {
@@ -473,6 +504,7 @@ describe('App logic functions', () => {
 
   test('no player duplication when completing game with paused players', async () => {
     render(<App />);
+    bypassWelcome();
     
     // Add exactly 5 players as described in the user's scenario
     for (let i = 1; i <= 5; i++) {
@@ -523,6 +555,7 @@ describe('App logic functions', () => {
 
   test('no player duplication when drag and drop with paused players', async () => {
     render(<App />);
+    bypassWelcome();
     
     // Add 6 players as described in the user's scenario
     for (let i = 1; i <= 6; i++) {
