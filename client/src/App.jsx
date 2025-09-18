@@ -397,6 +397,7 @@ function App() {
           onConfirm={handleEndSession}
           sessionPlayers={sessionPlayers}
           deletedPlayers={deletedPlayers}
+          uploadedPlayers={uploadedPlayers}
         />
         <Toast message={toast} />
 
