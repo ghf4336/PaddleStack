@@ -17,7 +17,7 @@ describe('PaddleStack Player Phone Number', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'PhoneUser' } });
-    fireEvent.change(screen.getByPlaceholderText('0221111111'), { target: { value: '123-456-7890' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: '123-456-7890' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
@@ -54,7 +54,7 @@ describe('PaddleStack Player Phone Number', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'StatePhoneUser' } });
-    fireEvent.change(screen.getByPlaceholderText('0221111111'), { target: { value: '999-888-7777' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: '999-888-7777' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'cash' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add a second player to force a re-render

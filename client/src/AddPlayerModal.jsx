@@ -194,7 +194,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         </label>
         <input
           type="tel"
-          placeholder="0221111111"
+          placeholder="Enter phone number"
           value={phone}
           onChange={e => setPhone(e.target.value)}
           style={{

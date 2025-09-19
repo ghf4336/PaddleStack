@@ -94,7 +94,7 @@ describe('AddPlayerModal player lookup features', () => {
 
     // Check that all fields are filled
     expect(nameInput).toHaveValue('Alice Johnson');
-    expect(screen.getByPlaceholderText('0221111111')).toHaveValue('555-1111');
+    expect(screen.getByPlaceholderText('Enter phone number')).toHaveValue('555-1111');
     
     // Check payment selection using the ID
     const paymentSelect = screen.getByRole('combobox');
@@ -120,7 +120,7 @@ describe('AddPlayerModal player lookup features', () => {
 
     // Check that the values were filled correctly (main functionality)
     expect(nameInput).toHaveValue('Alice Johnson');
-    expect(screen.getByPlaceholderText('0221111111')).toHaveValue('555-1111');
+    expect(screen.getByPlaceholderText('Enter phone number')).toHaveValue('555-1111');
     
     // Check select value by accessing the select element directly
     const paymentSelect = screen.getByRole('combobox');
@@ -243,7 +243,7 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.click(screen.getByText('Alice Johnson'));
 
     expect(nameInput).toHaveValue('Alice Johnson');
-    expect(screen.getByPlaceholderText('0221111111')).toHaveValue('555-1111');
+    expect(screen.getByPlaceholderText('Enter phone number')).toHaveValue('555-1111');
     
     // Check that the select remains empty (payment was empty string)
     const paymentSelect = screen.getByRole('combobox');
