@@ -33,7 +33,12 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         player.name.toLowerCase().includes(playerName.toLowerCase())
       );
       setFilteredPlayers(filtered);
-      setShowDropdown(filtered.length > 0);
+      // Don't show dropdown if input exactly matches a single player (prevents flash after selection)
+      if (filtered.length === 1 && filtered[0].name.toLowerCase() === playerName.toLowerCase()) {
+        setShowDropdown(false);
+      } else {
+        setShowDropdown(filtered.length > 0);
+      }
     } else {
       setFilteredPlayers([]);
       setShowDropdown(false);
