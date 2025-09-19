@@ -56,21 +56,21 @@ describe('AddPlayerModal player lookup features', () => {
     });
   });
 
-  test('should perform case-insensitive matching', async () => {
+  test('should show dropdown for exact name matches', async () => {
     const uploadedPlayers = [
       { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true },
-      { name: 'bob smith', payment: 'cash', phone: '555-2222', paid: true }
+      { name: 'Bob Smith', payment: 'cash', phone: '555-2222', paid: true }
     ];
 
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
-    await user.type(nameInput, 'BOB');
+    await user.type(nameInput, 'Alice Johnson');
 
     await waitFor(() => {
-      expect(screen.getByText('bob smith')).toBeInTheDocument();
-      expect(screen.queryByText('Alice Johnson')).not.toBeInTheDocument();
+      expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
+      expect(screen.queryByText('Bob Smith')).not.toBeInTheDocument();
     });
   });
 

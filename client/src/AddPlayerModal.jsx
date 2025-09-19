@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const PAID_OPTIONS = [
   { value: 'online', label: 'Paid online', paid: true },
@@ -13,6 +13,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
+  const justSelectedRef = useRef(false);
 
   useEffect(() => {
     if (show) {
@@ -23,6 +24,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       setFilteredPlayers([]);
       setShowDropdown(false);
       setDuplicateError(false);
+      justSelectedRef.current = false;
     }
   }, [show]);
 
@@ -33,16 +35,16 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         player.name.toLowerCase().includes(playerName.toLowerCase())
       );
       setFilteredPlayers(filtered);
-      // Don't show dropdown if input exactly matches a single player (prevents flash after selection)
-      if (filtered.length === 1 && filtered[0].name.toLowerCase() === playerName.toLowerCase()) {
-        setShowDropdown(false);
-      } else {
+      // Don't show dropdown immediately after selection to prevent flash
+      if (!justSelectedRef.current) {
         setShowDropdown(filtered.length > 0);
       }
     } else {
       setFilteredPlayers([]);
       setShowDropdown(false);
     }
+    // Clear the justSelected flag after processing
+    justSelectedRef.current = false;
   }, [playerName, uploadedPlayers]);
 
   // Check for duplicate names
@@ -71,6 +73,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   };
 
   const handlePlayerSelect = (player) => {
+    justSelectedRef.current = true;
     setPlayerName(player.name);
     setPhone(player.phone || '');
     setPayment(player.payment || '');
