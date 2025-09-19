@@ -14,6 +14,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   const [showDropdown, setShowDropdown] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
   const justSelectedRef = useRef(false);
+  const dropdownInteractingRef = useRef(false);
 
   useEffect(() => {
     if (show) {
@@ -85,10 +86,6 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   };
 
   const handleNameBlur = (e) => {
-    // Don't hide dropdown if clicking on it
-    if (e.relatedTarget && e.relatedTarget.closest('.player-dropdown')) {
-      return;
-    }
     // Delay hiding dropdown to allow for click selection
     setTimeout(() => setShowDropdown(false), 150);
   };
@@ -151,19 +148,23 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
         {/* Player dropdown */}
         {showDropdown && filteredPlayers.length > 0 && (
-          <div className="player-dropdown" style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            background: '#fff',
-            border: '1px solid #d1d5db',
-            borderRadius: 8,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            zIndex: 1000,
-            maxHeight: 200,
-            overflowY: 'auto'
-          }}>
+          <div
+            className="player-dropdown"
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              background: '#fff',
+              border: '1px solid #d1d5db',
+              borderRadius: 8,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              zIndex: 1000,
+              maxHeight: 200,
+              overflowY: 'auto'
+            }}
+            onMouseDown={e => e.preventDefault()}
+          >
             {filteredPlayers.map((player, index) => (
               <div
                 key={index}
