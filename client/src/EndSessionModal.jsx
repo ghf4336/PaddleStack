@@ -1,7 +1,7 @@
 import React from 'react';
 import { generatePlayerDownloadData } from './utils/downloadUtils.js';
 
-function EndSessionModal({ open, onClose, onConfirm, sessionPlayers, deletedPlayers = [], uploadedPlayers = [] }) {
+function EndSessionModal({ open, onClose, onConfirm, sessionPlayers, deletedPlayers = [], uploadedPlayers = [], onLoadTestData }) {
   const [pin, setPin] = React.useState("");
   const [error, setError] = React.useState("");
   const [showDownload, setShowDownload] = React.useState(false);
@@ -47,7 +47,26 @@ function EndSessionModal({ open, onClose, onConfirm, sessionPlayers, deletedPlay
   return (
     <div className="modal-overlay">
       <div className="modal end-session-modal">
-        <h2>End Session?</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+          <h2 style={{ margin: 0 }}>End Session?</h2>
+          {onLoadTestData && (
+            <button
+              onClick={onLoadTestData}
+              style={{
+                background: '#f3f4f6',
+                color: '#374151',
+                border: '1px solid #d1d5db',
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              Load Test Data
+            </button>
+          )}
+        </div>
         <p>This will stop all games and clear all players, courts, and queue data. This action cannot be undone.</p>
         {!showDownload ? (
           <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>

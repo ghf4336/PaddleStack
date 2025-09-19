@@ -5,7 +5,6 @@ function PlayerListSection({
   courts,
   pausedPlayers,
   handleAddPlayer,
-  handleLoadTestData,
   handleEnablePausedPlayer,
   handleRemovePlayer,
 }) {
@@ -43,9 +42,6 @@ function PlayerListSection({
           Add Player
         </button>
       </div>
-      <button className="load-test-btn" style={{ margin: '8px 0', width: '100%' }} onClick={handleLoadTestData}>
-        Load Test Data
-      </button>
       {/* AddPlayerModal will be rendered here if present */}
       {/** @ts-ignore: AddPlayerModal is injected as a prop by App.jsx for in-panel rendering */}
       {typeof window !== 'undefined' && window.__AddPlayerModalInSidebar}

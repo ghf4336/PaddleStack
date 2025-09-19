@@ -369,7 +369,6 @@ function App() {
             courts={courts}
             pausedPlayers={pausedPlayers}
             handleAddPlayer={handleAddPlayer}
-            handleLoadTestData={handleLoadTestData}
             handleEnablePausedPlayer={handleEnablePausedPlayer}
             handleRemovePlayer={handleRemovePlayer}
           />
@@ -398,6 +397,7 @@ function App() {
           sessionPlayers={sessionPlayers}
           deletedPlayers={deletedPlayers}
           uploadedPlayers={uploadedPlayers}
+          onLoadTestData={handleLoadTestData}
         />
         <Toast message={toast} />
 
