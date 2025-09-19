@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const PAID_OPTIONS = [
   { value: 'online', label: 'Paid online', paid: true },
@@ -13,9 +13,17 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const dropdownTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (show) {
+      // Clear any pending timeout
+      if (dropdownTimeoutRef.current) {
+        clearTimeout(dropdownTimeoutRef.current);
+        dropdownTimeoutRef.current = null;
+      }
+      
       setPlayerName('');
       setPhone('');
       setPayment('');
@@ -23,27 +31,38 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       setFilteredPlayers([]);
       setShowDropdown(false);
       setDuplicateError(false);
+      setIsSelecting(false);
     }
   }, [show]);
 
   // Filter uploaded players based on name input
   useEffect(() => {
+    // Clear any existing timeout
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+
     if (playerName.trim() && uploadedPlayers.length > 0) {
       const filtered = uploadedPlayers.filter(player =>
         player.name.toLowerCase().includes(playerName.toLowerCase())
       );
       setFilteredPlayers(filtered);
-      // Don't show dropdown if input exactly matches a single player (prevents flash after selection)
-      if (filtered.length === 1 && filtered[0].name.toLowerCase() === playerName.toLowerCase()) {
-        setShowDropdown(false);
+      // Add small delay to prevent flash with browser autocomplete
+      // Don't show dropdown if we're in the middle of selecting a player
+      if (filtered.length > 0 && !isSelecting) {
+        dropdownTimeoutRef.current = setTimeout(() => {
+          setShowDropdown(true);
+          dropdownTimeoutRef.current = null;
+        }, 50);
       } else {
-        setShowDropdown(filtered.length > 0);
+        setShowDropdown(false);
       }
     } else {
       setFilteredPlayers([]);
       setShowDropdown(false);
     }
-  }, [playerName, uploadedPlayers]);
+  }, [playerName, uploadedPlayers, isSelecting]);
 
   // Check for duplicate names
   useEffect(() => {
@@ -71,10 +90,19 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   };
 
   const handlePlayerSelect = (player) => {
+    // Clear any pending dropdown timeout
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    
+    setIsSelecting(true);
     setPlayerName(player.name);
     setPhone(player.phone || '');
     setPayment(player.payment || '');
     setShowDropdown(false);
+    // Reset the selecting flag after a short delay
+    setTimeout(() => setIsSelecting(false), 100);
   };
 
   const handleNameChange = (e) => {
@@ -114,17 +142,17 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         <label style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
           <span style={{ marginRight: 4 }}>👤</span> Player Name *
         </label>
+        {/* Hidden input to trick browser autocomplete */}
+        <input type="text" style={{ display: 'none' }} />
         <input
           type="text"
           placeholder="Enter player name"
           value={playerName}
           onChange={handleNameChange}
           onBlur={handleNameBlur}
-          onFocus={() => {
-            if (filteredPlayers.length > 0) {
-              setShowDropdown(true);
-            }
-          }}
+          autoComplete="new-password"
+          data-form-type="other"
+          spellCheck="false"
           style={{
             width: '100%',
             padding: '10px 12px',
@@ -153,7 +181,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             border: '1px solid #d1d5db',
             borderRadius: 8,
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            zIndex: 1000,
+            zIndex: 9999,
             maxHeight: 200,
             overflowY: 'auto'
           }}>
