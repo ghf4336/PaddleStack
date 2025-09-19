@@ -52,7 +52,14 @@ function PlayerListSection({
             const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
             const isPaused = pausedPlayers.some(pp => pp.name === p.name);
             return (
-              <div className={`session-player${isPaused ? ' paused' : ''}`} key={p.name} style={isPaused ? { opacity: 0.5, background: '#f6f6fa' } : {}}>
+              <div 
+                className={`session-player${isPaused ? ' paused' : ''}${i === 0 ? ' first-player' : ''}`} 
+                key={p.name} 
+                style={{
+                  ...(isPaused ? { opacity: 0.5, background: '#f6f6fa' } : {}),
+                  ...(i === 0 ? { marginTop: '6px' } : {})
+                }}
+              >
                 <span>
                   {p.name}
                   {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}
