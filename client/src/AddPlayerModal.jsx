@@ -110,13 +110,22 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       minHeight: 120
     }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-        <span style={{ fontSize: 22, marginRight: 8 }}>✚</span>
+        <span style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center' }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4v16m8-8H4" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
         <h3 style={{ margin: 0, fontWeight: 600, fontSize: 20 }}>Add New Player</h3>
         <button onClick={onCancel} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Close">×</button>
       </div>
       <div style={{ marginBottom: 12, position: 'relative' }}>
         <label style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
-          <span style={{ marginRight: 4 }}>👤</span> Player Name *
+          <span style={{ marginRight: 4, display: 'inline-flex', alignItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="7" r="4" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span> Player Name *
         </label>
         <input
           type="text"
@@ -191,7 +200,11 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
-          <span style={{ marginRight: 4 }}>📞</span> Phone Number 
+          <span style={{ marginRight: 4, display: 'inline-flex', alignItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span> Phone Number 
         </label>
         <input
           type="tel"
@@ -212,7 +225,12 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       </div>
       <div style={{ marginBottom: 18 }}>
         <label htmlFor="payment-method-select" style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
-          <span style={{ marginRight: 4 }}>💰</span> Payment Method *
+          <span style={{ marginRight: 4, display: 'inline-flex', alignItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="1" y1="10" x2="23" y2="10" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span> Payment Method *
         </label>
         <select
           id="payment-method-select"
@@ -258,7 +276,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
           onClick={handleConfirm}
           className="confirm-btn"
           style={{
-            background: '#11121a',
+            background: '#22c55e',
             color: '#fff',
             border: 'none',
             borderRadius: 8,
