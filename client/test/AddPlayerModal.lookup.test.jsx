@@ -22,7 +22,7 @@ describe('AddPlayerModal player lookup features', () => {
   test('should render without uploaded players', () => {
     render(<AddPlayerModal {...defaultProps} />);
 
-    expect(screen.getByPlaceholderText('Enter player name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter first and last name')).toBeInTheDocument();
     expect(screen.getByText('Add New Player')).toBeInTheDocument();
   });
 
@@ -30,7 +30,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice');
 
     // Should not show any dropdown
@@ -41,7 +41,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Ali');
 
     await waitFor(() => {
@@ -55,7 +55,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice Johnson');
 
     await waitFor(() => {
@@ -68,7 +68,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -91,7 +91,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -113,7 +113,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     
     // Type and then blur
     await user.type(nameInput, 'Alice');
@@ -135,7 +135,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -157,7 +157,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'A');
 
     await waitFor(() => {
@@ -179,7 +179,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.WITH_MISSING_PHONE} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -194,7 +194,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.WITH_MISSING_PAYMENT} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -215,7 +215,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     
     // Type and clear
     await user.type(nameInput, 'A');
@@ -235,7 +235,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     await user.type(nameInput, 'Player');
 
     await waitFor(() => {
@@ -253,7 +253,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
@@ -280,7 +280,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
@@ -305,7 +305,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
@@ -342,7 +342,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, 'alice'); // lowercase
@@ -356,7 +356,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter player name');
+    const nameInput = screen.getByPlaceholderText('Enter first and last name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, '  Alice  '); // with whitespace

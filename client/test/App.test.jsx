@@ -17,7 +17,7 @@ describe('PaddleStack Player Phone Number', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.PHONE_USER } });
     fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: TEST_PHONE_NUMBERS.PHONE_USER } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
@@ -27,7 +27,7 @@ describe('PaddleStack Player Phone Number', () => {
     // Phone number is not shown in UI, but we can check the internal state by adding another player and checking the session list
     // (simulate by adding a second player and checking the session list order)
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.SECOND_USER } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.SECOND_USER } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // The session list should contain both players
@@ -40,7 +40,7 @@ describe('PaddleStack Player Phone Number', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.NO_PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.NO_PHONE_USER } });
     // Leave phone blank
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
@@ -54,13 +54,13 @@ describe('PaddleStack Player Phone Number', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.STATE_PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.STATE_PHONE_USER } });
     fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: TEST_PHONE_NUMBERS.STATE_PHONE_USER } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add a second player to force a re-render
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'OtherUser' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'OtherUser' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // There is no direct UI for phone, but we can check the DOM for the player name and ensure no error
@@ -77,7 +77,7 @@ describe('PaddleStack App', () => {
     // Add 6 players: Alice, Bob, Charlie, Diana, Eve, Frank
     [TEST_PLAYER_NAMES.ALICE, TEST_PLAYER_NAMES.BOB, TEST_PLAYER_NAMES.CHARLIE, TEST_PLAYER_NAMES.DIANA, TEST_PLAYER_NAMES.EVE, TEST_PLAYER_NAMES.FRANK].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -87,7 +87,7 @@ describe('PaddleStack App', () => {
     // Add two more players to fill Court 2
     [TEST_PLAYER_NAMES.GINA, TEST_PLAYER_NAMES.HENRY].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -117,7 +117,7 @@ describe('PaddleStack App', () => {
     bypassWelcome();
     expect(screen.getAllByText(/Players \(/).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Test Player' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'Test Player' } });
     expect(screen.getByText(/Add New Player/i)).toBeInTheDocument();
   });
 
@@ -125,7 +125,7 @@ describe('PaddleStack App', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Alice appears in both session list and next up, so use getAllByText
@@ -137,7 +137,7 @@ describe('PaddleStack App', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.BOB } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.BOB } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Use correct button title
@@ -156,12 +156,12 @@ describe('PaddleStack App', () => {
     bypassWelcome();
     // Add Alice
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add Frank
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.FRANK } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: TEST_PLAYER_NAMES.FRANK } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     expect(screen.getAllByText(TEST_PLAYER_NAMES.ALICE).length).toBeGreaterThan(0);
@@ -174,7 +174,7 @@ describe('PaddleStack App', () => {
     // Add 4 players to fill the court
     [TEST_PLAYER_NAMES.ALICE, TEST_PLAYER_NAMES.BOB, TEST_PLAYER_NAMES.CHARLIE, TEST_PLAYER_NAMES.DIANA].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -188,7 +188,7 @@ describe('PaddleStack App', () => {
     // Add 3 players
     ['A', 'B', 'C'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -196,7 +196,7 @@ describe('PaddleStack App', () => {
     expect(screen.getAllByText('Waiting for players...').length).toBeGreaterThan(0);
     // Add a 4th player
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'D' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'D' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     expect(screen.queryAllByText('Waiting for players...').length).toBe(0);
@@ -212,7 +212,7 @@ describe('PaddleStack App', () => {
     // Add 6 players
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -224,7 +224,7 @@ describe('PaddleStack App', () => {
     // Add 2 more players
     ['Gina', 'Henry'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -241,7 +241,7 @@ describe('PaddleStack App', () => {
     // Add 6 players manually
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -288,7 +288,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'TestPlayer' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'TestPlayer' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // There may be multiple TestPlayer elements, just check at least one exists
@@ -301,7 +301,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     bypassWelcome();
     // Add player
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'DeleteMe' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'DeleteMe' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Remove button (×) should be enabled
@@ -318,11 +318,11 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     bypassWelcome();
     // Add two players
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'P1' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'P1' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'P2' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: 'P2' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Pause P1
@@ -342,7 +342,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // Add 4 players
     for (let i = 1; i <= 4; i++) {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: `CourtP${i}` } });
+      fireEvent.change(screen.getByPlaceholderText("Enter first and last name"), { target: { value: `CourtP${i}` } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }
@@ -374,7 +374,7 @@ describe('App logic functions', () => {
     // Add 4 players and a court
     ['A', 'B', 'C', 'D'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -399,7 +399,7 @@ describe('App logic functions', () => {
     // Add 8 players and 2 courts
     ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: name } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -421,11 +421,11 @@ describe('App logic functions', () => {
     bypassWelcome();
     // Add two players
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P1' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: 'P1' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'P2' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: 'P2' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Pause P1
@@ -444,7 +444,7 @@ describe('App logic functions', () => {
     bypassWelcome();
     // Add a player and a court
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: 'ClearMe' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: 'ClearMe' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.click(screen.getByText('+ Add Court'));
@@ -466,7 +466,7 @@ describe('App logic functions', () => {
     // Add 6 players
     for (let i = 1; i <= 6; i++) {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: `Player${i}` } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }
@@ -510,7 +510,7 @@ describe('App logic functions', () => {
     // Add exactly 5 players as described in the user's scenario
     for (let i = 1; i <= 5; i++) {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: `Player${i}` } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }
@@ -561,7 +561,7 @@ describe('App logic functions', () => {
     // Add 6 players as described in the user's scenario
     for (let i = 1; i <= 6; i++) {
       fireEvent.click(screen.getByText('Add Player'));
-      fireEvent.change(screen.getByPlaceholderText('Enter player name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByPlaceholderText('Enter first and last name'), { target: { value: `Player${i}` } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }

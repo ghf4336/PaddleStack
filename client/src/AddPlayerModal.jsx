@@ -135,11 +135,11 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <circle cx="12" cy="7" r="4" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </span> Player Name *
+          </span> Player Full Name *
         </label>
         <input
           type="text"
-          placeholder="Enter player name"
+          placeholder="Enter first and last name"
           value={playerName}
           onChange={handleNameChange}
           onBlur={handleNameBlur}
