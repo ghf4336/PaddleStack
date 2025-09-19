@@ -1,11 +1,12 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
 import CourtsPanel from '../src/CourtsPanel';
+import { TEST_PLAYER_NAMES } from '../src/testPlayers';
 
 describe('CourtsPanel', () => {
   const defaultProps = {
     courts: [
-      { number: 1, players: [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }] },
+      { number: 1, players: [{ name: TEST_PLAYER_NAMES.A }, { name: TEST_PLAYER_NAMES.B }, { name: TEST_PLAYER_NAMES.C }, { name: TEST_PLAYER_NAMES.D }] },
       { number: 2, players: [] }
     ],
     courtToRemove: null,
@@ -68,7 +69,7 @@ describe('CourtsPanel waiting status logic', () => {
 
   it('shows "Waiting" with blue background when court has less than 4 players', () => {
     const courts = [
-      { number: 1, players: [{ name: 'A' }, { name: 'B' }, { name: 'C' }] },
+      { number: 1, players: [{ name: TEST_PLAYER_NAMES.A }, { name: TEST_PLAYER_NAMES.B }, { name: TEST_PLAYER_NAMES.C }] },
     ];
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Waiting');

@@ -1,4 +1,5 @@
 import { swapPlayers, generateDragId, parseDragId, reorderCourts } from '../src/utils/dragDrop';
+import { TEST_PLAYER_NAMES } from '../src/testPlayers';
 
 describe('Drag and Drop Utilities', () => {
   test('generateDragId creates correct IDs', () => {
@@ -23,10 +24,10 @@ describe('Drag and Drop Utilities', () => {
 
   test('swapPlayers handles basic queue swaps', () => {
     const sessionPlayers = [
-      { name: 'Alice', paid: true },
-      { name: 'Bob', paid: true },
-      { name: 'Charlie', paid: true },
-      { name: 'Diana', paid: true }
+      { name: TEST_PLAYER_NAMES.ALICE, paid: true },
+      { name: TEST_PLAYER_NAMES.BOB, paid: true },
+      { name: TEST_PLAYER_NAMES.CHARLIE, paid: true },
+      { name: TEST_PLAYER_NAMES.DIANA, paid: true }
     ];
 
     const courts = [];
@@ -36,14 +37,14 @@ describe('Drag and Drop Utilities', () => {
 
     const result = swapPlayers(sessionPlayers, sourceData, targetData, courts);
 
-    expect(result.newSessionPlayers[0].name).toBe('Bob');
-    expect(result.newSessionPlayers[1].name).toBe('Alice');
+    expect(result.newSessionPlayers[0].name).toBe(TEST_PLAYER_NAMES.BOB);
+    expect(result.newSessionPlayers[1].name).toBe(TEST_PLAYER_NAMES.ALICE);
   });
 
   test('swapPlayers returns original arrays if source or target player is missing', () => {
     const sessionPlayers = [
-      { name: 'Alice', paid: true },
-      { name: 'Bob', paid: true }
+      { name: TEST_PLAYER_NAMES.ALICE, paid: true },
+      { name: TEST_PLAYER_NAMES.BOB, paid: true }
     ];
     const courts = [];
     // Invalid source index
@@ -70,14 +71,14 @@ describe('Drag and Drop Utilities', () => {
 
   test('reorderCourts moves court and renumbers', () => {
     const courts = [
-      { number: 1, players: ['A'] },
-      { number: 2, players: ['B'] },
-      { number: 3, players: ['C'] }
+      { number: 1, players: [TEST_PLAYER_NAMES.A] },
+      { number: 2, players: [TEST_PLAYER_NAMES.B] },
+      { number: 3, players: [TEST_PLAYER_NAMES.C] }
     ];
     const result = reorderCourts(courts, 0, 2);
     expect(result[0].number).toBe(1);
     expect(result[1].number).toBe(2);
     expect(result[2].number).toBe(3);
-    expect(result[2].players).toEqual(['A']);
+    expect(result[2].players).toEqual([TEST_PLAYER_NAMES.A]);
   });
 });

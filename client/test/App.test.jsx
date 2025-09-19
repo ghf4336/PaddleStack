@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import App from '../src/App.jsx';
 import '@testing-library/jest-dom';
+import { TEST_PLAYER_NAMES, TEST_PHONE_NUMBERS, TEST_PAYMENTS } from '../src/testPlayers';
 
 // Helper to bypass the welcome page if present
 function bypassWelcome() {
@@ -16,22 +17,22 @@ describe('PaddleStack Player Phone Number', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'PhoneUser' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: '123-456-7890' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: TEST_PHONE_NUMBERS.PHONE_USER } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
-    const playerEls = await screen.findAllByText('PhoneUser');
+    const playerEls = await screen.findAllByText(TEST_PLAYER_NAMES.PHONE_USER);
     expect(playerEls.length).toBeGreaterThan(0);
     // Phone number is not shown in UI, but we can check the internal state by adding another player and checking the session list
     // (simulate by adding a second player and checking the session list order)
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'SecondUser' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.SECOND_USER } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // The session list should contain both players
     const sessionPlayers = screen.getAllByText(/PhoneUser|SecondUser/).map(el => el.textContent);
-    expect(sessionPlayers).toEqual(expect.arrayContaining(['PhoneUser', 'SecondUser']));
+    expect(sessionPlayers).toEqual(expect.arrayContaining([TEST_PLAYER_NAMES.PHONE_USER, TEST_PLAYER_NAMES.SECOND_USER]));
     // (Optional) If you expose phone in UI, check for it here
   });
 
@@ -39,12 +40,12 @@ describe('PaddleStack Player Phone Number', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'NoPhoneUser' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.NO_PHONE_USER } });
     // Leave phone blank
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'cash' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
-    const playerEls = await screen.findAllByText('NoPhoneUser');
+    const playerEls = await screen.findAllByText(TEST_PLAYER_NAMES.NO_PHONE_USER);
     expect(playerEls.length).toBeGreaterThan(0);
   });
 
@@ -53,17 +54,17 @@ describe('PaddleStack Player Phone Number', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'StatePhoneUser' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: '999-888-7777' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'cash' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.STATE_PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: TEST_PHONE_NUMBERS.STATE_PHONE_USER } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add a second player to force a re-render
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'OtherUser' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // There is no direct UI for phone, but we can check the DOM for the player name and ensure no error
-    const playerEls = await screen.findAllByText('StatePhoneUser');
+    const playerEls = await screen.findAllByText(TEST_PLAYER_NAMES.STATE_PHONE_USER);
     expect(playerEls.length).toBeGreaterThan(0);
     // (If phone is ever shown in UI, add an assertion here)
   });
@@ -74,20 +75,20 @@ describe('PaddleStack App', () => {
     render(<App />);
     bypassWelcome();
     // Add 6 players: Alice, Bob, Charlie, Diana, Eve, Frank
-    ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
+    [TEST_PLAYER_NAMES.ALICE, TEST_PLAYER_NAMES.BOB, TEST_PLAYER_NAMES.CHARLIE, TEST_PLAYER_NAMES.DIANA, TEST_PLAYER_NAMES.EVE, TEST_PLAYER_NAMES.FRANK].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Add two courts
     fireEvent.click(screen.getByText('+ Add Court'));
     fireEvent.click(screen.getByText('+ Add Court'));
     // Add two more players to fill Court 2
-    ['Gina', 'Henry'].forEach(name => {
+    [TEST_PLAYER_NAMES.GINA, TEST_PLAYER_NAMES.HENRY].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Now Court 2 should be: Eve, Frank, Gina, Henry
@@ -124,11 +125,11 @@ describe('PaddleStack App', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Alice' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Alice appears in both session list and next up, so use getAllByText
-    const aliceEls = screen.getAllByText('Alice');
+    const aliceEls = screen.getAllByText(TEST_PLAYER_NAMES.ALICE);
     expect(aliceEls.length).toBeGreaterThan(0);
   });
 
@@ -136,8 +137,8 @@ describe('PaddleStack App', () => {
     render(<App />);
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Bob' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.BOB } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Use correct button title
     const removeBtn = screen.getByTitle('Remove or pause player');
@@ -146,7 +147,7 @@ describe('PaddleStack App', () => {
     fireEvent.click(screen.getByText('Delete Player'));
     await waitFor(() => {
       // Bob may appear in multiple places, so check all
-      expect(screen.queryAllByText('Bob').length).toBe(0);
+      expect(screen.queryAllByText(TEST_PLAYER_NAMES.BOB).length).toBe(0);
     });
   });
 
@@ -155,26 +156,26 @@ describe('PaddleStack App', () => {
     bypassWelcome();
     // Add Alice
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Alice' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add Frank
     fireEvent.click(screen.getByText('Add Player'));
-    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: 'Frank' } });
-    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: TEST_PLAYER_NAMES.FRANK } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
-    expect(screen.getAllByText('Alice').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Frank').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(TEST_PLAYER_NAMES.ALICE).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(TEST_PLAYER_NAMES.FRANK).length).toBeGreaterThan(0);
   });
 
   test('add court button adds a court panel', () => {
     render(<App />);
     bypassWelcome();
     // Add 4 players to fill the court
-    ['Alice', 'Bob', 'Charlie', 'Diana'].forEach(name => {
+    [TEST_PLAYER_NAMES.ALICE, TEST_PLAYER_NAMES.BOB, TEST_PLAYER_NAMES.CHARLIE, TEST_PLAYER_NAMES.DIANA].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter player name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     fireEvent.click(screen.getByText('+ Add Court'));

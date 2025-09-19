@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import AddPlayerModal from '../src/AddPlayerModal';
+import { TEST_PLAYER_NAMES, TEST_PHONE_NUMBERS, TEST_PAYMENTS, TEST_UPLOADED_PLAYERS, TEST_EXISTING_NAMES } from '../src/testPlayers';
 
 describe('AddPlayerModal player lookup features', () => {
   const defaultProps = {
@@ -37,14 +38,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should show dropdown with matching players', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true },
-      { name: 'Bob Smith', payment: 'cash', phone: '555-2222', paid: true },
-      { name: 'Alicia Brown', payment: 'online', phone: '555-3333', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Ali');
@@ -57,13 +52,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should show dropdown for exact name matches', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true },
-      { name: 'Bob Smith', payment: 'cash', phone: '555-2222', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Alice Johnson');
@@ -75,12 +65,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should auto-fill player information when dropdown item is clicked', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Alice');
@@ -102,12 +88,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should auto-fill fields when selecting a player', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Alice');
@@ -128,12 +110,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should show dropdown when focusing input with existing matches', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     
@@ -154,12 +132,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should hide dropdown on blur with delay', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Alice');
@@ -180,13 +154,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should display player payment and phone in dropdown', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true },
-      { name: 'Bob Smith', payment: 'cash', phone: '', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'A');
@@ -207,12 +176,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should handle missing phone numbers in dropdown display', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.WITH_MISSING_PHONE} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Alice');
@@ -226,12 +191,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should handle players with missing payment info', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: '', phone: '555-1111', paid: false }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.WITH_MISSING_PAYMENT} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     await user.type(nameInput, 'Alice');
@@ -251,12 +212,8 @@ describe('AddPlayerModal player lookup features', () => {
   });
 
   test('should not show dropdown when input is empty', async () => {
-    const uploadedPlayers = [
-      { name: 'Alice Johnson', payment: 'online', phone: '555-1111', paid: true }
-    ];
-
     const user = userEvent.setup();
-    render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
+    render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     
@@ -294,15 +251,14 @@ describe('AddPlayerModal player lookup features', () => {
 
   test('should successfully add a player with a unique name', async () => {
     const user = userEvent.setup();
-    const existingNames = ['Alice', 'Bob'];
-    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+    render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
-    await user.type(nameInput, 'Charlie');
-    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+    await user.type(nameInput, TEST_PLAYER_NAMES.CHARLIE);
+    fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should not show duplicate error
     expect(screen.queryByText('A player with this name is already added')).not.toBeInTheDocument();
@@ -314,23 +270,22 @@ describe('AddPlayerModal player lookup features', () => {
 
     // Should call onConfirm with the new player data
     expect(defaultProps.onConfirm).toHaveBeenCalledWith({
-      name: 'Charlie',
+      name: TEST_PLAYER_NAMES.CHARLIE,
       phone: '',
-      payment: 'online'
+      payment: TEST_PAYMENTS.ONLINE
     });
   });
 
   test('should show error when trying to add a player with duplicate name', async () => {
     const user = userEvent.setup();
-    const existingNames = ['Alice', 'Bob'];
-    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+    render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
-    await user.type(nameInput, 'Alice');
-    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+    await user.type(nameInput, TEST_PLAYER_NAMES.ALICE);
+    fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show duplicate error
     expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
@@ -348,16 +303,15 @@ describe('AddPlayerModal player lookup features', () => {
 
   test('should clear duplicate error when name is changed to unique', async () => {
     const user = userEvent.setup();
-    const existingNames = ['Alice', 'Bob'];
-    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+    render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
     // First type duplicate name
-    await user.type(nameInput, 'Alice');
-    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+    await user.type(nameInput, TEST_PLAYER_NAMES.ALICE);
+    fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show error
     expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
@@ -365,7 +319,7 @@ describe('AddPlayerModal player lookup features', () => {
 
     // Clear and type unique name
     await user.clear(nameInput);
-    await user.type(nameInput, 'Charlie');
+    await user.type(nameInput, TEST_PLAYER_NAMES.CHARLIE);
 
     // Error should be cleared
     expect(screen.queryByText('A player with this name is already added')).not.toBeInTheDocument();
@@ -378,22 +332,21 @@ describe('AddPlayerModal player lookup features', () => {
 
     fireEvent.click(confirmBtn);
     expect(defaultProps.onConfirm).toHaveBeenCalledWith({
-      name: 'Charlie',
+      name: TEST_PLAYER_NAMES.CHARLIE,
       phone: '',
-      payment: 'online'
+      payment: TEST_PAYMENTS.ONLINE
     });
   });
 
   test('should handle case-insensitive duplicate names', async () => {
     const user = userEvent.setup();
-    const existingNames = ['Alice', 'Bob'];
-    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+    render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, 'alice'); // lowercase
-    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+    fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show duplicate error (case-insensitive check)
     expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
@@ -401,14 +354,13 @@ describe('AddPlayerModal player lookup features', () => {
 
   test('should trim whitespace when checking for duplicates', async () => {
     const user = userEvent.setup();
-    const existingNames = ['Alice', 'Bob'];
-    render(<AddPlayerModal {...defaultProps} existingNames={existingNames} />);
+    render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter player name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, '  Alice  '); // with whitespace
-    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+    fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show duplicate error (trims whitespace)
     expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
