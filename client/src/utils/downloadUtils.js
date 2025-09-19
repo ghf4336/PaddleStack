@@ -60,17 +60,27 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
     }
   });
 
-  // Convert map to array and sort by source (uploaded, updated, new, deleted)
-  const allPlayers = Array.from(playerMap.values()).sort((a, b) => {
-    const sourceOrder = { 'uploaded': 1, 'updated': 2, 'new': 3, 'deleted': 4 };
-    return sourceOrder[a.source] - sourceOrder[b.source];
-  });
-
-  if (allPlayers.length === 0) return '';
-
   // Create sets for quick lookup of session participants
   const sessionPlayerNames = new Set(sessionPlayers.map(p => p.name.toLowerCase()));
   const deletedPlayerNames = new Set(deletedPlayers.map(p => p.name.toLowerCase()));
+
+  // Convert map to array and sort by Played status in descending order, then by name
+  const allPlayers = Array.from(playerMap.values()).sort((a, b) => {
+    // Determine if players participated in this session
+    const playedA = sessionPlayerNames.has(a.name.toLowerCase()) || deletedPlayerNames.has(a.name.toLowerCase()) ? 'Yes' : 'No';
+    const playedB = sessionPlayerNames.has(b.name.toLowerCase()) || deletedPlayerNames.has(b.name.toLowerCase()) ? 'Yes' : 'No';
+    
+    // Primary sort: by Played status (Yes before No)
+    const playedComparison = playedB.localeCompare(playedA);
+    if (playedComparison !== 0) {
+      return playedComparison;
+    }
+    
+    // Secondary sort: by name for consistent ordering within same Played group
+    return a.name.localeCompare(b.name);
+  });
+
+  if (allPlayers.length === 0) return '';
 
   // Create the download content
   const lines = [

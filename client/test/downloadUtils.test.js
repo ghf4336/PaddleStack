@@ -48,9 +48,9 @@ describe('generatePlayerDownloadData', () => {
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
       'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\tNo\r\n' +
       'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
-      'Charlie\tonline\t555-3333\tNEW\tYes'
+      'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
+      'Bob\tcash\t555-2222\tORIGINAL\tNo'
     );
   });
 
@@ -67,8 +67,8 @@ describe('generatePlayerDownloadData', () => {
     const result = generatePlayerDownloadData([], deletedPlayers, uploadedPlayers);
     expect(result).toBe(
       'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL\tNo\r\n' +
-      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes'
+      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes\r\n' +
+      'Alice\tonline\t555-1111\tORIGINAL\tNo'
     );
   });
 
@@ -123,14 +123,14 @@ describe('generatePlayerDownloadData', () => {
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
       'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\tNo\r\n' +
       'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'Charlie (deleted)\tonline\t555-3333\tDELETED\tYes\r\n' +
       'Diana\tonline\t555-4444\tNEW\tYes\r\n' +
-      'Charlie (deleted)\tonline\t555-3333\tDELETED\tYes'
+      'Bob\tcash\t555-2222\tORIGINAL\tNo'
     );
   });
 
-  test('sorts players by status order: ORIGINAL, UPDATED, NEW, DELETED', () => {
+  test('sorts players by played status: Yes then No', () => {
     const uploadedPlayers = [
       { name: 'Alice', payment: 'online', phone: '555-1111', paid: true },
       { name: 'Bob', payment: 'cash', phone: '555-2222', paid: false }
@@ -150,9 +150,9 @@ describe('generatePlayerDownloadData', () => {
     expect(result).toBe(
       'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
       'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes\r\n' +
       'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
-      'Diana\tcash\t555-4444\tNEW\tYes\r\n' +
-      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes'
+      'Diana\tcash\t555-4444\tNEW\tYes'
     );
   });
 
@@ -190,11 +190,11 @@ describe('generatePlayerDownloadData', () => {
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
       'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'UploadedOnly\tonline\t555-1111\tORIGINAL\tNo\r\n' +
-      'PlayedUnchanged\tcash\t555-3333\tORIGINAL\tYes\r\n' +
-      'PlayedAndUpdated\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'DeletedPlayer (deleted)\tcash\t555-5555\tDELETED\tYes\r\n' +
       'NewPlayer\tonline\t555-4444\tNEW\tYes\r\n' +
-      'DeletedPlayer (deleted)\tcash\t555-5555\tDELETED\tYes'
+      'PlayedAndUpdated\tcash\t555-9999\tUPDATED\tYes\r\n' +
+      'PlayedUnchanged\tcash\t555-3333\tORIGINAL\tYes\r\n' +
+      'UploadedOnly\tonline\t555-1111\tORIGINAL\tNo'
     );
   });
 });
