@@ -109,7 +109,11 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
     setPlayerName(e.target.value);
   };
 
-  const handleNameBlur = () => {
+  const handleNameBlur = (e) => {
+    // Don't hide dropdown if clicking on it
+    if (e.relatedTarget && e.relatedTarget.closest('.player-dropdown')) {
+      return;
+    }
     // Delay hiding dropdown to allow for click selection
     setTimeout(() => setShowDropdown(false), 150);
   };
@@ -172,7 +176,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
         {/* Player dropdown */}
         {showDropdown && filteredPlayers.length > 0 && (
-          <div style={{
+          <div className="player-dropdown" style={{
             position: 'absolute',
             top: '100%',
             left: 0,
