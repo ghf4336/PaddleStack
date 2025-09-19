@@ -143,7 +143,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
           <span style={{ color: '#e74c3c', fontSize: 13 }}>Name is required</span>
         )}
         {duplicateError && (
-          <span style={{ color: '#e74c3c', fontSize: 13 }}>A player with this name already exists</span>
+          <span style={{ color: '#e74c3c', fontSize: 13 }}>A player with this name is already added</span>
         )}
 
         {/* Player dropdown */}

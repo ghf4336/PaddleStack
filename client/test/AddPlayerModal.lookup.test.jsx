@@ -305,7 +305,7 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.change(paymentSelect, { target: { value: 'online' } });
 
     // Should not show duplicate error
-    expect(screen.queryByText('A player with this name already exists')).not.toBeInTheDocument();
+    expect(screen.queryByText('A player with this name is already added')).not.toBeInTheDocument();
     
     // Confirm button should be enabled
     expect(confirmBtn).toHaveStyle({ opacity: '1' });
@@ -333,7 +333,7 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.change(paymentSelect, { target: { value: 'online' } });
 
     // Should show duplicate error
-    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+    expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
     
     // Name input should have red border
     expect(nameInput).toHaveStyle({ border: '1.5px solid #e74c3c' });
@@ -360,7 +360,7 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.change(paymentSelect, { target: { value: 'online' } });
 
     // Should show error
-    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+    expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
     expect(confirmBtn).toHaveStyle({ opacity: '0.7' });
 
     // Clear and type unique name
@@ -368,7 +368,7 @@ describe('AddPlayerModal player lookup features', () => {
     await user.type(nameInput, 'Charlie');
 
     // Error should be cleared
-    expect(screen.queryByText('A player with this name already exists')).not.toBeInTheDocument();
+    expect(screen.queryByText('A player with this name is already added')).not.toBeInTheDocument();
     
     // Border should be normal
     expect(nameInput).toHaveStyle({ border: '1.5px solid #d1d5db' });
@@ -396,7 +396,7 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.change(paymentSelect, { target: { value: 'online' } });
 
     // Should show duplicate error (case-insensitive check)
-    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+    expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
   });
 
   test('should trim whitespace when checking for duplicates', async () => {
@@ -411,6 +411,6 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.change(paymentSelect, { target: { value: 'online' } });
 
     // Should show duplicate error (trims whitespace)
-    expect(screen.getByText('A player with this name already exists')).toBeInTheDocument();
+    expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
   });
 });
