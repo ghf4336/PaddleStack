@@ -93,22 +93,32 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   if (!show) return null;
   return (
     <div style={{
-      position: 'absolute',
-      top: 60,
+      position: 'fixed',
+      top: 0,
       left: 0,
-      width: '100%',
-      zIndex: 10,
-      background: '#fff',
-      boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
-      borderRadius: 12,
-      padding: 24,
-      minWidth: 340,
-      maxWidth: 400,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'stretch',
-      minHeight: 120
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
     }}>
+      <div style={{
+        background: '#fff',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+        borderRadius: 12,
+        padding: 32,
+        width: '90%',
+        maxWidth: 480,
+        minWidth: 400,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        minHeight: 120,
+        maxHeight: '90vh',
+        overflowY: 'auto'
+      }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
         <span style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -289,6 +299,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             transition: 'box-shadow 0.2s'
           }}
         >Confirm</button>
+      </div>
       </div>
     </div>
   );
