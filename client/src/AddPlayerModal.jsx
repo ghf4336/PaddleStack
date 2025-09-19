@@ -200,8 +200,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
               >
                 <div style={{ fontWeight: 500 }}>{player.name}</div>
                 <div style={{ fontSize: 12, color: '#666' }}>
-                  {player.payment && `${player.payment}`}
-                  {player.phone && ` • ${player.phone}`}
+                  {player.phone && `${player.phone}`}
                 </div>
               </div>
             ))}

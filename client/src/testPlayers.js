@@ -73,7 +73,7 @@ export const testPlayers = [
 export const TEST_UPLOADED_PLAYERS = {
   BASIC: [
     { name: TEST_PLAYER_NAMES.ALICE_JOHNSON, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
-    { name: TEST_PLAYER_NAMES.BOB_SMITH, payment: TEST_PAYMENTS.CASH, phone: '', paid: true },
+    { name: TEST_PLAYER_NAMES.BOB_SMITH, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.BOB, paid: true },
     { name: TEST_PLAYER_NAMES.ALICIA_BROWN, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true }
   ],
   WITH_MISSING_PHONE: [

@@ -153,7 +153,7 @@ describe('AddPlayerModal player lookup features', () => {
     }, { timeout: 200 });
   });
 
-  test('should display player payment and phone in dropdown', async () => {
+  test('should display player phone in dropdown', async () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
@@ -162,7 +162,7 @@ describe('AddPlayerModal player lookup features', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
-      expect(screen.getByText('online • 555-1111')).toBeInTheDocument();
+      expect(screen.getByText('555-1111')).toBeInTheDocument();
     });
 
     // Clear and type 'Bob'
@@ -171,7 +171,7 @@ describe('AddPlayerModal player lookup features', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Bob Smith')).toBeInTheDocument();
-      expect(screen.getByText('cash')).toBeInTheDocument();
+      expect(screen.getByText('555-2222')).toBeInTheDocument();
     });
   });
 
@@ -184,9 +184,8 @@ describe('AddPlayerModal player lookup features', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
-      expect(screen.getByText('online')).toBeInTheDocument();
-      // Should not show phone bullet point
-      expect(screen.queryByText('•')).not.toBeInTheDocument();
+      // Should not show any additional info since payment is hidden and phone is missing
+      expect(screen.queryByText('555-1111')).not.toBeInTheDocument();
     });
   });
 
