@@ -14,9 +14,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData([], [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL\tNo\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\tNo'
+      'Name   Payment Type  Phone Number  Status    Played\r\n' +
+      '-----  ------------  ------------  --------  ------\r\n' +
+      'Alice  online        555-1111      ORIGINAL  No    \r\n' +
+      'Bob    cash          555-2222      ORIGINAL  No    '
     );
   });
 
@@ -28,9 +29,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], []);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
-      'Diana\tcash\t\tNEW\tYes'
+      'Name     Payment Type  Phone Number  Status  Played\r\n' +
+      '-------  ------------  ------------  ------  ------\r\n' +
+      'Charlie  online        555-3333      NEW     Yes   \r\n' +
+      'Diana    cash                        NEW     Yes   '
     );
   });
 
@@ -47,10 +49,11 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
-      'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\tNo'
+      'Name     Payment Type  Phone Number  Status    Played\r\n' +
+      '-------  ------------  ------------  --------  ------\r\n' +
+      'Alice    cash          555-9999      UPDATED   Yes   \r\n' +
+      'Charlie  online        555-3333      NEW       Yes   \r\n' +
+      'Bob      cash          555-2222      ORIGINAL  No    '
     );
   });
 
@@ -66,9 +69,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData([], deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL\tNo'
+      'Name           Payment Type  Phone Number  Status    Played\r\n' +
+      '-------------  ------------  ------------  --------  ------\r\n' +
+      'Bob (deleted)  cash          555-2222      DELETED   Yes   \r\n' +
+      'Alice          online        555-1111      ORIGINAL  No    '
     );
   });
 
@@ -83,8 +87,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\tYes'
+      'Name   Payment Type  Phone Number  Status   Played\r\n' +
+      '-----  ------------  ------------  -------  ------\r\n' +
+      'Alice  cash          555-9999      UPDATED  Yes   '
     );
   });
 
@@ -99,8 +104,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tonline\t555-1111\tORIGINAL\tYes'
+      'Name   Payment Type  Phone Number  Status    Played\r\n' +
+      '-----  ------------  ------------  --------  ------\r\n' +
+      'Alice  online        555-1111      ORIGINAL  Yes   '
     );
   });
 
@@ -122,11 +128,12 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
-      'Charlie (deleted)\tonline\t555-3333\tDELETED\tYes\r\n' +
-      'Diana\tonline\t555-4444\tNEW\tYes\r\n' +
-      'Bob\tcash\t555-2222\tORIGINAL\tNo'
+      'Name               Payment Type  Phone Number  Status    Played\r\n' +
+      '-----------------  ------------  ------------  --------  ------\r\n' +
+      'Alice              cash          555-9999      UPDATED   Yes   \r\n' +
+      'Charlie (deleted)  online        555-3333      DELETED   Yes   \r\n' +
+      'Diana              online        555-4444      NEW       Yes   \r\n' +
+      'Bob                cash          555-2222      ORIGINAL  No    '
     );
   });
 
@@ -148,11 +155,12 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tcash\t555-9999\tUPDATED\tYes\r\n' +
-      'Bob (deleted)\tcash\t555-2222\tDELETED\tYes\r\n' +
-      'Charlie\tonline\t555-3333\tNEW\tYes\r\n' +
-      'Diana\tcash\t555-4444\tNEW\tYes'
+      'Name           Payment Type  Phone Number  Status   Played\r\n' +
+      '-------------  ------------  ------------  -------  ------\r\n' +
+      'Alice          cash          555-9999      UPDATED  Yes   \r\n' +
+      'Bob (deleted)  cash          555-2222      DELETED  Yes   \r\n' +
+      'Charlie        online        555-3333      NEW      Yes   \r\n' +
+      'Diana          cash          555-4444      NEW      Yes   '
     );
   });
 
@@ -164,9 +172,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], []);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'Alice\tpaid\t555-1111\tNEW\tYes\r\n' +
-      'Bob\tunknown\t555-2222\tNEW\tYes'
+      'Name   Payment Type  Phone Number  Status  Played\r\n' +
+      '-----  ------------  ------------  ------  ------\r\n' +
+      'Alice  paid          555-1111      NEW     Yes   \r\n' +
+      'Bob    unknown       555-2222      NEW     Yes   '
     );
   });
 
@@ -189,12 +198,13 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name\tPayment Type\tPhone Number\tStatus\tPlayed\r\n' +
-      'DeletedPlayer (deleted)\tcash\t555-5555\tDELETED\tYes\r\n' +
-      'NewPlayer\tonline\t555-4444\tNEW\tYes\r\n' +
-      'PlayedAndUpdated\tcash\t555-9999\tUPDATED\tYes\r\n' +
-      'PlayedUnchanged\tcash\t555-3333\tORIGINAL\tYes\r\n' +
-      'UploadedOnly\tonline\t555-1111\tORIGINAL\tNo'
+      'Name                     Payment Type  Phone Number  Status    Played\r\n' +
+      '-----------------------  ------------  ------------  --------  ------\r\n' +
+      'DeletedPlayer (deleted)  cash          555-5555      DELETED   Yes   \r\n' +
+      'NewPlayer                online        555-4444      NEW       Yes   \r\n' +
+      'PlayedAndUpdated         cash          555-9999      UPDATED   Yes   \r\n' +
+      'PlayedUnchanged          cash          555-3333      ORIGINAL  Yes   \r\n' +
+      'UploadedOnly             online        555-1111      ORIGINAL  No    '
     );
   });
 });

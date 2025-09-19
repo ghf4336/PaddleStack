@@ -82,22 +82,39 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
 
   if (allPlayers.length === 0) return '';
 
-  // Create the download content
-  const lines = [
-    'Name\tPayment Type\tPhone Number\tStatus\tPlayed',
-    ...allPlayers.map(p => {
-      const status = p.source === 'deleted' ? 'DELETED' :
-                    p.source === 'new' ? 'NEW' :
-                    p.source === 'updated' ? 'UPDATED' : 'ORIGINAL';
-      const name = p.source === 'deleted' ? `${p.name} (deleted)` : p.name;
-      
-      // Determine if player participated in this session
-      // A player "played" if they were in sessionPlayers OR were deleted (since deleted players were in the session)
-      const played = sessionPlayerNames.has(p.name.toLowerCase()) || deletedPlayerNames.has(p.name.toLowerCase()) ? 'Yes' : 'No';
-      
-      return `${name}\t${p.payment || (p.paid ? 'paid' : 'unknown')}\t${p.phone || ''}\t${status}\t${played}`;
-    })
-  ];
+  // Calculate column widths
+  const headers = ['Name', 'Payment Type', 'Phone Number', 'Status', 'Played'];
+  const rows = allPlayers.map(p => {
+    const status = p.source === 'deleted' ? 'DELETED' :
+                  p.source === 'new' ? 'NEW' :
+                  p.source === 'updated' ? 'UPDATED' : 'ORIGINAL';
+    const name = p.source === 'deleted' ? `${p.name} (deleted)` : p.name;
+    const payment = p.payment || (p.paid ? 'paid' : 'unknown');
+    const phone = p.phone || '';
+    const played = sessionPlayerNames.has(p.name.toLowerCase()) || deletedPlayerNames.has(p.name.toLowerCase()) ? 'Yes' : 'No';
+    return [name, payment, phone, status, played];
+  });
+
+  // Determine max width for each column
+  const colWidths = headers.map((header, i) => {
+    return Math.max(
+      header.length,
+      ...rows.map(row => row[i].length)
+    );
+  });
+
+  // Helper to pad a string
+  function pad(str, len) {
+    return str + ' '.repeat(len - str.length);
+  }
+
+  // Build the table
+  const lines = [];
+  lines.push(headers.map((h, i) => pad(h, colWidths[i])).join('  '));
+  lines.push(colWidths.map(w => '-'.repeat(w)).join('  '));
+  for (const row of rows) {
+    lines.push(row.map((cell, i) => pad(cell, colWidths[i])).join('  '));
+  }
 
   return lines.join('\r\n');
 }
