@@ -134,7 +134,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'flex-start',
+      paddingTop: '5px',
       zIndex: 1000
     }}>
       <form autoComplete="off" style={{

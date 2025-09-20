@@ -250,21 +250,6 @@ function App() {
     });
   };
 
-  // Render AddPlayerModal inside Sidebar using a portal-like prop
-  const AddPlayerModalInSidebar = (
-    <AddPlayerModal
-      show={showAddPlayerModal}
-      onPaidChange={() => {}}
-      onConfirm={handleConfirmAdd}
-      onCancel={handleCancelAdd}
-      uploadedPlayers={uploadedPlayers}
-      existingNames={sessionPlayers.map(p => getPlayerFullName(p))}
-    />
-  );
-  if (typeof window !== 'undefined') {
-    window.__AddPlayerModalInSidebar = AddPlayerModalInSidebar;
-  }
-
   // Handle drag and drop
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
@@ -378,6 +363,14 @@ function App() {
       onDragOver={handleDragOver}
     >
       <DragOverlay>{dragOverlayContent}</DragOverlay>
+      <AddPlayerModal
+        show={showAddPlayerModal}
+        onPaidChange={() => {}}
+        onConfirm={handleConfirmAdd}
+        onCancel={handleCancelAdd}
+        uploadedPlayers={uploadedPlayers}
+        existingNames={sessionPlayers.map(p => getPlayerFullName(p))}
+      />
       <div className="app-container">
         <div className="sidebar" style={{ position: 'relative', padding: 0, background: 'none', boxShadow: 'none', border: 'none' }}>
           <PlayerListSection
