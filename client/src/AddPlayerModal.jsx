@@ -36,10 +36,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
     const fullName = `${firstName} ${lastName}`.trim();
     if (fullName && uploadedPlayers.length > 0) {
       const filtered = uploadedPlayers.filter(player => {
-        // Support both old format (single name) and new format (firstName + lastName)
-        const playerFullName = player.firstName && player.lastName 
-          ? `${player.firstName} ${player.lastName}`
-          : player.name || '';
+        // Use the name field which should be properly constructed by the parser
+        const playerFullName = player.name || '';
         return playerFullName.toLowerCase().includes(fullName.toLowerCase());
       });
       setFilteredPlayers(filtered);
@@ -170,7 +168,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             </svg>
           </span> Player Name *
         </label>
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '30px' }}>
           <div style={{ flex: 1 }}>
             <input
               type="text"
@@ -237,9 +235,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             onMouseDown={e => e.preventDefault()}
           >
             {filteredPlayers.map((player, index) => {
-              const displayName = player.firstName && player.lastName 
-                ? `${player.firstName} ${player.lastName}`
-                : player.name || '';
+              // Use the name field which should be properly constructed by the parser
+              const displayName = player.name || '';
               return (
                 <div
                   key={index}

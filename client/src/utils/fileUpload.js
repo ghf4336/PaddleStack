@@ -25,14 +25,22 @@ export function parsePlayerFile(fileContent) {
   
   // Detect if it's the new format with separate first/last name columns
   const hasFirstLastName = firstLine.toLowerCase().includes('first name') && firstLine.toLowerCase().includes('last name');
+  
+  // Also check if it's a 3-column format: FirstName, LastName, PaymentType (even without explicit headers)
+  const potentialThreeColumn = isTabDelimited && !hasFirstLastName;
 
   // Skip header line if it exists
   let dataLines = lines;
+  let isSwappedFormat = false;
   if (lines.length > 0) {
     const headerLine = lines[0].toLowerCase();
     if ((headerLine.includes('name') && headerLine.includes('payment')) || 
         (headerLine.includes('first name') && headerLine.includes('last name'))) {
       dataLines = lines.slice(1);
+      // Check if it's a swapped format (Payment Type comes before Name)
+      if (headerLine.indexOf('payment') < headerLine.indexOf('name')) {
+        isSwappedFormat = true;
+      }
       // Also skip separator line in space-aligned format (line with dashes)
       if (dataLines.length > 0 && dataLines[0].trim().match(/^-+(\s+-+)*$/)) {
         dataLines = dataLines.slice(1);
@@ -43,68 +51,116 @@ export function parsePlayerFile(fileContent) {
   const players = [];
 
   for (const line of dataLines) {
-    let firstName, lastName, paymentType, phone;
+    let firstName = '', lastName = '', paymentType = '', phone = '';
 
     if (isTabDelimited) {
       // Handle tab-delimited format
       const parts = line.split('\t');
-      if (hasFirstLastName && parts.length >= 3) {
-        // New format: First Name, Last Name, Payment Type, Phone Number
-        firstName = parts[0]?.trim();
-        lastName = parts[1]?.trim();
-        paymentType = parts[2]?.trim();
-        phone = parts[3]?.trim() || '';
-      } else if (parts.length >= 2) {
-        // Old format: Name, Payment Type, Phone Number
-        const fullName = parts[0]?.trim();
-        if (fullName) {
-          const nameParts = fullName.split(' ');
-          firstName = nameParts[0] || '';
-          lastName = nameParts.slice(1).join(' ') || '';
+      
+      // Check if this looks like the standard format: FirstName, LastName, PaymentType, Phone, Status, Played
+      if (parts.length >= 3) {
+        const col1 = parts[0]?.trim();
+        const col2 = parts[1]?.trim();
+        const col3 = parts[2]?.trim();
+        const col4 = parts[3]?.trim() || '';
+        
+        // Check if col3 is a payment method (this confirms the standard format)
+        if (col3 === 'online' || col3 === 'cash') {
+          // Standard format: FirstName, LastName (may be empty), PaymentType, Phone, Status, Played
+          firstName = col1;
+          lastName = col2; // May be empty string
+          paymentType = col3;
+          phone = col4;
+        } else if (hasFirstLastName && parts.length >= 3) {
+          // Explicit header format: First Name, Last Name, Payment Type, Phone Number
+          firstName = col1;
+          lastName = col2;
+          paymentType = col3;
+          phone = col4;
+        } else {
+          // Fallback to old logic for backward compatibility
+          if (isSwappedFormat || col1 === 'online' || col1 === 'cash') {
+            // Swapped format: Payment, Name, Phone
+            paymentType = col1;
+            if (col2) {
+              const nameParts = col2.split(' ');
+              firstName = nameParts[0] || '';
+              lastName = nameParts.slice(1).join(' ') || '';
+            }
+            phone = col3;
+          } else {
+            // Normal order: Name, Payment, Phone
+            if (col1) {
+              const nameParts = col1.split(' ');
+              firstName = nameParts[0] || '';
+              lastName = nameParts.slice(1).join(' ') || '';
+            }
+            paymentType = col2;
+            phone = col3;
+          }
         }
-        paymentType = parts[1]?.trim();
-        phone = parts[2]?.trim() || '';
       }
     } else {
-      // Handle space-aligned format
-      const parts = line.split(/\s{2,}/).filter(part => part.trim());
-      if (hasFirstLastName && parts.length >= 3) {
-        // New format: First Name, Last Name, Payment Type, Phone Number, Status, Played
-        firstName = parts[0]?.trim();
-        lastName = parts[1]?.trim();
-        paymentType = parts[2]?.trim();
-        // For space-aligned format, only use phone if it's actually a phone number
-        if (parts.length >= 4) {
-          const fourthPart = parts[3]?.trim();
-          // Check if fourth part looks like a phone number (contains digits or is empty)
-          if (fourthPart && (fourthPart.match(/\d/) || fourthPart === '')) {
-            phone = fourthPart;
+      // Handle space-aligned format - use fixed column positions based on header
+      const rawParts = line.split(/\s+/);
+      
+      if (rawParts.length >= 3) {
+        // For space-aligned format, we need to handle fixed-width columns
+        // The format is: First Name | Last Name | Payment Type | Phone Number | Status | Played
+        // We can determine this by the position of payment types and phone patterns
+        
+        // Find the payment type column (should be 'online' or 'cash')
+        let paymentIndex = -1;
+        for (let i = 0; i < rawParts.length; i++) {
+          if (rawParts[i] === 'online' || rawParts[i] === 'cash') {
+            paymentIndex = i;
+            break;
+          }
+        }
+        
+        if (paymentIndex >= 0) {
+          // Payment type found, now determine column positions
+          paymentType = rawParts[paymentIndex];
+          
+          // Phone number should be the next column after payment
+          let phoneIndex = paymentIndex + 1;
+          phone = '';
+          if (phoneIndex < rawParts.length) {
+            const potentialPhone = rawParts[phoneIndex];
+            // Check if it looks like a phone number (contains digits and/or dashes, but not pure letters)
+            if (potentialPhone.match(/[\d-]/) && !potentialPhone.match(/^[A-Za-z]+$/)) {
+              phone = potentialPhone;
+            }
+          }
+          
+          // Everything before payment type is name (first + last)
+          const nameParts = rawParts.slice(0, paymentIndex);
+          
+          if (nameParts.length === 1) {
+            // Only first name
+            firstName = nameParts[0];
+            lastName = '';
+          } else if (nameParts.length === 2) {
+            // First and last name
+            firstName = nameParts[0];
+            lastName = nameParts[1];
+          } else if (nameParts.length > 2) {
+            // Multiple parts - assume first is first name, rest is last name
+            firstName = nameParts[0];
+            lastName = nameParts.slice(1).join(' ');
           } else {
-            phone = ''; // Fourth part is probably Status column
+            // Fallback
+            firstName = nameParts.join(' ');
+            lastName = '';
           }
         } else {
-          phone = '';
-        }
-      } else if (parts.length >= 2) {
-        // Old format: Name, Payment Type, Phone Number, Status, Played
-        const fullName = parts[0]?.trim();
-        if (fullName) {
-          const nameParts = fullName.split(' ');
-          firstName = nameParts[0] || '';
-          lastName = nameParts.slice(1).join(' ') || '';
-        }
-        paymentType = parts[1]?.trim();
-        // For space-aligned format, only use phone if it's actually a phone number
-        if (parts.length >= 3) {
-          const thirdPart = parts[2]?.trim();
-          // Check if third part looks like a phone number (contains digits or is empty)
-          if (thirdPart && (thirdPart.match(/\d/) || thirdPart === '')) {
-            phone = thirdPart;
-          } else {
-            phone = ''; // Third part is probably Status column
+          // No payment type found, fallback to old logic
+          firstName = rawParts[0] || '';
+          lastName = '';
+          paymentType = rawParts[1] || '';
+          if (rawParts.length > 2 && rawParts[2].match(/[\d-]/) && !rawParts[2].match(/^[A-Za-z]+$/)) {
+            phone = rawParts[2];
           }
-        } else {
-          phone = '';
         }
       }
     }
