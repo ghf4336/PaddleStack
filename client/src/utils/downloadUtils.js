@@ -1,12 +1,14 @@
 // Utility function for generating player download data
 // Extracted from EndSessionModal for easier testing
+import { getPlayerFullName } from './playerUtils';
 export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], uploadedPlayers = []) {
   // Create a comprehensive player list that merges uploaded players with session updates
   const playerMap = new Map();
 
   // First, add all uploaded players as the base
   uploadedPlayers.forEach(player => {
-    playerMap.set(player.name.toLowerCase(), {
+    const playerName = getPlayerFullName(player);
+    playerMap.set(playerName.toLowerCase(), {
       ...player,
       source: 'uploaded'
     });
@@ -14,7 +16,8 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
 
   // Then, update/add players from the current session (these take priority)
   sessionPlayers.forEach(player => {
-    const key = player.name.toLowerCase();
+    const playerName = getPlayerFullName(player);
+    const key = playerName.toLowerCase();
     const existingPlayer = playerMap.get(key);
 
     if (existingPlayer) {
@@ -41,7 +44,8 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
 
   // Add deleted players (marked as deleted)
   deletedPlayers.forEach(player => {
-    const key = player.name.toLowerCase();
+    const playerName = getPlayerFullName(player);
+    const key = playerName.toLowerCase();
     const existingPlayer = playerMap.get(key);
 
     if (existingPlayer) {
@@ -61,14 +65,16 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
   });
 
   // Create sets for quick lookup of session participants
-  const sessionPlayerNames = new Set(sessionPlayers.map(p => p.name.toLowerCase()));
-  const deletedPlayerNames = new Set(deletedPlayers.map(p => p.name.toLowerCase()));
+  const sessionPlayerNames = new Set(sessionPlayers.map(p => getPlayerFullName(p).toLowerCase()));
+  const deletedPlayerNames = new Set(deletedPlayers.map(p => getPlayerFullName(p).toLowerCase()));
 
   // Convert map to array and sort by Played status in descending order, then by name
   const allPlayers = Array.from(playerMap.values()).sort((a, b) => {
     // Determine if players participated in this session
-    const playedA = sessionPlayerNames.has(a.name.toLowerCase()) || deletedPlayerNames.has(a.name.toLowerCase()) ? 'Yes' : 'No';
-    const playedB = sessionPlayerNames.has(b.name.toLowerCase()) || deletedPlayerNames.has(b.name.toLowerCase()) ? 'Yes' : 'No';
+    const aName = getPlayerFullName(a).toLowerCase();
+    const bName = getPlayerFullName(b).toLowerCase();
+    const playedA = sessionPlayerNames.has(aName) || deletedPlayerNames.has(aName) ? 'Yes' : 'No';
+    const playedB = sessionPlayerNames.has(bName) || deletedPlayerNames.has(bName) ? 'Yes' : 'No';
     
     // Primary sort: by Played status (Yes before No)
     const playedComparison = playedB.localeCompare(playedA);
@@ -77,22 +83,26 @@ export function generatePlayerDownloadData(sessionPlayers, deletedPlayers = [], 
     }
     
     // Secondary sort: by name for consistent ordering within same Played group
-    return a.name.localeCompare(b.name);
+    return getPlayerFullName(a).localeCompare(getPlayerFullName(b));
   });
 
   if (allPlayers.length === 0) return '';
 
   // Calculate column widths
-  const headers = ['Name', 'Payment Type', 'Phone Number', 'Status', 'Played'];
+  const headers = ['First Name', 'Last Name', 'Payment Type', 'Phone Number', 'Status', 'Played'];
   const rows = allPlayers.map(p => {
     const status = p.source === 'deleted' ? 'DELETED' :
                   p.source === 'new' ? 'NEW' :
                   p.source === 'updated' ? 'UPDATED' : 'ORIGINAL';
-    const name = p.source === 'deleted' ? `${p.name} (deleted)` : p.name;
+    const fullName = getPlayerFullName(p);
+    const displayName = p.source === 'deleted' ? `${fullName} (deleted)` : fullName;
+    const firstName = p.firstName || (p.name ? p.name.split(' ')[0] : '');
+    const lastName = p.lastName || (p.name ? p.name.split(' ').slice(1).join(' ') : '');
     const payment = p.payment || (p.paid ? 'paid' : 'unknown');
     const phone = p.phone || '';
-    const played = sessionPlayerNames.has(p.name.toLowerCase()) || deletedPlayerNames.has(p.name.toLowerCase()) ? 'Yes' : 'No';
-    return [name, payment, phone, status, played];
+    const playerName = getPlayerFullName(p);
+    const played = sessionPlayerNames.has(playerName.toLowerCase()) || deletedPlayerNames.has(playerName.toLowerCase()) ? 'Yes' : 'No';
+    return [firstName, lastName, payment, phone, status, played];
   });
 
   // Determine max width for each column

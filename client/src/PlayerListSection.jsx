@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatPlayerDisplayName, getPlayerFullName } from './utils/playerUtils';
 
 function PlayerListSection({
   sessionPlayers,
@@ -49,19 +50,19 @@ function PlayerListSection({
         {[...sessionPlayers]
           .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))
           .map((p, i) => {
-            const inCourt = courts.some(court => (court.players || []).some(cp => cp && cp.name === p.name));
-            const isPaused = pausedPlayers.some(pp => pp.name === p.name);
+            const inCourt = courts.some(court => (court.players || []).some(cp => cp && getPlayerFullName(cp) === getPlayerFullName(p)));
+            const isPaused = pausedPlayers.some(pp => getPlayerFullName(pp) === getPlayerFullName(p));
             return (
               <div 
                 className={`session-player${isPaused ? ' paused' : ''}${i === 0 ? ' first-player' : ''}`} 
-                key={p.name} 
+                key={getPlayerFullName(p)} 
                 style={{
                   ...(isPaused ? { opacity: 0.5, background: '#f6f6fa' } : {}),
                   ...(i === 0 ? { marginTop: '6px' } : {})
                 }}
               >
                 <span>
-                  {p.name}
+                  {formatPlayerDisplayName(p)}
                   {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}
                   {inCourt && (
                     <span className="incourt-badge" style={{ background: '#2196f3', color: '#fff', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6, fontWeight: 600 }}>On court</span>

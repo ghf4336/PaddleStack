@@ -1,8 +1,8 @@
 /**
  * Parse player file content (supports both tab-delimited and space-aligned formats)
  * Expected formats: 
- * - Tab-delimited: "Name\tPayment Type\tPhone Number"
- * - Space-aligned: "Name        Payment Type    Phone Number    Status     Played"
+ * - Old format: "Name\tPayment Type\tPhone Number" or "Name        Payment Type    Phone Number    Status     Played"
+ * - New format: "First Name\tLast Name\tPayment Type\tPhone Number" or "First Name   Last Name   Payment Type    Phone Number    Status     Played"
  * Ignores deleted players (lines containing "(deleted)")
  * @param {string} fileContent - Raw file content
  * @returns {Array} Array of player objects
@@ -21,13 +21,17 @@ export function parsePlayerFile(fileContent) {
   // Detect format by checking the first line
   const firstLine = lines[0];
   const isTabDelimited = firstLine.includes('\t');
-  const isSpaceAligned = firstLine.includes('Name') && firstLine.includes('Payment Type') && !firstLine.includes('\t');
+  const isSpaceAligned = !isTabDelimited && firstLine.includes('Name') && firstLine.includes('Payment Type');
+  
+  // Detect if it's the new format with separate first/last name columns
+  const hasFirstLastName = firstLine.toLowerCase().includes('first name') && firstLine.toLowerCase().includes('last name');
 
   // Skip header line if it exists
   let dataLines = lines;
   if (lines.length > 0) {
     const headerLine = lines[0].toLowerCase();
-    if (headerLine.includes('name') && headerLine.includes('payment')) {
+    if ((headerLine.includes('name') && headerLine.includes('payment')) || 
+        (headerLine.includes('first name') && headerLine.includes('last name'))) {
       dataLines = lines.slice(1);
       // Also skip separator line in space-aligned format (line with dashes)
       if (dataLines.length > 0 && dataLines[0].trim().match(/^-+(\s+-+)*$/)) {
@@ -39,25 +43,58 @@ export function parsePlayerFile(fileContent) {
   const players = [];
 
   for (const line of dataLines) {
-    let name, paymentType, phone;
+    let firstName, lastName, paymentType, phone;
 
     if (isTabDelimited) {
-      // Handle old tab-delimited format
+      // Handle tab-delimited format
       const parts = line.split('\t');
-      if (parts.length >= 2) {
-        name = parts[0]?.trim();
+      if (hasFirstLastName && parts.length >= 3) {
+        // New format: First Name, Last Name, Payment Type, Phone Number
+        firstName = parts[0]?.trim();
+        lastName = parts[1]?.trim();
+        paymentType = parts[2]?.trim();
+        phone = parts[3]?.trim() || '';
+      } else if (parts.length >= 2) {
+        // Old format: Name, Payment Type, Phone Number
+        const fullName = parts[0]?.trim();
+        if (fullName) {
+          const nameParts = fullName.split(' ');
+          firstName = nameParts[0] || '';
+          lastName = nameParts.slice(1).join(' ') || '';
+        }
         paymentType = parts[1]?.trim();
         phone = parts[2]?.trim() || '';
       }
     } else {
-      // Handle new space-aligned format
-      // Parse by splitting on multiple spaces and filtering out empty strings
+      // Handle space-aligned format
       const parts = line.split(/\s{2,}/).filter(part => part.trim());
-      if (parts.length >= 2) {
-        name = parts[0]?.trim();
+      if (hasFirstLastName && parts.length >= 3) {
+        // New format: First Name, Last Name, Payment Type, Phone Number, Status, Played
+        firstName = parts[0]?.trim();
+        lastName = parts[1]?.trim();
+        paymentType = parts[2]?.trim();
+        // For space-aligned format, only use phone if it's actually a phone number
+        if (parts.length >= 4) {
+          const fourthPart = parts[3]?.trim();
+          // Check if fourth part looks like a phone number (contains digits or is empty)
+          if (fourthPart && (fourthPart.match(/\d/) || fourthPart === '')) {
+            phone = fourthPart;
+          } else {
+            phone = ''; // Fourth part is probably Status column
+          }
+        } else {
+          phone = '';
+        }
+      } else if (parts.length >= 2) {
+        // Old format: Name, Payment Type, Phone Number, Status, Played
+        const fullName = parts[0]?.trim();
+        if (fullName) {
+          const nameParts = fullName.split(' ');
+          firstName = nameParts[0] || '';
+          lastName = nameParts.slice(1).join(' ') || '';
+        }
         paymentType = parts[1]?.trim();
         // For space-aligned format, only use phone if it's actually a phone number
-        // Skip Status and Played columns by only taking the 3rd part if it looks like a phone
         if (parts.length >= 3) {
           const thirdPart = parts[2]?.trim();
           // Check if third part looks like a phone number (contains digits or is empty)
@@ -69,13 +106,13 @@ export function parsePlayerFile(fileContent) {
         } else {
           phone = '';
         }
-        // Note: Status and Played columns are ignored for import
       }
     }
 
-    if (name && paymentType) {
+    if (firstName && paymentType) {
       // Skip deleted players (ignore lines with "(deleted)")
-      if (name.includes('(deleted)')) {
+      const fullName = `${firstName}${lastName ? ` ${lastName}` : ''}`;
+      if (fullName.includes('(deleted)')) {
         continue;
       }
 
@@ -83,7 +120,9 @@ export function parsePlayerFile(fileContent) {
       const paid = paymentType === 'online' || paymentType === 'cash';
 
       players.push({
-        name,
+        firstName,
+        lastName,
+        name: fullName, // Keep for backward compatibility
         payment: paymentType,
         phone,
         paid

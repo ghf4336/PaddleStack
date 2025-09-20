@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId, generateCourtDragId } from './utils/dragDrop';
+import { formatPlayerDisplayName } from './utils/playerUtils';
 
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId }) {
   // Track courts that have "Starting" status locally for 60 seconds after Complete Game is clicked
@@ -306,7 +307,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                             >
                               {activeId === dragId ? (
                                 <div className="queue-player ghost-player" style={{ minHeight: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                  <span style={{ textAlign: 'center', width: '100%' }}>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                                  <span style={{ textAlign: 'center', width: '100%' }}>{p ? formatPlayerDisplayName(p) : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
                                 </div>
                               ) : (
                                 <DraggablePlayer
@@ -314,7 +315,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                                   player={p}
                                 >
                                   <div className="queue-player" style={{ minHeight: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                    <span style={{ textAlign: 'center', width: '100%' }}>{p ? p.name : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
+                                    <span style={{ textAlign: 'center', width: '100%' }}>{p ? formatPlayerDisplayName(p) : <span style={{ color: '#bbb' }}>Player {i + 1}</span>}</span>
                                   </div>
                                 </DraggablePlayer>
                               )}

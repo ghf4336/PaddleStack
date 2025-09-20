@@ -2,6 +2,7 @@ import React from 'react';
 import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId } from './utils/dragDrop';
+import { formatPlayerDisplayName } from './utils/playerUtils';
 
 function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId = "nextup" }) {
   // First group: players 1-4
@@ -65,7 +66,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
                     {activeId === dragId ? (
                       <div className="nextup-card ghost-player">
                         <div className="nextup-num">#{startNum + idx}</div>
-                        <div className="nextup-name">{p.name}</div>
+                        <div className="nextup-name">{formatPlayerDisplayName(p)}</div>
                       </div>
                     ) : (
                       <DraggablePlayer 
@@ -74,7 +75,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
                       >
                         <div className="nextup-card">
                           <div className="nextup-num">#{startNum + idx}</div>
-                          <div className="nextup-name">{p.name}</div>
+                          <div className="nextup-name">{formatPlayerDisplayName(p)}</div>
                         </div>
                       </DraggablePlayer>
                     )}
@@ -141,7 +142,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
                     {activeId === dragId ? (
                       <div className="nextup-card ghost-player">
                         <div className="nextup-num">#{startNum + 4 + idx}</div>
-                        <div className="nextup-name">{p.name}</div>
+                        <div className="nextup-name">{formatPlayerDisplayName(p)}</div>
                       </div>
                     ) : (
                       <DraggablePlayer 
@@ -150,7 +151,7 @@ function NextUpSection({ nextUpPlayers, startNum = 1, activeId, overId, panelId 
                       >
                         <div className="nextup-card">
                           <div className="nextup-num">#{startNum + 4 + idx}</div>
-                          <div className="nextup-name">{p.name}</div>
+                          <div className="nextup-name">{formatPlayerDisplayName(p)}</div>
                         </div>
                       </DraggablePlayer>
                     )}

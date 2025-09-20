@@ -1,4 +1,5 @@
 // Drag and drop utilities for PaddleStack
+import { getPlayerFullName } from './playerUtils';
 
 /**
  * Swaps two players in the session players array based on their positions in different queues/courts
@@ -47,13 +48,16 @@ function getQueuePositions(sessionPlayers, courts, pausedPlayers = []) {
   const assignedPlayerNames = new Set();
   courts.forEach(court => {
     (court.players || []).forEach(player => {
-      if (player && player.name) assignedPlayerNames.add(player.name);
+      if (player) {
+        const playerName = getPlayerFullName(player);
+        if (playerName) assignedPlayerNames.add(playerName);
+      }
     });
   });
 
   // Get unassigned and unpausedPlayers players in order
-  const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
-  const unassignedUnpausedPlayers = unpausedSessionPlayers.filter(p => !assignedPlayerNames.has(p.name));
+  const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => getPlayerFullName(pp) === getPlayerFullName(p)));
+  const unassignedUnpausedPlayers = unpausedSessionPlayers.filter(p => !assignedPlayerNames.has(getPlayerFullName(p)));
   
   // Next up section now includes first 8 players (first group: 0-3, second group: 4-7)
   const nextUpPlayers = unassignedUnpausedPlayers.slice(0, 8);
@@ -108,7 +112,7 @@ function getPlayerFromPosition(positionData, nextUpPlayers, generalQueue, courts
     // Get the new order of players in the court
     const courtPlayers = newCourts[sourceData.courtIndex].players;
     // Find indices in sessionPlayers
-    const indices = courtPlayers.map(p => sessionPlayers.findIndex(sp => sp.name === p.name));
+    const indices = courtPlayers.map(p => sessionPlayers.findIndex(sp => getPlayerFullName(sp) === getPlayerFullName(p)));
     // If all indices are valid, reorder sessionPlayers
     if (indices.every(idx => idx !== -1)) {
       newSessionPlayers = [...sessionPlayers];
@@ -140,8 +144,8 @@ function swapCourtAndQueuePlayer(sessionPlayers, courts, sourceData, targetData,
   }
 
   // Replace queue player with court player in sessionPlayers
-  const courtPlayerIndex = newSessionPlayers.findIndex(p => p.name === courtPlayer.name);
-  const queuePlayerIndex = newSessionPlayers.findIndex(p => p.name === queuePlayer.name);
+  const courtPlayerIndex = newSessionPlayers.findIndex(p => getPlayerFullName(p) === getPlayerFullName(courtPlayer));
+  const queuePlayerIndex = newSessionPlayers.findIndex(p => getPlayerFullName(p) === getPlayerFullName(queuePlayer));
 
   if (courtPlayerIndex !== -1 && queuePlayerIndex !== -1) {
     // Swap their positions in sessionPlayers
@@ -159,8 +163,8 @@ function swapQueuePlayers(sessionPlayers, sourcePlayer, targetPlayer) {
   const newSessionPlayers = [...sessionPlayers];
   
   // Find their indices in sessionPlayers
-  const sourceIndex = newSessionPlayers.findIndex(p => p.name === sourcePlayer.name);
-  const targetIndex = newSessionPlayers.findIndex(p => p.name === targetPlayer.name);
+  const sourceIndex = newSessionPlayers.findIndex(p => getPlayerFullName(p) === getPlayerFullName(sourcePlayer));
+  const targetIndex = newSessionPlayers.findIndex(p => getPlayerFullName(p) === getPlayerFullName(targetPlayer));
 
   if (sourceIndex !== -1 && targetIndex !== -1) {
     // Swap their positions

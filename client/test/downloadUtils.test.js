@@ -8,52 +8,52 @@ describe('generatePlayerDownloadData', () => {
 
   test('downloads only uploaded players with ORIGINAL status', () => {
     const uploadedPlayers = [
-      { name: 'Alice', payment: 'online', phone: '555-1111', paid: true },
-      { name: 'Bob', payment: 'cash', phone: '555-2222', paid: false }
+      { firstName: 'Alice', lastName: 'Smith', name: 'Alice Smith', payment: 'online', phone: '555-1111', paid: true },
+      { firstName: 'Bob', lastName: 'Jones', name: 'Bob Jones', payment: 'cash', phone: '555-2222', paid: false }
     ];
 
     const result = generatePlayerDownloadData([], [], uploadedPlayers);
     expect(result).toBe(
-      'Name   Payment Type  Phone Number  Status    Played\r\n' +
-      '-----  ------------  ------------  --------  ------\r\n' +
-      'Alice  online        555-1111      ORIGINAL  No    \r\n' +
-      'Bob    cash          555-2222      ORIGINAL  No    '
+      'First Name  Last Name  Payment Type  Phone Number  Status    Played\r\n' +
+      '----------  ---------  ------------  ------------  --------  ------\r\n' +
+      'Alice       Smith      online        555-1111      ORIGINAL  No    \r\n' +
+      'Bob         Jones      cash          555-2222      ORIGINAL  No    '
     );
   });
 
   test('downloads new session players with NEW status', () => {
     const sessionPlayers = [
-      { name: 'Charlie', payment: 'online', phone: '555-3333', paid: true },
-      { name: 'Diana', payment: 'cash', phone: '', paid: false }
+      { firstName: 'Charlie', lastName: 'Brown', name: 'Charlie Brown', payment: 'online', phone: '555-3333', paid: true },
+      { firstName: 'Diana', lastName: 'Prince', name: 'Diana Prince', payment: 'cash', phone: '', paid: false }
     ];
 
     const result = generatePlayerDownloadData(sessionPlayers, [], []);
     expect(result).toBe(
-      'Name     Payment Type  Phone Number  Status  Played\r\n' +
-      '-------  ------------  ------------  ------  ------\r\n' +
-      'Charlie  online        555-3333      NEW     Yes   \r\n' +
-      'Diana    cash                        NEW     Yes   '
+      'First Name  Last Name  Payment Type  Phone Number  Status  Played\r\n' +
+      '----------  ---------  ------------  ------------  ------  ------\r\n' +
+      'Charlie     Brown      online        555-3333      NEW     Yes   \r\n' +
+      'Diana       Prince     cash                        NEW     Yes   '
     );
   });
 
   test('merges uploaded and session players with correct status', () => {
     const uploadedPlayers = [
-      { name: 'Alice', payment: 'online', phone: '555-1111', paid: true },
-      { name: 'Bob', payment: 'cash', phone: '555-2222', paid: false }
+      { firstName: 'Alice', lastName: 'Smith', name: 'Alice Smith', payment: 'online', phone: '555-1111', paid: true },
+      { firstName: 'Bob', lastName: 'Jones', name: 'Bob Jones', payment: 'cash', phone: '555-2222', paid: false }
     ];
 
     const sessionPlayers = [
-      { name: 'Alice', payment: 'cash', phone: '555-9999', paid: true }, // Updated
-      { name: 'Charlie', payment: 'online', phone: '555-3333', paid: true } // New
+      { firstName: 'Alice', lastName: 'Smith', name: 'Alice Smith', payment: 'cash', phone: '555-9999', paid: true }, // Updated
+      { firstName: 'Charlie', lastName: 'Brown', name: 'Charlie Brown', payment: 'online', phone: '555-3333', paid: true } // New
     ];
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name     Payment Type  Phone Number  Status    Played\r\n' +
-      '-------  ------------  ------------  --------  ------\r\n' +
-      'Alice    cash          555-9999      UPDATED   Yes   \r\n' +
-      'Charlie  online        555-3333      NEW       Yes   \r\n' +
-      'Bob      cash          555-2222      ORIGINAL  No    '
+      'First Name  Last Name  Payment Type  Phone Number  Status    Played\r\n' +
+      '----------  ---------  ------------  ------------  --------  ------\r\n' +
+      'Alice       Smith      cash          555-9999      UPDATED   Yes   \r\n' +
+      'Charlie     Brown      online        555-3333      NEW       Yes   \r\n' +
+      'Bob         Jones      cash          555-2222      ORIGINAL  No    '
     );
   });
 
@@ -69,10 +69,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData([], deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name           Payment Type  Phone Number  Status    Played\r\n' +
-      '-------------  ------------  ------------  --------  ------\r\n' +
-      'Bob (deleted)  cash          555-2222      DELETED   Yes   \r\n' +
-      'Alice          online        555-1111      ORIGINAL  No    '
+      'First Name  Last Name  Payment Type  Phone Number  Status    Played\r\n' +
+      '----------  ---------  ------------  ------------  --------  ------\r\n' +
+      'Bob                    cash          555-2222      DELETED   Yes   \r\n' +
+      'Alice                  online        555-1111      ORIGINAL  No    '
     );
   });
 
@@ -87,9 +87,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name   Payment Type  Phone Number  Status   Played\r\n' +
-      '-----  ------------  ------------  -------  ------\r\n' +
-      'Alice  cash          555-9999      UPDATED  Yes   '
+      'First Name  Last Name  Payment Type  Phone Number  Status   Played\r\n' +
+      '----------  ---------  ------------  ------------  -------  ------\r\n' +
+      'Alice                  cash          555-9999      UPDATED  Yes   '
     );
   });
 
@@ -104,9 +104,9 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], uploadedPlayers);
     expect(result).toBe(
-      'Name   Payment Type  Phone Number  Status    Played\r\n' +
-      '-----  ------------  ------------  --------  ------\r\n' +
-      'Alice  online        555-1111      ORIGINAL  Yes   '
+      'First Name  Last Name  Payment Type  Phone Number  Status    Played\r\n' +
+      '----------  ---------  ------------  ------------  --------  ------\r\n' +
+      'Alice                  online        555-1111      ORIGINAL  Yes   '
     );
   });
 
@@ -128,12 +128,12 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name               Payment Type  Phone Number  Status    Played\r\n' +
-      '-----------------  ------------  ------------  --------  ------\r\n' +
-      'Alice              cash          555-9999      UPDATED   Yes   \r\n' +
-      'Charlie (deleted)  online        555-3333      DELETED   Yes   \r\n' +
-      'Diana              online        555-4444      NEW       Yes   \r\n' +
-      'Bob                cash          555-2222      ORIGINAL  No    '
+      'First Name  Last Name  Payment Type  Phone Number  Status    Played\r\n' +
+      '----------  ---------  ------------  ------------  --------  ------\r\n' +
+      'Alice                  cash          555-9999      UPDATED   Yes   \r\n' +
+      'Charlie                online        555-3333      DELETED   Yes   \r\n' +
+      'Diana                  online        555-4444      NEW       Yes   \r\n' +
+      'Bob                    cash          555-2222      ORIGINAL  No    '
     );
   });
 
@@ -155,12 +155,12 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name           Payment Type  Phone Number  Status   Played\r\n' +
-      '-------------  ------------  ------------  -------  ------\r\n' +
-      'Alice          cash          555-9999      UPDATED  Yes   \r\n' +
-      'Bob (deleted)  cash          555-2222      DELETED  Yes   \r\n' +
-      'Charlie        online        555-3333      NEW      Yes   \r\n' +
-      'Diana          cash          555-4444      NEW      Yes   '
+      'First Name  Last Name  Payment Type  Phone Number  Status   Played\r\n' +
+      '----------  ---------  ------------  ------------  -------  ------\r\n' +
+      'Alice                  cash          555-9999      UPDATED  Yes   \r\n' +
+      'Bob                    cash          555-2222      DELETED  Yes   \r\n' +
+      'Charlie                online        555-3333      NEW      Yes   \r\n' +
+      'Diana                  cash          555-4444      NEW      Yes   '
     );
   });
 
@@ -172,10 +172,10 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, [], []);
     expect(result).toBe(
-      'Name   Payment Type  Phone Number  Status  Played\r\n' +
-      '-----  ------------  ------------  ------  ------\r\n' +
-      'Alice  paid          555-1111      NEW     Yes   \r\n' +
-      'Bob    unknown       555-2222      NEW     Yes   '
+      'First Name  Last Name  Payment Type  Phone Number  Status  Played\r\n' +
+      '----------  ---------  ------------  ------------  ------  ------\r\n' +
+      'Alice                  paid          555-1111      NEW     Yes   \r\n' +
+      'Bob                    unknown       555-2222      NEW     Yes   '
     );
   });
 
@@ -198,13 +198,13 @@ describe('generatePlayerDownloadData', () => {
 
     const result = generatePlayerDownloadData(sessionPlayers, deletedPlayers, uploadedPlayers);
     expect(result).toBe(
-      'Name                     Payment Type  Phone Number  Status    Played\r\n' +
-      '-----------------------  ------------  ------------  --------  ------\r\n' +
-      'DeletedPlayer (deleted)  cash          555-5555      DELETED   Yes   \r\n' +
-      'NewPlayer                online        555-4444      NEW       Yes   \r\n' +
-      'PlayedAndUpdated         cash          555-9999      UPDATED   Yes   \r\n' +
-      'PlayedUnchanged          cash          555-3333      ORIGINAL  Yes   \r\n' +
-      'UploadedOnly             online        555-1111      ORIGINAL  No    '
+      'First Name        Last Name  Payment Type  Phone Number  Status    Played\r\n' +
+      '----------------  ---------  ------------  ------------  --------  ------\r\n' +
+      'DeletedPlayer                cash          555-5555      DELETED   Yes   \r\n' +
+      'NewPlayer                    online        555-4444      NEW       Yes   \r\n' +
+      'PlayedAndUpdated             cash          555-9999      UPDATED   Yes   \r\n' +
+      'PlayedUnchanged              cash          555-3333      ORIGINAL  Yes   \r\n' +
+      'UploadedOnly                 online        555-1111      ORIGINAL  No    '
     );
   });
 });

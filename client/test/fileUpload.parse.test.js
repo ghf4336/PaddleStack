@@ -11,9 +11,9 @@ ${TEST_PLAYER_NAMES.BOB}      ${TEST_PAYMENTS.CASH}          ${TEST_PHONE_NUMBER
 
     const result = parsePlayerFile(content);
     expect(result).toEqual([
-      { name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
-      { name: TEST_PLAYER_NAMES.CHARLIE, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true },
-      { name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
+      { firstName: 'Alice', lastName: '', name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
+      { firstName: 'Charlie', lastName: '', name: TEST_PLAYER_NAMES.CHARLIE, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true },
+      { firstName: 'Bob', lastName: '', name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
     ]);
   });
 
@@ -25,9 +25,9 @@ ${TEST_PLAYER_NAMES.BOB}\t${TEST_PAYMENTS.CASH}\t${TEST_PHONE_NUMBERS.BOB}`;
 
     const result = parsePlayerFile(content);
     expect(result).toEqual([
-      { name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
-      { name: TEST_PLAYER_NAMES.CHARLIE, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true },
-      { name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
+      { firstName: 'Alice', lastName: '', name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
+      { firstName: 'Charlie', lastName: '', name: TEST_PLAYER_NAMES.CHARLIE, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true },
+      { firstName: 'Bob', lastName: '', name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
     ]);
   });
 
@@ -40,8 +40,8 @@ ${TEST_PLAYER_NAMES.CHARLIE}        ${TEST_PAYMENTS.ONLINE}        ${TEST_PHONE_
 
     const result = parsePlayerFile(content);
     expect(result).toEqual([
-      { name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
-      { name: TEST_PLAYER_NAMES.CHARLIE, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true }
+      { firstName: 'Alice', lastName: '', name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
+      { firstName: 'Charlie', lastName: '', name: TEST_PLAYER_NAMES.CHARLIE, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.CHARLIE, paid: true }
     ]);
   });
 
@@ -53,8 +53,8 @@ ${TEST_PLAYER_NAMES.BOB}      ${TEST_PAYMENTS.ONLINE}        ${TEST_PHONE_NUMBER
 
     const result = parsePlayerFile(content);
     expect(result).toEqual([
-      { name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: '', paid: true },
-      { name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
+      { firstName: 'Alice', lastName: '', name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: '', paid: true },
+      { firstName: 'Bob', lastName: '', name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
     ]);
   });
 });

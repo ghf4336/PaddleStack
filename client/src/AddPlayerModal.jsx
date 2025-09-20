@@ -6,7 +6,8 @@ const PAID_OPTIONS = [
 ];
 
 function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlayers = [], existingNames = [] }) {
-  const [playerName, setPlayerName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [payment, setPayment] = useState('');
   const [touched, setTouched] = useState(false);
@@ -18,7 +19,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
   useEffect(() => {
     if (show) {
-      setPlayerName('');
+      setFirstName('');
+      setLastName('');
       setPhone('');
       setPayment('');
       setTouched(false);
@@ -31,10 +33,15 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
   // Filter uploaded players based on name input
   useEffect(() => {
-    if (playerName.trim() && uploadedPlayers.length > 0) {
-      const filtered = uploadedPlayers.filter(player =>
-        player.name.toLowerCase().includes(playerName.toLowerCase())
-      );
+    const fullName = `${firstName} ${lastName}`.trim();
+    if (fullName && uploadedPlayers.length > 0) {
+      const filtered = uploadedPlayers.filter(player => {
+        // Support both old format (single name) and new format (firstName + lastName)
+        const playerFullName = player.firstName && player.lastName 
+          ? `${player.firstName} ${player.lastName}`
+          : player.name || '';
+        return playerFullName.toLowerCase().includes(fullName.toLowerCase());
+      });
       setFilteredPlayers(filtered);
       // Don't show dropdown immediately after selection to prevent flash
       if (!justSelectedRef.current) {
@@ -46,16 +53,17 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
     }
     // Clear the justSelected flag after processing
     justSelectedRef.current = false;
-  }, [playerName, uploadedPlayers]);
+  }, [firstName, lastName, uploadedPlayers]);
 
   // Check for duplicate names
   useEffect(() => {
-    if (playerName.trim() && existingNames.length > 0) {
-      setDuplicateError(existingNames.some(name => name.toLowerCase() === playerName.trim().toLowerCase()));
+    const fullName = `${firstName} ${lastName}`.trim();
+    if (fullName && existingNames.length > 0) {
+      setDuplicateError(existingNames.some(name => name.toLowerCase() === fullName.toLowerCase()));
     } else {
       setDuplicateError(false);
     }
-  }, [playerName, existingNames]);
+  }, [firstName, lastName, existingNames]);
 
   // Notify parent of paid status
   useEffect(() => {
@@ -67,27 +75,52 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
   const handleConfirm = () => {
     setTouched(true);
-    const trimmedName = playerName.trim();
-    if (trimmedName && payment && !duplicateError) {
-      onConfirm({ name: trimmedName, phone: phone.trim(), payment });
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+    if (trimmedFirstName && payment && !duplicateError) {
+      onConfirm({ 
+        firstName: trimmedFirstName, 
+        lastName: trimmedLastName,
+        phone: phone.trim(), 
+        payment 
+      });
     }
   };
 
   const handlePlayerSelect = (player) => {
     justSelectedRef.current = true;
-    setPlayerName(player.name);
+    // Support both old format (single name) and new format (firstName + lastName)
+    if (player.firstName && player.lastName) {
+      setFirstName(player.firstName);
+      setLastName(player.lastName);
+    } else if (player.name) {
+      // Try to split the old single name format
+      const nameParts = player.name.trim().split(' ');
+      setFirstName(nameParts[0] || '');
+      setLastName(nameParts.slice(1).join(' ') || '');
+    }
     setPhone(player.phone || '');
     setPayment(player.payment || '');
     setShowDropdown(false);
   };
 
-  const handleNameChange = (e) => {
-    setPlayerName(e.target.value);
+  const handleFirstNameChange = (e) => {
+    setFirstName(e.target.value);
+  };
+
+  const handleLastNameChange = (e) => {
+    setLastName(e.target.value);
   };
 
   const handleNameBlur = (e) => {
     // Delay hiding dropdown to allow for click selection
     setTimeout(() => setShowDropdown(false), 150);
+  };
+
+  const handleNameFocus = () => {
+    if (filteredPlayers.length > 0) {
+      setShowDropdown(true);
+    }
   };
 
   if (!show) return null;
@@ -135,31 +168,50 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <circle cx="12" cy="7" r="4" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </span> Player Full Name *
+          </span> Player Name *
         </label>
-        <input
-          type="text"
-          placeholder="Enter first and last name"
-          value={playerName}
-          onChange={handleNameChange}
-          onBlur={handleNameBlur}
-          onFocus={() => {
-            if (filteredPlayers.length > 0) {
-              setShowDropdown(true);
-            }
-          }}
-          style={{
-            width: '100%',
-            padding: '10px 12px',
-            border: touched && !playerName.trim() || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
-            borderRadius: 8,
-            fontSize: 16,
-            outline: 'none',
-            marginBottom: 2
-          }}
-        />
-        {touched && !playerName.trim() && (
-          <span style={{ color: '#e74c3c', fontSize: 13 }}>Name is required</span>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <div style={{ flex: 1 }}>
+            <input
+              type="text"
+              placeholder="Enter first name"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              onBlur={handleNameBlur}
+              onFocus={handleNameFocus}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                border: touched && !firstName.trim() || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
+                borderRadius: 8,
+                fontSize: 16,
+                outline: 'none',
+                marginBottom: 2
+              }}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <input
+              type="text"
+              placeholder="Enter last name"
+              value={lastName}
+              onChange={handleLastNameChange}
+              onBlur={handleNameBlur}
+              onFocus={handleNameFocus}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                border: touched && !firstName.trim() || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
+                borderRadius: 8,
+                fontSize: 16,
+                outline: 'none',
+                marginBottom: 2
+              }}
+            />
+          </div>
+        </div>
+        {touched && !firstName.trim() && (
+          <span style={{ color: '#e74c3c', fontSize: 13 }}>First name is required</span>
         )}
         {duplicateError && (
           <span style={{ color: '#e74c3c', fontSize: 13 }}>A player with this name is already added</span>
@@ -184,26 +236,31 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             }}
             onMouseDown={e => e.preventDefault()}
           >
-            {filteredPlayers.map((player, index) => (
-              <div
-                key={index}
-                onClick={() => handlePlayerSelect(player)}
-                style={{
-                  padding: '10px 12px',
-                  cursor: 'pointer',
-                  borderBottom: index < filteredPlayers.length - 1 ? '1px solid #f0f0f0' : 'none',
-                  backgroundColor: 'transparent',
-                  fontSize: 14
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-              >
-                <div style={{ fontWeight: 500 }}>{player.name}</div>
-                <div style={{ fontSize: 12, color: '#666' }}>
-                  {player.phone && `${player.phone}`}
+            {filteredPlayers.map((player, index) => {
+              const displayName = player.firstName && player.lastName 
+                ? `${player.firstName} ${player.lastName}`
+                : player.name || '';
+              return (
+                <div
+                  key={index}
+                  onClick={() => handlePlayerSelect(player)}
+                  style={{
+                    padding: '10px 12px',
+                    cursor: 'pointer',
+                    borderBottom: index < filteredPlayers.length - 1 ? '1px solid #f0f0f0' : 'none',
+                    backgroundColor: 'transparent',
+                    fontSize: 14
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  <div style={{ fontWeight: 500 }}>{displayName}</div>
+                  <div style={{ fontSize: 12, color: '#666' }}>
+                    {player.phone && `${player.phone}`}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -293,8 +350,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             fontWeight: 600,
             fontSize: 16,
             cursor: 'pointer',
-            opacity: playerName.trim() && payment && !duplicateError ? 1 : 0.7,
-            boxShadow: touched && !(playerName.trim() && payment && !duplicateError) ? '0 0 0 2px #e74c3c55' : 'none',
+            opacity: firstName.trim() && payment && !duplicateError ? 1 : 0.7,
+            boxShadow: touched && !(firstName.trim() && payment && !duplicateError) ? '0 0 0 2px #e74c3c55' : 'none',
             transition: 'box-shadow 0.2s'
           }}
         >Confirm</button>

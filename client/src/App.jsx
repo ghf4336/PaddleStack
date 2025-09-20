@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { useSensor, useSensors, PointerSensor, TouchSensor } from '@dnd-kit/core';
 import { swapPlayers, parseDragId, reorderCourts } from './utils/dragDrop';
+import { formatPlayerDisplayName, getPlayerFullName } from './utils/playerUtils';
 import EndSessionModal from './EndSessionModal';
 import Welcome from './Welcome';
 import './App.css';
@@ -57,8 +58,8 @@ function App() {
       if (court && court.players && court.players.length > 0) {
         setSessionPlayers(prevPlayers => {
           // Remove these players from their current positions in the queue
-          const namesToRemove = court.players.map(p => p.name);
-          const filtered = prevPlayers.filter(p => !namesToRemove.includes(p.name));
+          const namesToRemove = court.players.map(p => getPlayerFullName(p));
+          const filtered = prevPlayers.filter(p => !namesToRemove.includes(getPlayerFullName(p)));
           // Add them to the end, preserving their order
           return [...filtered, ...court.players];
         });
@@ -100,13 +101,13 @@ function App() {
     // Batch update: move finished players to end, clear court, and reassign courts in one go
     const court = courts[courtIdx];
     if (!court || !court.players || court.players.length !== 4) return;
-    const finishedNames = court.players.map(p => p.name);
+    const finishedNames = court.players.map(p => getPlayerFullName(p));
 
     setSessionPlayers(prevPlayers => {
       // Remove finished players from their current positions
-      const filtered = prevPlayers.filter(p => !finishedNames.includes(p.name));
+      const filtered = prevPlayers.filter(p => !finishedNames.includes(getPlayerFullName(p)));
       // Add finished players to the end, preserving their order
-      const finishedPlayers = prevPlayers.filter(p => finishedNames.includes(p.name));
+      const finishedPlayers = prevPlayers.filter(p => finishedNames.includes(getPlayerFullName(p)));
       return [...filtered, ...finishedPlayers];
     });
 
@@ -123,12 +124,15 @@ function App() {
       const assignedNames = new Set();
       prevCourts.forEach(court => {
         (court.players || []).forEach(player => {
-          if (player && player.name) assignedNames.add(player.name);
+          if (player) {
+            const playerName = getPlayerFullName(player);
+            if (playerName) assignedNames.add(playerName);
+          }
         });
       });
 
       // Get unassigned players in order, excluding paused players
-      const queue = sessionPlayers.filter(p => !assignedNames.has(p.name) && !pausedPlayers.some(pp => pp.name === p.name));
+      const queue = sessionPlayers.filter(p => !assignedNames.has(getPlayerFullName(p)) && !pausedPlayers.some(pp => getPlayerFullName(pp) === getPlayerFullName(p)));
       let queueIdx = 0;
 
       // Assign players to courts in order
@@ -165,13 +169,16 @@ function App() {
   const assignedPlayerNames = new Set();
   courts.forEach(court => {
     (court.players || []).forEach(player => {
-      if (player && player.name) assignedPlayerNames.add(player.name);
+      if (player) {
+        const playerName = getPlayerFullName(player);
+        if (playerName) assignedPlayerNames.add(playerName);
+      }
     });
   });
   
   // Next up: first 8 unassigned and not paused players (4 in next up, 4 in "2 games")
-  const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => pp.name === p.name));
-  const unassignedUnpausedPlayers = unpausedSessionPlayers.filter(p => !assignedPlayerNames.has(p.name));
+  const unpausedSessionPlayers = sessionPlayers.filter(p => !pausedPlayers.some(pp => getPlayerFullName(pp) === getPlayerFullName(p)));
+  const unassignedUnpausedPlayers = unpausedSessionPlayers.filter(p => !assignedPlayerNames.has(getPlayerFullName(p)));
   const nextUpPlayers = unassignedUnpausedPlayers.slice(0, 8);
   const generalQueue = unassignedUnpausedPlayers.slice(8);
   const nextUpCount = nextUpPlayers.length;
@@ -182,11 +189,20 @@ function App() {
   };
 
   // Confirm from AddPlayerModal
-  const handleConfirmAdd = ({ name, phone, payment }) => {
+  const handleConfirmAdd = ({ firstName, lastName, phone, payment }) => {
     const paid = payment === 'online' || payment === 'cash';
+    const fullName = `${firstName}${lastName ? ` ${lastName}` : ''}`.trim();
     setSessionPlayers([
       ...sessionPlayers,
-      { name: name.trim(), phone: phone || '', paid, payment, addedAt: Date.now() }
+      { 
+        firstName: firstName.trim(), 
+        lastName: lastName ? lastName.trim() : '', 
+        name: fullName, // Keep for backward compatibility
+        phone: phone || '', 
+        paid, 
+        payment, 
+        addedAt: Date.now() 
+      }
     ]);
     setShowAddPlayerModal(false);
   };
@@ -207,8 +223,8 @@ function App() {
   const handleConfirmDeletePlayer = () => {
     // Soft delete: move player to deletedPlayers and remove from active arrays
     setDeletedPlayers(prev => [...prev, playerToAction]);
-    setSessionPlayers(sessionPlayers.filter(sp => sp.name !== playerToAction.name));
-    setPausedPlayers(pausedPlayers.filter(pp => pp.name !== playerToAction.name));
+    setSessionPlayers(sessionPlayers.filter(sp => getPlayerFullName(sp) !== getPlayerFullName(playerToAction)));
+    setPausedPlayers(pausedPlayers.filter(pp => getPlayerFullName(pp) !== getPlayerFullName(playerToAction)));
     setShowPlayerActionModal(false);
     setPlayerToAction(null);
   };
@@ -225,10 +241,10 @@ function App() {
   };
 
   const handleEnablePausedPlayer = (player) => {
-    setPausedPlayers(pausedPlayers.filter(pp => pp.name !== player.name));
+    setPausedPlayers(pausedPlayers.filter(pp => getPlayerFullName(pp) !== getPlayerFullName(player)));
     setSessionPlayers(prevPlayers => {
       // Remove the player from their current position
-      const filtered = prevPlayers.filter(p => p.name !== player.name);
+      const filtered = prevPlayers.filter(p => getPlayerFullName(p) !== getPlayerFullName(player));
       // Add them to the end
       return [...filtered, { ...player, addedAt: Date.now() }];
     });
@@ -242,7 +258,7 @@ function App() {
       onConfirm={handleConfirmAdd}
       onCancel={handleCancelAdd}
       uploadedPlayers={uploadedPlayers}
-      existingNames={sessionPlayers.map(p => p.name)}
+      existingNames={sessionPlayers.map(p => getPlayerFullName(p))}
     />
   );
   if (typeof window !== 'undefined') {
@@ -306,7 +322,7 @@ function App() {
       if (player) {
         label = (
           <div className="queue-player ghost-player">
-            <span>{player.name}</span>
+            <span>{formatPlayerDisplayName(player)}</span>
             <span className="queue-num">#{generalQueueStartNum + dragData.index}</span>
           </div>
         );
@@ -317,7 +333,7 @@ function App() {
         label = (
           <div className="nextup-card ghost-player">
             <div className="nextup-num">#{1 + dragData.index}</div>
-            <div className="nextup-name">{player.name}</div>
+            <div className="nextup-name">{formatPlayerDisplayName(player)}</div>
           </div>
         );
       }
@@ -327,7 +343,7 @@ function App() {
         label = (
           <div className="nextup-card ghost-player">
             <div className="nextup-num">#{5 + dragData.index}</div>
-            <div className="nextup-name">{player.name}</div>
+            <div className="nextup-name">{formatPlayerDisplayName(player)}</div>
           </div>
         );
       }
@@ -336,7 +352,7 @@ function App() {
       player = court && court.players ? court.players[dragData.index] : null;
       label = (
         <div className="queue-player ghost-player" style={{ minHeight: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ textAlign: 'center', width: '100%' }}>{player ? player.name : <span style={{ color: '#bbb' }}>Player {dragData.index + 1}</span>}</span>
+          <span style={{ textAlign: 'center', width: '100%' }}>{player ? formatPlayerDisplayName(player) : <span style={{ color: '#bbb' }}>Player {dragData.index + 1}</span>}</span>
         </div>
       );
     }

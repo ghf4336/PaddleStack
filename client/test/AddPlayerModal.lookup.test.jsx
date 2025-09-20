@@ -22,7 +22,7 @@ describe('AddPlayerModal player lookup features', () => {
   test('should render without uploaded players', () => {
     render(<AddPlayerModal {...defaultProps} />);
 
-    expect(screen.getByPlaceholderText('Enter first and last name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter first name')).toBeInTheDocument();
     expect(screen.getByText('Add New Player')).toBeInTheDocument();
   });
 
@@ -30,7 +30,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice');
 
     // Should not show any dropdown
@@ -41,7 +41,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Ali');
 
     await waitFor(() => {
@@ -55,7 +55,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice Johnson');
 
     await waitFor(() => {
@@ -68,7 +68,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -79,7 +79,8 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.click(screen.getByText('Alice Johnson'));
 
     // Check that all fields are filled
-    expect(nameInput).toHaveValue('Alice Johnson');
+    expect(nameInput).toHaveValue('Alice');
+    expect(screen.getByPlaceholderText('Enter last name')).toHaveValue('Johnson');
     expect(screen.getByPlaceholderText('Enter phone number')).toHaveValue('555-1111');
     
     // Check payment selection using the ID
@@ -91,7 +92,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -101,7 +102,8 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.click(screen.getByText('Alice Johnson'));
 
     // Check that the values were filled correctly (main functionality)
-    expect(nameInput).toHaveValue('Alice Johnson');
+    expect(nameInput).toHaveValue('Alice');
+    expect(screen.getByPlaceholderText('Enter last name')).toHaveValue('Johnson');
     expect(screen.getByPlaceholderText('Enter phone number')).toHaveValue('555-1111');
     
     // Check select value by accessing the select element directly
@@ -113,7 +115,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     
     // Type and then blur
     await user.type(nameInput, 'Alice');
@@ -135,7 +137,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -157,7 +159,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'A');
 
     await waitFor(() => {
@@ -179,7 +181,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.WITH_MISSING_PHONE} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -193,7 +195,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.WITH_MISSING_PAYMENT} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Alice');
 
     await waitFor(() => {
@@ -202,7 +204,8 @@ describe('AddPlayerModal player lookup features', () => {
 
     fireEvent.click(screen.getByText('Alice Johnson'));
 
-    expect(nameInput).toHaveValue('Alice Johnson');
+    expect(nameInput).toHaveValue('Alice');
+    expect(screen.getByPlaceholderText('Enter last name')).toHaveValue('Johnson');
     expect(screen.getByPlaceholderText('Enter phone number')).toHaveValue('555-1111');
     
     // Check that the select remains empty (payment was empty string)
@@ -214,7 +217,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={TEST_UPLOADED_PLAYERS.BASIC} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     
     // Type and clear
     await user.type(nameInput, 'A');
@@ -234,7 +237,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} uploadedPlayers={uploadedPlayers} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     await user.type(nameInput, 'Player');
 
     await waitFor(() => {
@@ -252,7 +255,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
@@ -269,7 +272,8 @@ describe('AddPlayerModal player lookup features', () => {
 
     // Should call onConfirm with the new player data
     expect(defaultProps.onConfirm).toHaveBeenCalledWith({
-      name: TEST_PLAYER_NAMES.CHARLIE,
+      firstName: TEST_PLAYER_NAMES.CHARLIE,
+      lastName: '',
       phone: '',
       payment: TEST_PAYMENTS.ONLINE
     });
@@ -279,7 +283,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
@@ -304,7 +308,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     const paymentSelect = screen.getByRole('combobox');
     const confirmBtn = screen.getByText('Confirm');
 
@@ -331,7 +335,8 @@ describe('AddPlayerModal player lookup features', () => {
 
     fireEvent.click(confirmBtn);
     expect(defaultProps.onConfirm).toHaveBeenCalledWith({
-      name: TEST_PLAYER_NAMES.CHARLIE,
+      firstName: TEST_PLAYER_NAMES.CHARLIE,
+      lastName: '',
       phone: '',
       payment: TEST_PAYMENTS.ONLINE
     });
@@ -341,7 +346,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, 'alice'); // lowercase
@@ -355,7 +360,7 @@ describe('AddPlayerModal player lookup features', () => {
     const user = userEvent.setup();
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
-    const nameInput = screen.getByPlaceholderText('Enter first and last name');
+    const nameInput = screen.getByPlaceholderText('Enter first name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, '  Alice  '); // with whitespace

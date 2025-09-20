@@ -2,6 +2,7 @@ import React from 'react';
 import DraggablePlayer from './components/DraggablePlayer';
 import DroppableArea from './components/DroppableArea';
 import { generateDragId } from './utils/dragDrop';
+import { formatPlayerDisplayName } from './utils/playerUtils';
 
 function GeneralQueueSection({
   generalQueue,
@@ -65,7 +66,7 @@ function GeneralQueueSection({
             >
               {activeId === dragId ? (
                 <div className="queue-player ghost-player">
-                  <span>{p.name}</span>
+                  <span>{formatPlayerDisplayName(p)}</span>
                   <span className="queue-num">#{generalQueueStartNum + i}</span>
                 </div>
               ) : (
@@ -74,7 +75,7 @@ function GeneralQueueSection({
                   player={p}
                 >
                   <div className="queue-player">
-                    <span>{p.name}</span>
+                    <span>{formatPlayerDisplayName(p)}</span>
                     <span className="queue-num">#{generalQueueStartNum + i}</span>
                   </div>
                 </DraggablePlayer>
