@@ -62,7 +62,7 @@ function PlayerListSection({
                 }}
               >
                 <span>
-                  {formatPlayerDisplayName(p)}
+                  {getPlayerFullName(p)}
                   {isPaused && <span className="paused-badge" style={{ background: '#bbb', color: '#222', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6 }}>Paused</span>}
                   {inCourt && (
                     <span className="incourt-badge" style={{ background: '#2196f3', color: '#fff', borderRadius: 6, padding: '2px 8px', fontSize: 13, marginLeft: 6, fontWeight: 600 }}>On court</span>

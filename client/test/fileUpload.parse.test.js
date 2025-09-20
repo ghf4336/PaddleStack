@@ -45,6 +45,20 @@ ${TEST_PLAYER_NAMES.CHARLIE}        ${TEST_PAYMENTS.ONLINE}        ${TEST_PHONE_
     ]);
   });
 
+  test('skips deleted players with DELETED status (without deleted in name)', () => {
+    const content = `First Name  Last Name  Payment Type  Phone Number  Status    Played
+----------  ---------  ------------  ------------  --------  ------
+${TEST_PLAYER_NAMES.ALICE}                   ${TEST_PAYMENTS.CASH}          ${TEST_PHONE_NUMBERS.ALICE}      ORIGINAL  Yes   
+Adrian      Martinez   cash          555-6666      DELETED   Yes   
+${TEST_PLAYER_NAMES.BOB}                     ${TEST_PAYMENTS.ONLINE}        ${TEST_PHONE_NUMBERS.BOB}      UPDATED   Yes   `;
+
+    const result = parsePlayerFile(content);
+    expect(result).toEqual([
+      { firstName: 'Alice', lastName: '', name: TEST_PLAYER_NAMES.ALICE, payment: TEST_PAYMENTS.CASH, phone: TEST_PHONE_NUMBERS.ALICE, paid: true },
+      { firstName: 'Bob', lastName: '', name: TEST_PLAYER_NAMES.BOB, payment: TEST_PAYMENTS.ONLINE, phone: TEST_PHONE_NUMBERS.BOB, paid: true }
+    ]);
+  });
+
   test('handles empty phone numbers', () => {
     const content = `Name     Payment Type  Phone Number  Status  Played
 -------  ------------  ------------  ------  ------

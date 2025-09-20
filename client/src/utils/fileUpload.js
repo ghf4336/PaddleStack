@@ -3,7 +3,7 @@
  * Expected formats: 
  * - Old format: "Name\tPayment Type\tPhone Number" or "Name        Payment Type    Phone Number    Status     Played"
  * - New format: "First Name\tLast Name\tPayment Type\tPhone Number" or "First Name   Last Name   Payment Type    Phone Number    Status     Played"
- * Ignores deleted players (lines containing "(deleted)")
+ * Ignores deleted players (lines containing "(deleted)" in name or "DELETED" in status column)
  * @param {string} fileContent - Raw file content
  * @returns {Array} Array of player objects
  */
@@ -51,6 +51,11 @@ export function parsePlayerFile(fileContent) {
   const players = [];
 
   for (const line of dataLines) {
+    // Skip deleted players early (ignore lines with "(deleted)" or "DELETED" status)
+    if (line.includes('(deleted)') || line.includes('DELETED')) {
+      continue;
+    }
+
     let firstName = '', lastName = '', paymentType = '', phone = '';
 
     if (isTabDelimited) {
@@ -166,14 +171,11 @@ export function parsePlayerFile(fileContent) {
     }
 
     if (firstName && paymentType) {
-      // Skip deleted players (ignore lines with "(deleted)")
-      const fullName = `${firstName}${lastName ? ` ${lastName}` : ''}`;
-      if (fullName.includes('(deleted)')) {
-        continue;
-      }
-
       // Determine if player has paid based on payment type
       const paid = paymentType === 'online' || paymentType === 'cash';
+      
+      // Construct full name for backward compatibility
+      const fullName = `${firstName}${lastName ? ` ${lastName}` : ''}`;
 
       players.push({
         firstName,

@@ -525,8 +525,8 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     
     // Verify Player5 is paused and not on court
-    expect(screen.getByText('Player5 T')).toBeInTheDocument();
-    const player5Element = screen.getByText('Player5 T').closest('.session-player');
+    expect(screen.getByText('Player5 Test')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5 Test').closest('.session-player');
     expect(player5Element).toHaveClass('paused');
     
     // Player6 should be in Next Up, Player5 should not be anywhere in courts
@@ -538,8 +538,8 @@ describe('App logic functions', () => {
     fireEvent.click(completeBtn);
     
     // Player5 should still be paused and NOT assigned to the court
-    expect(screen.getByText('Player5 T')).toBeInTheDocument();
-    const player5ElementAfter = screen.getByText('Player5 T').closest('.session-player');
+    expect(screen.getByText('Player5 Test')).toBeInTheDocument();
+    const player5ElementAfter = screen.getByText('Player5 Test').closest('.session-player');
     expect(player5ElementAfter).toHaveClass('paused');
     
     // Court should have Player6 and not Player5
@@ -570,8 +570,8 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     
     // Verify Player5 is paused
-    expect(screen.getByText('Player5 T')).toBeInTheDocument();
-    const player5Element = screen.getByText('Player5 T').closest('.session-player');
+    expect(screen.getByText('Player5 Test')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5 Test').closest('.session-player');
     expect(player5Element).toHaveClass('paused');
     
     // Complete the game
@@ -596,7 +596,7 @@ describe('App logic functions', () => {
     }
     
     // Player5 should still be paused after game completion
-    const player5ElementAfter = screen.getByText('Player5 T').closest('.session-player');
+    const player5ElementAfter = screen.getByText('Player5 Test').closest('.session-player');
     expect(player5ElementAfter).toHaveClass('paused');
   });
 
@@ -629,8 +629,8 @@ describe('App logic functions', () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Verify that Player5 is still paused and no duplications occurred
-    expect(screen.getByText('Player5 T')).toBeInTheDocument();
-    const player5Element = screen.getByText('Player5 T').closest('.session-player');
+    expect(screen.getByText('Player5 Test')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5 Test').closest('.session-player');
     expect(player5Element).toHaveClass('paused');
     
     // Check that no player appears duplicated anywhere
