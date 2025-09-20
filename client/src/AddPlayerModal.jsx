@@ -142,7 +142,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         background: '#fff',
         boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
         borderRadius: 12,
-        padding: 32,
+        padding: '4px 32px 32px 32px',
         width: '90%',
         maxWidth: 480,
         minWidth: 400,
