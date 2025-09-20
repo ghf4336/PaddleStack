@@ -3,7 +3,33 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import AddPlayerModal from '../src/AddPlayerModal';
+import { formatAndCleanPlayerName } from '../src/utils/playerUtils';
 import { TEST_PLAYER_NAMES, TEST_PHONE_NUMBERS, TEST_PAYMENTS, TEST_UPLOADED_PLAYERS, TEST_EXISTING_NAMES } from '../src/testPlayers';
+
+describe('formatAndCleanPlayerName utility', () => {
+  test('should capitalize first letter and lowercase rest', () => {
+    expect(formatAndCleanPlayerName('aDRIAN')).toBe('Adrian');
+    expect(formatAndCleanPlayerName('pETER')).toBe('Peter');
+    expect(formatAndCleanPlayerName('JOHN')).toBe('John');
+    expect(formatAndCleanPlayerName('elizabeth')).toBe('Elizabeth');
+  });
+
+  test('should remove all spaces from names', () => {
+    expect(formatAndCleanPlayerName('a d r i a n')).toBe('Adrian');
+    expect(formatAndCleanPlayerName('  j o h n  ')).toBe('John');
+    expect(formatAndCleanPlayerName(' mary jane ')).toBe('Maryjane');
+    expect(formatAndCleanPlayerName('s m i t h')).toBe('Smith');
+  });
+
+  test('should handle edge cases', () => {
+    expect(formatAndCleanPlayerName('')).toBe('');
+    expect(formatAndCleanPlayerName('   ')).toBe('');
+    expect(formatAndCleanPlayerName('a')).toBe('A');
+    expect(formatAndCleanPlayerName(' A ')).toBe('A');
+    expect(formatAndCleanPlayerName(null)).toBe('');
+    expect(formatAndCleanPlayerName(undefined)).toBe('');
+  });
+});
 
 describe('AddPlayerModal player lookup features', () => {
   const defaultProps = {
@@ -378,6 +404,31 @@ describe('AddPlayerModal player lookup features', () => {
 
     // Should show duplicate error (trims whitespace)
     expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
+  });
+
+  test('should format and clean player names when adding', async () => {
+    const user = userEvent.setup();
+    render(<AddPlayerModal {...defaultProps} />);
+
+    const nameInput = screen.getByPlaceholderText('Enter first name');
+    const lastNameInput = screen.getByPlaceholderText('Enter last name');
+    const paymentSelect = screen.getByRole('combobox');
+    const confirmBtn = screen.getByText('Confirm');
+
+    // Type names with mixed case and spaces
+    await user.type(nameInput, 'aDRIAN ');
+    await user.type(lastNameInput, ' pETER  ');
+    fireEvent.change(paymentSelect, { target: { value: 'online' } });
+
+    fireEvent.click(confirmBtn);
+
+    // Should call onConfirm with formatted names (capitalized and spaces removed)
+    expect(defaultProps.onConfirm).toHaveBeenCalledWith({
+      firstName: 'Adrian',
+      lastName: 'Peter',
+      phone: '',
+      payment: 'online'
+    });
   });
 });
 

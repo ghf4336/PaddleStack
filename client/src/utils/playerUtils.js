@@ -3,6 +3,23 @@
  */
 
 /**
+ * Format and clean a player's name: capitalize first letter, lowercase rest, remove spaces.
+ * E.g., "aDRIAN " => "Adrian"; "  j o h n  " => "John"
+ * @param {string} name - Raw name input
+ * @returns {string} Formatted name
+ */
+export function formatAndCleanPlayerName(name) {
+  if (!name || typeof name !== 'string') return '';
+  
+  // Remove all spaces and trim
+  const cleaned = name.replace(/\s+/g, '').trim();
+  if (!cleaned) return '';
+  
+  // Capitalize first letter, lowercase the rest
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+}
+
+/**
  * Format a player's name for display as "firstName L" (first name + last initial)
  * @param {Object} player - Player object with firstName, lastName, or legacy name field
  * @returns {string} Formatted display name

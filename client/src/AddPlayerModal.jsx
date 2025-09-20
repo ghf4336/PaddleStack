@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { formatAndCleanPlayerName } from './utils/playerUtils';
 
 const PAID_OPTIONS = [
   { value: 'online', label: 'Paid online', paid: true },
@@ -73,12 +74,13 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
   const handleConfirm = () => {
     setTouched(true);
-    const trimmedFirstName = firstName.trim();
-    const trimmedLastName = lastName.trim();
-    if (trimmedFirstName && trimmedLastName && payment && !duplicateError) {
+    // Format and clean the names
+    const formattedFirstName = formatAndCleanPlayerName(firstName);
+    const formattedLastName = formatAndCleanPlayerName(lastName);
+    if (formattedFirstName && formattedLastName && payment && !duplicateError) {
       onConfirm({ 
-        firstName: trimmedFirstName, 
-        lastName: trimmedLastName,
+        firstName: formattedFirstName, 
+        lastName: formattedLastName,
         phone: phone.trim(), 
         payment 
       });

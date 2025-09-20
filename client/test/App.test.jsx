@@ -41,7 +41,7 @@ describe('PaddleStack Player Phone Number', () => {
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
-    const playerEls = await screen.findAllByText('PhoneUser T');
+    const playerEls = await screen.findAllByText('Phoneuser T');
     expect(playerEls.length).toBeGreaterThan(0);
     // Phone number is not shown in UI, but we can check the internal state by adding another player and checking the session list
     // (simulate by adding a second player and checking the session list order)
@@ -51,8 +51,8 @@ describe('PaddleStack Player Phone Number', () => {
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // The session list should contain both players
-    const sessionPlayers = screen.getAllByText(/PhoneUser|SecondUser/).map(el => el.textContent);
-    expect(sessionPlayers).toEqual(expect.arrayContaining(['PhoneUser T', 'SecondUser T']));
+    const sessionPlayers = screen.getAllByText(/Phoneuser|Seconduser/).map(el => el.textContent);
+    expect(sessionPlayers).toEqual(expect.arrayContaining(['Phoneuser T', 'Seconduser T']));
     // (Optional) If you expose phone in UI, check for it here
   });
 
@@ -66,7 +66,7 @@ describe('PaddleStack Player Phone Number', () => {
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
-    const playerEls = await screen.findAllByText('NoPhoneUser T');
+    const playerEls = await screen.findAllByText('Nophoneuser T');
     expect(playerEls.length).toBeGreaterThan(0);
   });
 
@@ -87,7 +87,7 @@ describe('PaddleStack Player Phone Number', () => {
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // There is no direct UI for phone, but we can check the DOM for the player name and ensure no error
-    const playerEls = await screen.findAllByText('StatePhoneUser T');
+    const playerEls = await screen.findAllByText('Statephoneuser T');
     expect(playerEls.length).toBeGreaterThan(0);
     // (If phone is ever shown in UI, add an assertion here)
   });
@@ -328,7 +328,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // There may be multiple TestPlayer elements, just check at least one exists
-    const testPlayers = await screen.findAllByText('TestPlayer T');
+    const testPlayers = await screen.findAllByText('Testplayer T');
     expect(testPlayers.length).toBeGreaterThan(0);
   });
 
