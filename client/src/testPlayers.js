@@ -84,4 +84,4 @@ export const TEST_UPLOADED_PLAYERS = {
   ]
 };
 
-export const TEST_EXISTING_NAMES = ['Alice', 'Bob'];
+export const TEST_EXISTING_NAMES = ['Alice Test', 'Bob Smith'];

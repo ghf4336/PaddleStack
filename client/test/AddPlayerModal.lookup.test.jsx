@@ -260,6 +260,8 @@ describe('AddPlayerModal player lookup features', () => {
     const confirmBtn = screen.getByText('Confirm');
 
     await user.type(nameInput, TEST_PLAYER_NAMES.CHARLIE);
+    const lastNameInput = screen.getByPlaceholderText('Enter last name');
+    await user.type(lastNameInput, 'Test');
     fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should not show duplicate error
@@ -273,7 +275,7 @@ describe('AddPlayerModal player lookup features', () => {
     // Should call onConfirm with the new player data
     expect(defaultProps.onConfirm).toHaveBeenCalledWith({
       firstName: TEST_PLAYER_NAMES.CHARLIE,
-      lastName: '',
+      lastName: 'Test',
       phone: '',
       payment: TEST_PAYMENTS.ONLINE
     });
@@ -288,6 +290,8 @@ describe('AddPlayerModal player lookup features', () => {
     const confirmBtn = screen.getByText('Confirm');
 
     await user.type(nameInput, TEST_PLAYER_NAMES.ALICE);
+    const lastNameInput = screen.getByPlaceholderText('Enter last name');
+    await user.type(lastNameInput, 'Test');
     fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show duplicate error
@@ -314,6 +318,8 @@ describe('AddPlayerModal player lookup features', () => {
 
     // First type duplicate name
     await user.type(nameInput, TEST_PLAYER_NAMES.ALICE);
+    const lastNameInput = screen.getByPlaceholderText('Enter last name');
+    await user.type(lastNameInput, 'Test');
     fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show error
@@ -336,7 +342,7 @@ describe('AddPlayerModal player lookup features', () => {
     fireEvent.click(confirmBtn);
     expect(defaultProps.onConfirm).toHaveBeenCalledWith({
       firstName: TEST_PLAYER_NAMES.CHARLIE,
-      lastName: '',
+      lastName: 'Test',
       phone: '',
       payment: TEST_PAYMENTS.ONLINE
     });
@@ -347,9 +353,11 @@ describe('AddPlayerModal player lookup features', () => {
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter first name');
+    const lastNameInput = screen.getByPlaceholderText('Enter last name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, 'alice'); // lowercase
+    await user.type(lastNameInput, 'test'); // lowercase
     fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show duplicate error (case-insensitive check)
@@ -361,12 +369,15 @@ describe('AddPlayerModal player lookup features', () => {
     render(<AddPlayerModal {...defaultProps} existingNames={TEST_EXISTING_NAMES} />);
 
     const nameInput = screen.getByPlaceholderText('Enter first name');
+    const lastNameInput = screen.getByPlaceholderText('Enter last name');
     const paymentSelect = screen.getByRole('combobox');
 
     await user.type(nameInput, '  Alice  '); // with whitespace
+    await user.type(lastNameInput, '  Test  '); // with whitespace
     fireEvent.change(paymentSelect, { target: { value: TEST_PAYMENTS.ONLINE } });
 
     // Should show duplicate error (trims whitespace)
     expect(screen.getByText('A player with this name is already added')).toBeInTheDocument();
   });
 });
+

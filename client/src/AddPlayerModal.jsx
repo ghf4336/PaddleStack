@@ -55,7 +55,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
 
   // Check for duplicate names
   useEffect(() => {
-    const fullName = `${firstName} ${lastName}`.trim();
+    const fullName = `${firstName.trim()} ${lastName.trim()}`.trim().replace(/\s+/g, ' ');
     if (fullName && existingNames.length > 0) {
       setDuplicateError(existingNames.some(name => name.toLowerCase() === fullName.toLowerCase()));
     } else {
@@ -75,7 +75,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
     setTouched(true);
     const trimmedFirstName = firstName.trim();
     const trimmedLastName = lastName.trim();
-    if (trimmedFirstName && payment && !duplicateError) {
+    if (trimmedFirstName && trimmedLastName && payment && !duplicateError) {
       onConfirm({ 
         firstName: trimmedFirstName, 
         lastName: trimmedLastName,
@@ -180,7 +180,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: touched && !firstName.trim() || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
+                border: touched && (!firstName.trim() || !lastName.trim()) || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
                 borderRadius: 8,
                 fontSize: 16,
                 outline: 'none',
@@ -199,7 +199,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: touched && !firstName.trim() || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
+                border: touched && (!firstName.trim() || !lastName.trim()) || duplicateError ? '1.5px solid #e74c3c' : '1.5px solid #d1d5db',
                 borderRadius: 8,
                 fontSize: 16,
                 outline: 'none',
@@ -210,6 +210,9 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         </div>
         {touched && !firstName.trim() && (
           <span style={{ color: '#e74c3c', fontSize: 13 }}>First name is required</span>
+        )}
+        {touched && !lastName.trim() && (
+          <span style={{ color: '#e74c3c', fontSize: 13 }}>Last name is required</span>
         )}
         {duplicateError && (
           <span style={{ color: '#e74c3c', fontSize: 13 }}>A player with this name is already added</span>
@@ -347,8 +350,8 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             fontWeight: 600,
             fontSize: 16,
             cursor: 'pointer',
-            opacity: firstName.trim() && payment && !duplicateError ? 1 : 0.7,
-            boxShadow: touched && !(firstName.trim() && payment && !duplicateError) ? '0 0 0 2px #e74c3c55' : 'none',
+            opacity: firstName.trim() && lastName.trim() && payment && !duplicateError ? 1 : 0.7,
+            boxShadow: touched && !(firstName.trim() && lastName.trim() && payment && !duplicateError) ? '0 0 0 2px #e74c3c55' : 'none',
             transition: 'box-shadow 0.2s'
           }}
         >Confirm</button>

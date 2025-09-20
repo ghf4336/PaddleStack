@@ -23,6 +23,7 @@ function addTestPlayer(name, paymentMethod = 'online') {
     fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: lastName } });
   } else {
     fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: name } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
   }
   
   fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: paymentMethod } });
@@ -35,21 +36,23 @@ describe('PaddleStack Player Phone Number', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'T' } });
     fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: TEST_PHONE_NUMBERS.PHONE_USER } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
-    const playerEls = await screen.findAllByText(TEST_PLAYER_NAMES.PHONE_USER);
+    const playerEls = await screen.findAllByText('PhoneUser T');
     expect(playerEls.length).toBeGreaterThan(0);
     // Phone number is not shown in UI, but we can check the internal state by adding another player and checking the session list
     // (simulate by adding a second player and checking the session list order)
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.SECOND_USER } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // The session list should contain both players
     const sessionPlayers = screen.getAllByText(/PhoneUser|SecondUser/).map(el => el.textContent);
-    expect(sessionPlayers).toEqual(expect.arrayContaining([TEST_PLAYER_NAMES.PHONE_USER, TEST_PLAYER_NAMES.SECOND_USER]));
+    expect(sessionPlayers).toEqual(expect.arrayContaining(['PhoneUser T', 'SecondUser T']));
     // (Optional) If you expose phone in UI, check for it here
   });
 
@@ -58,11 +61,12 @@ describe('PaddleStack Player Phone Number', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.NO_PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'T' } });
     // Leave phone blank
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
     // Player should be in the session list
-    const playerEls = await screen.findAllByText(TEST_PLAYER_NAMES.NO_PHONE_USER);
+    const playerEls = await screen.findAllByText('NoPhoneUser T');
     expect(playerEls.length).toBeGreaterThan(0);
   });
 
@@ -72,16 +76,18 @@ describe('PaddleStack Player Phone Number', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.STATE_PHONE_USER } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'T' } });
     fireEvent.change(screen.getByPlaceholderText('Enter phone number'), { target: { value: TEST_PHONE_NUMBERS.STATE_PHONE_USER } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.CASH } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add a second player to force a re-render
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: 'OtherUser' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // There is no direct UI for phone, but we can check the DOM for the player name and ensure no error
-    const playerEls = await screen.findAllByText(TEST_PLAYER_NAMES.STATE_PHONE_USER);
+    const playerEls = await screen.findAllByText('StatePhoneUser T');
     expect(playerEls.length).toBeGreaterThan(0);
     // (If phone is ever shown in UI, add an assertion here)
   });
@@ -95,7 +101,8 @@ describe('PaddleStack App', () => {
     [TEST_PLAYER_NAMES.ALICE, TEST_PLAYER_NAMES.BOB, TEST_PLAYER_NAMES.CHARLIE, TEST_PLAYER_NAMES.DIANA, TEST_PLAYER_NAMES.EVE, TEST_PLAYER_NAMES.FRANK].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Add two courts
@@ -105,7 +112,8 @@ describe('PaddleStack App', () => {
     [TEST_PLAYER_NAMES.GINA, TEST_PLAYER_NAMES.HENRY].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Now Court 2 should be: Eve, Frank, Gina, Henry
@@ -116,8 +124,8 @@ describe('PaddleStack App', () => {
     // Court 1 should now have next 4 unassigned: none left, so should be empty
     expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
     // Court 2 should still have Eve and Frank (at least somewhere)
-    expect(screen.getAllByText('Eve').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Frank').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Eve T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Frank T').length).toBeGreaterThan(0);
     // Optionally, check that Court 2 card contains the correct players
     const court2 = screen.getAllByText('Court 2')[0].closest('.court-card');
     // The actual assigned players may differ if the queue is not long enough
@@ -143,10 +151,11 @@ describe('PaddleStack App', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Alice appears in both session list and next up, so use getAllByText
-    const aliceEls = screen.getAllByText(TEST_PLAYER_NAMES.ALICE);
+    const aliceEls = screen.getAllByText('Alice T');
     expect(aliceEls.length).toBeGreaterThan(0);
   });
 
@@ -155,6 +164,7 @@ describe('PaddleStack App', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.BOB } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Use correct button title
@@ -174,15 +184,17 @@ describe('PaddleStack App', () => {
     // Add Alice
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.ALICE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
     // Add Frank
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: TEST_PLAYER_NAMES.FRANK } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
-    expect(screen.getAllByText(TEST_PLAYER_NAMES.ALICE).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(TEST_PLAYER_NAMES.FRANK).length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Alice T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Frank T').length).toBeGreaterThan(0);
   });
 
   test('add court button adds a court panel', () => {
@@ -192,7 +204,8 @@ describe('PaddleStack App', () => {
     [TEST_PLAYER_NAMES.ALICE, TEST_PLAYER_NAMES.BOB, TEST_PLAYER_NAMES.CHARLIE, TEST_PLAYER_NAMES.DIANA].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     fireEvent.click(screen.getByText('+ Add Court'));
@@ -206,7 +219,8 @@ describe('PaddleStack App', () => {
     ['A', 'B', 'C'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     fireEvent.click(screen.getByText('+ Add Court'));
@@ -214,13 +228,14 @@ describe('PaddleStack App', () => {
     // Add a 4th player
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: 'D' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     expect(screen.queryAllByText('Waiting for players...').length).toBe(0);
-    expect(screen.getAllByText('A').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('B').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('C').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('D').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('A T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('B T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('C T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('D T').length).toBeGreaterThan(0);
   });
 
   test('next up always shows up to 4 unassigned players', () => {
@@ -230,26 +245,28 @@ describe('PaddleStack App', () => {
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Add a court to assign 4 players
     fireEvent.click(screen.getByText('+ Add Court'));
     // Next up should show the next 2 players (Eve, Frank)
-    expect(screen.getAllByText('Eve').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Frank').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Eve T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Frank T').length).toBeGreaterThan(0);
     // Add 2 more players
     ['Gina', 'Henry'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: name } });
-      fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
+    fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Next up should now show Eve, Frank, Gina, Henry
-    expect(screen.getAllByText('Eve').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Frank').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Gina').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Henry').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Eve T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Frank T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Gina T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Henry T').length).toBeGreaterThan(0);
   });
 
   test('removing a court returns its players to the end of the queue and removes the court', () => {
@@ -259,6 +276,7 @@ describe('PaddleStack App', () => {
     ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -277,14 +295,14 @@ describe('PaddleStack App', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     // Now Eve, Frank, Alice, Bob should be assigned to Court 1 (since Alice/Bob/Charlie/Diana are now at the end)
     // Next up should show Charlie, Diana, and any new players
-    expect(screen.getAllByText('Charlie').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Diana').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Charlie T').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Diana T').length).toBeGreaterThan(0);
     // General queue should include Alice and Bob at the end, and no duplicates
     const generalQueueEls = Array.from(document.querySelectorAll('.queue-player'))
       .filter(el => ['Alice', 'Bob', 'Charlie', 'Diana'].some(name => el.textContent.trim() === name || el.textContent.includes(name)));
     const queueNames = generalQueueEls.map(el => el.textContent.trim().replace(/^\u2022\s*/, '').replace(/#\d+$/, '').trim());
     // Should include Alice and Bob
-    expect(queueNames).toEqual(expect.arrayContaining(['Alice', 'Bob']));
+    expect(queueNames).toEqual(expect.arrayContaining(['Alice T', 'Bob T']));
     // Should not have duplicates
     const unique = new Set(queueNames);
     expect(unique.size).toBe(queueNames.length);
@@ -306,10 +324,11 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     bypassWelcome();
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: 'TestPlayer' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // There may be multiple TestPlayer elements, just check at least one exists
-    const testPlayers = await screen.findAllByText('TestPlayer');
+    const testPlayers = await screen.findAllByText('TestPlayer T');
     expect(testPlayers.length).toBeGreaterThan(0);
   });
 
@@ -319,6 +338,7 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // Add player
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: 'DeleteMe' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Remove button (×) should be enabled
@@ -336,10 +356,12 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // Add two players
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: 'P1' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText("Enter first name"), { target: { value: 'P2' } });
+    fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Pause P1
@@ -349,8 +371,8 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     // Enable P1
     fireEvent.click(screen.getByText('Play'));
     // P1 should now be after P2 in the session list
-    const playerNames = Array.from(screen.getAllByText(/P[12]/)).map(el => el.textContent);
-    expect(playerNames.indexOf('P2')).toBeLessThan(playerNames.indexOf('P1'));
+    const playerNames = Array.from(screen.getAllByText(/P[12] T/)).map(el => el.textContent);
+    expect(playerNames.indexOf('P2 T')).toBeLessThan(playerNames.indexOf('P1 T'));
   });
 
   it('shows remove button disabled if player is in a court', async () => {
@@ -392,6 +414,7 @@ describe('App logic functions', () => {
     ['A', 'B', 'C', 'D'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'T' } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -402,7 +425,7 @@ describe('App logic functions', () => {
     // Court should be gone
     expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
     // Players should be in the general queue
-    ['A', 'B', 'C', 'D'].forEach(name => {
+    ['A T', 'B T', 'C T', 'D T'].forEach(name => {
       expect(screen.getAllByText(name).length).toBeGreaterThan(0);
     });
     // Add another court and check renumbering
@@ -417,6 +440,7 @@ describe('App logic functions', () => {
     ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(name => {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: name } });
+      fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'T' } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     });
@@ -426,7 +450,7 @@ describe('App logic functions', () => {
     const completeBtns = screen.getAllByText('Complete Game');
     fireEvent.click(completeBtns[0]);
     // Players A-D should be at the end of the queue
-    ['A', 'B', 'C', 'D'].forEach(name => {
+    ['A T', 'B T', 'C T', 'D T'].forEach(name => {
       expect(screen.getAllByText(name).length).toBeGreaterThan(0);
     });
     // Court 1 should be empty or refilled
@@ -439,10 +463,12 @@ describe('App logic functions', () => {
     // Add two players
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: 'P1' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: 'P2' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     // Pause P1
@@ -452,8 +478,8 @@ describe('App logic functions', () => {
     // Enable P1
     fireEvent.click(screen.getByText('Play'));
     // P1 should now be after P2 in the session list
-    const playerNames = Array.from(screen.getAllByText(/P[12]/)).map(el => el.textContent);
-    expect(playerNames.indexOf('P2')).toBeLessThan(playerNames.indexOf('P1'));
+    const playerNames = Array.from(screen.getAllByText(/P[12] T/)).map(el => el.textContent);
+    expect(playerNames.indexOf('P2 T')).toBeLessThan(playerNames.indexOf('P1 T'));
   });
 
   test('handleEndSession clears all state', () => {
@@ -462,6 +488,7 @@ describe('App logic functions', () => {
     // Add a player and a court
     fireEvent.click(screen.getByText('Add Player'));
     fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: 'ClearMe' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
     fireEvent.click(screen.getByText('+ Add Court'));
@@ -484,6 +511,7 @@ describe('App logic functions', () => {
     for (let i = 1; i <= 6; i++) {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }
@@ -497,8 +525,8 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     
     // Verify Player5 is paused and not on court
-    expect(screen.getByText('Player5')).toBeInTheDocument();
-    const player5Element = screen.getByText('Player5').closest('.session-player');
+    expect(screen.getByText('Player5 T')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5 T').closest('.session-player');
     expect(player5Element).toHaveClass('paused');
     
     // Player6 should be in Next Up, Player5 should not be anywhere in courts
@@ -510,8 +538,8 @@ describe('App logic functions', () => {
     fireEvent.click(completeBtn);
     
     // Player5 should still be paused and NOT assigned to the court
-    expect(screen.getByText('Player5')).toBeInTheDocument();
-    const player5ElementAfter = screen.getByText('Player5').closest('.session-player');
+    expect(screen.getByText('Player5 T')).toBeInTheDocument();
+    const player5ElementAfter = screen.getByText('Player5 T').closest('.session-player');
     expect(player5ElementAfter).toHaveClass('paused');
     
     // Court should have Player6 and not Player5
@@ -528,6 +556,7 @@ describe('App logic functions', () => {
     for (let i = 1; i <= 5; i++) {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }
@@ -541,8 +570,8 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     
     // Verify Player5 is paused
-    expect(screen.getByText('Player5')).toBeInTheDocument();
-    const player5Element = screen.getByText('Player5').closest('.session-player');
+    expect(screen.getByText('Player5 T')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5 T').closest('.session-player');
     expect(player5Element).toHaveClass('paused');
     
     // Complete the game
@@ -567,7 +596,7 @@ describe('App logic functions', () => {
     }
     
     // Player5 should still be paused after game completion
-    const player5ElementAfter = screen.getByText('Player5').closest('.session-player');
+    const player5ElementAfter = screen.getByText('Player5 T').closest('.session-player');
     expect(player5ElementAfter).toHaveClass('paused');
   });
 
@@ -579,6 +608,7 @@ describe('App logic functions', () => {
     for (let i = 1; i <= 6; i++) {
       fireEvent.click(screen.getByText('Add Player'));
       fireEvent.change(screen.getByPlaceholderText('Enter first name'), { target: { value: `Player${i}` } });
+      fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
       fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
       fireEvent.click(screen.getByText('Confirm'));
     }
@@ -599,8 +629,8 @@ describe('App logic functions', () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Verify that Player5 is still paused and no duplications occurred
-    expect(screen.getByText('Player5')).toBeInTheDocument();
-    const player5Element = screen.getByText('Player5').closest('.session-player');
+    expect(screen.getByText('Player5 T')).toBeInTheDocument();
+    const player5Element = screen.getByText('Player5 T').closest('.session-player');
     expect(player5Element).toHaveClass('paused');
     
     // Check that no player appears duplicated anywhere
@@ -619,3 +649,8 @@ describe('App logic functions', () => {
     }
   });
 });
+
+
+
+
+
