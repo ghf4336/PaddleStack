@@ -21,9 +21,9 @@ describe('CourtsPanel', () => {
   };
 
   it('renders courts and Complete buttons', () => {
-    const { getAllByText } = render(<CourtsPanel {...defaultProps} />);
+    const { getAllByTitle } = render(<CourtsPanel {...defaultProps} />);
     // One enabled, one disabled
-    const buttons = getAllByText('Complete');
+    const buttons = getAllByTitle(/Complete game|Next players coming up/);
     expect(buttons.length).toBe(2);
     expect(buttons[0].disabled).toBe(false);
     expect(buttons[1].disabled).toBe(true);
@@ -32,8 +32,8 @@ describe('CourtsPanel', () => {
   it('disables button and shows Next players after complete', () => {
     jest.useFakeTimers();
     const handleCompleteGame = jest.fn();
-    const { getAllByText } = render(<CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />);
-    const completeBtns = getAllByText('Complete');
+    const { getAllByTitle } = render(<CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />);
+    const completeBtns = getAllByTitle(/Complete game|Next players coming up/);
     // click complete -> it should disable for 10s
     fireEvent.click(completeBtns[0]);
     expect(completeBtns[0].disabled).toBe(true);
@@ -45,10 +45,10 @@ describe('CourtsPanel', () => {
 
   it('calls handleCompleteGame when button clicked', () => {
     const handleCompleteGame = jest.fn();
-    const { getAllByText } = render(
+    const { getAllByTitle } = render(
       <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />
     );
-    const buttons = getAllByText('Complete');
+    const buttons = getAllByTitle(/Complete game|Next players coming up/);
     fireEvent.click(buttons[0]); // Only enabled button
     expect(handleCompleteGame).toHaveBeenCalledWith(0);
   });
@@ -106,8 +106,8 @@ describe('CourtsPanel waiting status logic', () => {
   it('shows "Starting" after completing a full court for 60 seconds', () => {
     jest.useFakeTimers();
     const courts = [ { number: 1, players: [{}, {}, {}, {}] } ];
-    const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
-    const btn = getByText('Complete');
+    const { getByText, getByTitle } = render(<CourtsPanel {...baseProps} courts={courts} />);
+    const btn = getByTitle('Complete game');
     fireEvent.click(btn);
     // Should show Starting immediately
     const justStarted = getByText('Starting');
@@ -146,8 +146,8 @@ describe('recently completed sync', () => {
       ]
     };
 
-    const { getAllByText, getByText } = render(<CourtsPanel {...props} />);
-    const completeBtns = getAllByText('Complete');
+    const { getAllByText, getByText, getAllByTitle } = render(<CourtsPanel {...props} />);
+    const completeBtns = getAllByTitle('Complete game');
     // click both Complete buttons rapidly
     fireEvent.click(completeBtns[0]);
     fireEvent.click(completeBtns[1]);

@@ -226,6 +226,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                   </div>
                   <button
                     className={`complete-game-btn ${completedRecently ? 'completed' : 'default'}`}
+                    title={disabledButtonsSet.has(courtId) ? 'Next players coming up' : 'Complete game'}
                     onClick={() => {
                       handleCompleteGame(idx);
                       markJustStarted(courtId);
@@ -234,7 +235,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                     }}
                     disabled={completedRecently || disabledButtonsSet.has(courtId) || !(court.players && court.players.length === 4)}
                   >
-                    {disabledButtonsSet.has(courtId) ? 'Next players' : 'Complete'}
+                    ✓
                   </button>
                   </div>
               )}

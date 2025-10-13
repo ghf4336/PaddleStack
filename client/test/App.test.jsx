@@ -118,7 +118,7 @@ describe('PaddleStack App', () => {
     });
     // Now Court 2 should be: Eve, Frank, Gina, Henry
     // Complete on Court 1
-    const completeBtns = screen.getAllByText('Complete');
+    const completeBtns = screen.getAllByTitle('Complete game');
     fireEvent.click(completeBtns[0]); // Court 1
     // Alice, Bob, Charlie, Diana should be at the end of the queue, not in any court
     // Court 1 should now have next 4 unassigned: none left, so should be empty
@@ -447,7 +447,7 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     fireEvent.click(screen.getByText('+ Add Court'));
     // Complete on Court 1
-    const completeBtns = screen.getAllByText('Complete');
+    const completeBtns = screen.getAllByTitle('Complete game');
     fireEvent.click(completeBtns[0]);
     // Players A-D should be at the end of the queue
     ['A T', 'B T', 'C T', 'D T'].forEach(name => {
@@ -534,7 +534,7 @@ describe('App logic functions', () => {
     expect(courtElement).not.toHaveTextContent('Player5');
     
     // Complete the game
-    const completeBtn = screen.getByText('Complete');
+    const completeBtn = screen.getByTitle('Complete game');
     fireEvent.click(completeBtn);
     
     // Player5 should still be paused and NOT assigned to the court
@@ -575,7 +575,7 @@ describe('App logic functions', () => {
     expect(player5Element).toHaveClass('paused');
     
     // Complete the game
-    const completeBtn = screen.getByText('Complete');
+    const completeBtn = screen.getByTitle('Complete game');
     fireEvent.click(completeBtn);
     
     // Check that no player appears duplicated anywhere
@@ -622,7 +622,7 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     
     // Complete the game to move court players to end of queue
-    const completeBtn = screen.getByText('Complete');
+    const completeBtn = screen.getByTitle('Complete game');
     fireEvent.click(completeBtn);
     
     // Wait for game completion to process
