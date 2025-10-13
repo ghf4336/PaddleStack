@@ -1,60 +1,60 @@
-/* Logo image styling */
-.welcome-logo {
-  display: block;
-  margin: 0 auto 18px auto;
-  width: 260px;
-  max-width: 90%;
-  height: auto;
-}
 /* Welcome page styles */
 .welcome-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #eafff2 0%, #d6f5e6 100%);
+  background: var(--color-bg-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: clamp(16px, 4vw, 24px);
   box-sizing: border-box;
 }
 
 .welcome-content {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 60px 48px;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: clamp(40px, 8vw, 60px) clamp(24px, 6vw, 48px);
   text-align: center;
   max-width: 480px;
   width: 100%;
 }
 
+.welcome-logo {
+  display: block;
+  margin: 0 auto clamp(12px, 2vw, 18px) auto;
+  width: clamp(200px, 50vw, 260px);
+  max-width: 90%;
+  height: auto;
+}
+
 .welcome-title {
-  font-size: 3.2rem;
+  font-size: clamp(2rem, 5vw + 1rem, 3.2rem);
   font-weight: 700;
-  color: #16a34a;
-  margin: 0 0 16px 0;
+  color: var(--color-accent);
+  margin: 0 0 var(--space-lg) 0;
   line-height: 1.1;
 }
 
 .welcome-subtitle {
-  font-size: 1.1rem;
-  color: #6b7280;
-  margin: 0 0 48px 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0 0 clamp(36px, 6vw, 48px) 0;
   line-height: 1.5;
 }
 
 .welcome-buttons {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-lg);
   align-items: center;
 }
 
 .welcome-btn {
   width: 100%;
   max-width: 280px;
-  padding: 16px 24px;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: clamp(12px, 2vw, 16px) clamp(20px, 3vw, 24px);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
@@ -63,7 +63,7 @@
 }
 
 .welcome-btn.primary {
-  background: #16a34a;
+  background: var(--color-accent);
   color: white;
 }
 
@@ -75,8 +75,8 @@
 
 .welcome-btn.secondary {
   background: white;
-  color: #16a34a;
-  border: 2px solid #16a34a;
+  color: var(--color-accent);
+  border: 2px solid var(--color-accent);
 }
 
 .welcome-btn.secondary:hover {
@@ -88,20 +88,17 @@
 /* Responsive design */
 @media (max-width: 640px) {
   .welcome-content {
-    padding: 40px 24px;
-  }
-  
-  .welcome-title {
-    font-size: 2.5rem;
+    padding: clamp(32px, 6vw, 40px) clamp(20px, 4vw, 24px);
   }
   
   .welcome-subtitle {
-    font-size: 1rem;
-    margin-bottom: 36px;
+    margin-bottom: clamp(28px, 5vw, 36px);
   }
-  
+}
+
+@media (max-width: 480px) {
   .welcome-btn {
-    padding: 14px 20px;
-    font-size: 0.95rem;
+    max-width: 100%;
+    padding: var(--space-md) var(--space-lg);
   }
 }

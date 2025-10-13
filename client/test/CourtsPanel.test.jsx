@@ -74,9 +74,9 @@ describe('CourtsPanel waiting status logic', () => {
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Waiting');
     expect(status).toBeTruthy();
-    // Inline style should have converted to rgb in JSDOM
-    expect(status.style.backgroundColor).toBe('rgb(59, 130, 246)');
-    expect(status.style.color).toBe('rgb(255, 255, 255)');
+    // Check for CSS class instead of inline style
+    expect(status.classList.contains('court-status-badge')).toBe(true);
+    expect(status.classList.contains('waiting')).toBe(true);
   });
 
   it('shows "Waiting" with blue background when court has no players', () => {
@@ -86,8 +86,9 @@ describe('CourtsPanel waiting status logic', () => {
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Waiting');
     expect(status).toBeTruthy();
-    expect(status.style.backgroundColor).toBe('rgb(59, 130, 246)');
-    expect(status.style.color).toBe('rgb(255, 255, 255)');
+    // Check for CSS class instead of inline style
+    expect(status.classList.contains('court-status-badge')).toBe(true);
+    expect(status.classList.contains('waiting')).toBe(true);
   });
 
   it('shows "Active" with green background when court has 4 players', () => {
@@ -97,8 +98,9 @@ describe('CourtsPanel waiting status logic', () => {
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Active');
     expect(status).toBeTruthy();
-    expect(status.style.backgroundColor).toBe('rgb(25, 195, 125)');
-    expect(status.style.color).toBe('rgb(255, 255, 255)');
+    // Check for CSS class instead of inline style
+    expect(status.classList.contains('court-status-badge')).toBe(true);
+    expect(status.classList.contains('active')).toBe(true);
   });
 
   it('shows "Starting" after completing a full court for 60 seconds', () => {
@@ -110,8 +112,9 @@ describe('CourtsPanel waiting status logic', () => {
     // Should show Starting immediately
     const justStarted = getByText('Starting');
     expect(justStarted).toBeTruthy();
-    expect(justStarted.style.backgroundColor).toBe('rgb(253, 230, 138)');
-    expect(justStarted.style.color).toBe('rgb(245, 158, 66)');
+    // Check for CSS class instead of inline style
+    expect(justStarted.classList.contains('court-status-badge')).toBe(true);
+    expect(justStarted.classList.contains('starting')).toBe(true);
 
     // After 60s should revert to Active
     act(() => {
@@ -119,6 +122,7 @@ describe('CourtsPanel waiting status logic', () => {
     });
     const active = getByText('Active');
     expect(active).toBeTruthy();
+    expect(active.classList.contains('active')).toBe(true);
     jest.useRealTimers();
   });
 });
@@ -148,28 +152,28 @@ describe('recently completed sync', () => {
     fireEvent.click(completeBtns[0]);
     fireEvent.click(completeBtns[1]);
 
-    // card backgrounds should be green immediately
+    // card should have 'highlight' class immediately
     const card1 = getByText('Court 1').closest('.court-card');
     const card2 = getByText('Court 2').closest('.court-card');
     expect(card1).toBeTruthy();
     expect(card2).toBeTruthy();
-    expect(card1.style.backgroundColor).toBe('rgb(25, 195, 125)');
-    expect(card2.style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(card1.classList.contains('highlight')).toBe(true);
+    expect(card2.classList.contains('highlight')).toBe(true);
 
-    // buttons should also be green
-    expect(completeBtns[0].style.backgroundColor).toBe('rgb(25, 195, 125)');
-    expect(completeBtns[1].style.backgroundColor).toBe('rgb(25, 195, 125)');
+    // buttons should have 'completed' class
+    expect(completeBtns[0].classList.contains('completed')).toBe(true);
+    expect(completeBtns[1].classList.contains('completed')).toBe(true);
 
     // advance timers by 10s: both should clear together
     act(() => {
       jest.advanceTimersByTime(10000);
     });
 
-    // after timeout, cards revert to white and buttons revert to dark
-    expect(card1.style.backgroundColor).toBe('rgb(255, 255, 255)');
-    expect(card2.style.backgroundColor).toBe('rgb(255, 255, 255)');
-    expect(completeBtns[0].style.backgroundColor).toBe('rgb(34, 34, 34)');
-    expect(completeBtns[1].style.backgroundColor).toBe('rgb(34, 34, 34)');
+    // after timeout, highlight class should be removed
+    expect(card1.classList.contains('highlight')).toBe(false);
+    expect(card2.classList.contains('highlight')).toBe(false);
+    expect(completeBtns[0].classList.contains('completed')).toBe(false);
+    expect(completeBtns[1].classList.contains('completed')).toBe(false);
 
     // 'Starting' label lasts 60s, so after 10s it should still be present
     const justStartedLabels = getAllByText('Starting');
