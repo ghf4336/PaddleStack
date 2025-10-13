@@ -20,10 +20,10 @@ describe('CourtsPanel', () => {
     recentlyCompletedCourt: null
   };
 
-  it('renders courts and Complete buttons', () => {
-    const { getAllByTitle } = render(<CourtsPanel {...defaultProps} />);
+  it('renders courts and complete game buttons', () => {
+    const { getAllByText } = render(<CourtsPanel {...defaultProps} />);
     // One enabled, one disabled
-    const buttons = getAllByTitle(/Complete game|Next players coming up/);
+    const buttons = getAllByText('Complete Game');
     expect(buttons.length).toBe(2);
     expect(buttons[0].disabled).toBe(false);
     expect(buttons[1].disabled).toBe(true);
@@ -32,8 +32,8 @@ describe('CourtsPanel', () => {
   it('disables button and shows Next players after complete', () => {
     jest.useFakeTimers();
     const handleCompleteGame = jest.fn();
-    const { getAllByTitle } = render(<CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />);
-    const completeBtns = getAllByTitle(/Complete game|Next players coming up/);
+    const { getAllByText } = render(<CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />);
+    const completeBtns = getAllByText('Complete Game');
     // click complete -> it should disable for 10s
     fireEvent.click(completeBtns[0]);
     expect(completeBtns[0].disabled).toBe(true);
@@ -45,10 +45,10 @@ describe('CourtsPanel', () => {
 
   it('calls handleCompleteGame when button clicked', () => {
     const handleCompleteGame = jest.fn();
-    const { getAllByTitle } = render(
+    const { getAllByText } = render(
       <CourtsPanel {...defaultProps} handleCompleteGame={handleCompleteGame} />
     );
-    const buttons = getAllByTitle(/Complete game|Next players coming up/);
+    const buttons = getAllByText('Complete Game');
     fireEvent.click(buttons[0]); // Only enabled button
     expect(handleCompleteGame).toHaveBeenCalledWith(0);
   });
@@ -74,9 +74,9 @@ describe('CourtsPanel waiting status logic', () => {
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Waiting');
     expect(status).toBeTruthy();
-    // Check for CSS class instead of inline style
-    expect(status.classList.contains('court-status-badge')).toBe(true);
-    expect(status.classList.contains('waiting')).toBe(true);
+    // Inline style should have converted to rgb in JSDOM
+    expect(status.style.backgroundColor).toBe('rgb(59, 130, 246)');
+    expect(status.style.color).toBe('rgb(255, 255, 255)');
   });
 
   it('shows "Waiting" with blue background when court has no players', () => {
@@ -86,9 +86,8 @@ describe('CourtsPanel waiting status logic', () => {
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Waiting');
     expect(status).toBeTruthy();
-    // Check for CSS class instead of inline style
-    expect(status.classList.contains('court-status-badge')).toBe(true);
-    expect(status.classList.contains('waiting')).toBe(true);
+    expect(status.style.backgroundColor).toBe('rgb(59, 130, 246)');
+    expect(status.style.color).toBe('rgb(255, 255, 255)');
   });
 
   it('shows "Active" with green background when court has 4 players', () => {
@@ -98,23 +97,21 @@ describe('CourtsPanel waiting status logic', () => {
     const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
     const status = getByText('Active');
     expect(status).toBeTruthy();
-    // Check for CSS class instead of inline style
-    expect(status.classList.contains('court-status-badge')).toBe(true);
-    expect(status.classList.contains('active')).toBe(true);
+    expect(status.style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(status.style.color).toBe('rgb(255, 255, 255)');
   });
 
   it('shows "Starting" after completing a full court for 60 seconds', () => {
     jest.useFakeTimers();
     const courts = [ { number: 1, players: [{}, {}, {}, {}] } ];
-    const { getByText, getByTitle } = render(<CourtsPanel {...baseProps} courts={courts} />);
-    const btn = getByTitle('Complete game');
+    const { getByText } = render(<CourtsPanel {...baseProps} courts={courts} />);
+    const btn = getByText('Complete Game');
     fireEvent.click(btn);
     // Should show Starting immediately
     const justStarted = getByText('Starting');
     expect(justStarted).toBeTruthy();
-    // Check for CSS class instead of inline style
-    expect(justStarted.classList.contains('court-status-badge')).toBe(true);
-    expect(justStarted.classList.contains('starting')).toBe(true);
+    expect(justStarted.style.backgroundColor).toBe('rgb(253, 230, 138)');
+    expect(justStarted.style.color).toBe('rgb(245, 158, 66)');
 
     // After 60s should revert to Active
     act(() => {
@@ -122,7 +119,6 @@ describe('CourtsPanel waiting status logic', () => {
     });
     const active = getByText('Active');
     expect(active).toBeTruthy();
-    expect(active.classList.contains('active')).toBe(true);
     jest.useRealTimers();
   });
 });
@@ -146,34 +142,34 @@ describe('recently completed sync', () => {
       ]
     };
 
-    const { getAllByText, getByText, getAllByTitle } = render(<CourtsPanel {...props} />);
-    const completeBtns = getAllByTitle('Complete game');
+    const { getAllByText, getByText } = render(<CourtsPanel {...props} />);
+    const completeBtns = getAllByText('Complete Game');
     // click both Complete buttons rapidly
     fireEvent.click(completeBtns[0]);
     fireEvent.click(completeBtns[1]);
 
-    // card should have 'highlight' class immediately
+    // card backgrounds should be green immediately
     const card1 = getByText('Court 1').closest('.court-card');
     const card2 = getByText('Court 2').closest('.court-card');
     expect(card1).toBeTruthy();
     expect(card2).toBeTruthy();
-    expect(card1.classList.contains('highlight')).toBe(true);
-    expect(card2.classList.contains('highlight')).toBe(true);
+    expect(card1.style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(card2.style.backgroundColor).toBe('rgb(25, 195, 125)');
 
-    // buttons should have 'completed' class
-    expect(completeBtns[0].classList.contains('completed')).toBe(true);
-    expect(completeBtns[1].classList.contains('completed')).toBe(true);
+    // buttons should also be green
+    expect(completeBtns[0].style.backgroundColor).toBe('rgb(25, 195, 125)');
+    expect(completeBtns[1].style.backgroundColor).toBe('rgb(25, 195, 125)');
 
     // advance timers by 10s: both should clear together
     act(() => {
       jest.advanceTimersByTime(10000);
     });
 
-    // after timeout, highlight class should be removed
-    expect(card1.classList.contains('highlight')).toBe(false);
-    expect(card2.classList.contains('highlight')).toBe(false);
-    expect(completeBtns[0].classList.contains('completed')).toBe(false);
-    expect(completeBtns[1].classList.contains('completed')).toBe(false);
+    // after timeout, cards revert to white and buttons revert to dark
+    expect(card1.style.backgroundColor).toBe('rgb(255, 255, 255)');
+    expect(card2.style.backgroundColor).toBe('rgb(255, 255, 255)');
+    expect(completeBtns[0].style.backgroundColor).toBe('rgb(34, 34, 34)');
+    expect(completeBtns[1].style.backgroundColor).toBe('rgb(34, 34, 34)');
 
     // 'Starting' label lasts 60s, so after 10s it should still be present
     const justStartedLabels = getAllByText('Starting');
