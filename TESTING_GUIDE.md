@@ -89,7 +89,7 @@ Click "Start Session Manually", then:
 
 1. **Drag and Drop**: Test on both desktop (mouse) and mobile (touch)
 2. **Add/Remove Courts**: Verify grid reflows properly
-3. **Complete Game**: Check button states on all screen sizes
+3. **Complete**: Check button states on all screen sizes
 4. **Modals**: Open "Add Player" modal on mobile and desktop
 5. **End Session**: Verify confirmation modal works on all sizes
 

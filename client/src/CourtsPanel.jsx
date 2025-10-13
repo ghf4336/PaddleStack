@@ -6,7 +6,7 @@ import { formatPlayerDisplayName } from './utils/playerUtils';
 import './CourtsPanel.css';
 
 function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRemoveCourt, handleCancelRemoveCourt, handleAddCourt, handleCompleteGame, activeId, overId }) {
-  // Track courts that have "Starting" status locally for 60 seconds after Complete Game is clicked
+  // Track courts that have "Starting" status locally for 60 seconds after Complete is clicked
   // Use a stable court id (court.number) as the key so timers remain correct if the courts array is reordered
   // Use Set-based state for boolean membership to avoid timestamp render inconsistencies when many courts update
   const [justStartedSet, setJustStartedSet] = useState(new Set()); // Set<courtId>
@@ -16,7 +16,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
   const [recentlyCompletedSet, setRecentlyCompletedSet] = useState(new Set()); // Set<courtId>
   const recentlyCompletedTimers = useRef({});
 
-  // Track temporarily disabled Complete Game buttons (so they can't be clicked again for 10s)
+  // Track temporarily disabled Complete buttons (so they can't be clicked again for 10s)
   const [disabledButtonsSet, setDisabledButtonsSet] = useState(new Set()); // Set<courtId>
   const disabledButtonsTimers = useRef({});
 
@@ -234,7 +234,7 @@ function CourtsPanel({ courts, courtToRemove, handleRemoveCourt, handleConfirmRe
                     }}
                     disabled={completedRecently || disabledButtonsSet.has(courtId) || !(court.players && court.players.length === 4)}
                   >
-                    {disabledButtonsSet.has(courtId) ? 'Next players' : 'Complete Game'}
+                    {disabledButtonsSet.has(courtId) ? 'Next players' : 'Complete'}
                   </button>
                   </div>
               )}

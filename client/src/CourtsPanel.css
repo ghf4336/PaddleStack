@@ -55,22 +55,24 @@
 }
 
 .courts-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(240px, 30vw, 280px), 1fr));
-  gap: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 .court-card {
   background: var(--color-bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-lg);
-  min-height: 180px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-sm) var(--space-md);
+  min-height: auto;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   position: relative;
   transition: background 0.3s, box-shadow 0.3s;
+  gap: var(--space-md);
 }
 
 .court-card.highlight {
@@ -91,30 +93,31 @@
 .court-header {
   display: flex;
   align-items: center;
-  width: 100%;
-  margin-bottom: var(--space-sm);
   gap: var(--space-sm);
+  flex-shrink: 0;
+  min-width: 180px;
 }
 
 .court-drag-handle {
-  margin-right: var(--space-xs);
   color: #999;
   font-size: var(--font-size-base);
   cursor: grab;
+  flex-shrink: 0;
 }
 
 .court-title {
   font-weight: 700;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
 }
 
 .court-status-badge {
-  margin-left: var(--space-sm);
   font-weight: 600;
-  font-size: var(--font-size-sm);
-  border-radius: var(--radius-md);
-  padding: 2px 10px;
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .court-status-badge.starting {
@@ -133,15 +136,14 @@
 }
 
 .remove-court-btn {
-  margin-left: auto;
   background: none;
   color: var(--color-error);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: clamp(18px, 2vw, 22px);
-  width: 36px;
-  height: 36px;
+  font-size: 18px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -150,6 +152,7 @@
   outline: none;
   padding: 0;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 
 .remove-court-btn:hover {
@@ -229,40 +232,59 @@
 }
 
 .court-players-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: row;
   gap: var(--space-sm);
-  width: 100%;
-  margin-bottom: var(--space-md);
+  flex: 1;
+  min-width: 0;
 }
 
 .court-player-slot {
-  min-height: 36px;
+  min-height: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Compact player cards for horizontal layout */
+.court-player-slot .queue-player {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  margin-bottom: 0;
+  min-height: 32px;
+  width: 100%;
+}
+
+.court-player-slot .queue-player span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .court-waiting-text {
-  grid-column: span 2;
   color: #bbb;
   text-align: center;
-  padding: var(--space-lg) 0;
+  padding: var(--space-sm) 0;
   font-weight: 500;
+  font-size: var(--font-size-sm);
+  width: 100%;
 }
 
 .complete-game-btn {
-  width: 100%;
   color: var(--color-bg-primary);
   font-weight: 600;
-  font-size: var(--font-size-base);
-  border-radius: var(--radius-md);
-  padding: clamp(8px, 1.5vw, 10px) 0;
-  margin-top: var(--space-sm);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-lg);
   border: none;
   transition: background 0.3s, transform 0.2s;
   background: #222;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 120px;
 }
 
 .complete-game-btn.completed {
@@ -293,27 +315,37 @@
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-  .courts-list {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  .court-header {
+    min-width: 150px;
+  }
+  
+  .complete-game-btn {
+    min-width: 100px;
+    padding: var(--space-xs) var(--space-md);
   }
 }
 
 @media (max-width: 768px) {
-  .courts-list {
-    grid-template-columns: 1fr;
+  .court-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
   }
 
   .court-header {
-    flex-wrap: wrap;
+    width: 100%;
+    min-width: auto;
+  }
+
+  .court-players-grid {
+    width: 100%;
+  }
+
+  .complete-game-btn {
+    width: 100%;
   }
 
   .court-status-badge {
-    order: 3;
-    margin-left: 0;
-    margin-top: var(--space-xs);
-  }
-
-  .remove-court-btn {
     margin-left: auto;
   }
 }
@@ -347,5 +379,13 @@
   .confirm-remove-court-btn,
   .cancel-remove-court-btn {
     width: 100%;
+  }
+  
+  .court-players-grid {
+    flex-wrap: wrap;
+  }
+  
+  .court-player-slot {
+    flex: 0 1 calc(50% - var(--space-xs));
   }
 }

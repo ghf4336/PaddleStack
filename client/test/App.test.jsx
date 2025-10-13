@@ -117,8 +117,8 @@ describe('PaddleStack App', () => {
       fireEvent.click(screen.getByText('Confirm'));
     });
     // Now Court 2 should be: Eve, Frank, Gina, Henry
-    // Complete game on Court 1
-    const completeBtns = screen.getAllByText('Complete Game');
+    // Complete on Court 1
+    const completeBtns = screen.getAllByText('Complete');
     fireEvent.click(completeBtns[0]); // Court 1
     // Alice, Bob, Charlie, Diana should be at the end of the queue, not in any court
     // Court 1 should now have next 4 unassigned: none left, so should be empty
@@ -446,8 +446,8 @@ describe('App logic functions', () => {
     });
     fireEvent.click(screen.getByText('+ Add Court'));
     fireEvent.click(screen.getByText('+ Add Court'));
-    // Complete game on Court 1
-    const completeBtns = screen.getAllByText('Complete Game');
+    // Complete on Court 1
+    const completeBtns = screen.getAllByText('Complete');
     fireEvent.click(completeBtns[0]);
     // Players A-D should be at the end of the queue
     ['A T', 'B T', 'C T', 'D T'].forEach(name => {
@@ -534,7 +534,7 @@ describe('App logic functions', () => {
     expect(courtElement).not.toHaveTextContent('Player5');
     
     // Complete the game
-    const completeBtn = screen.getByText('Complete Game');
+    const completeBtn = screen.getByText('Complete');
     fireEvent.click(completeBtn);
     
     // Player5 should still be paused and NOT assigned to the court
@@ -575,7 +575,7 @@ describe('App logic functions', () => {
     expect(player5Element).toHaveClass('paused');
     
     // Complete the game
-    const completeBtn = screen.getByText('Complete Game');
+    const completeBtn = screen.getByText('Complete');
     fireEvent.click(completeBtn);
     
     // Check that no player appears duplicated anywhere
@@ -622,7 +622,7 @@ describe('App logic functions', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     
     // Complete the game to move court players to end of queue
-    const completeBtn = screen.getByText('Complete Game');
+    const completeBtn = screen.getByText('Complete');
     fireEvent.click(completeBtn);
     
     // Wait for game completion to process

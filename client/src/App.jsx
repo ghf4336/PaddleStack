@@ -96,7 +96,7 @@ function App() {
     ]);
   };
 
-  // Complete game handler
+  // Complete handler
   const handleCompleteGame = (courtIdx) => {
     // Batch update: move finished players to end, clear court, and reassign courts in one go
     const court = courts[courtIdx];
