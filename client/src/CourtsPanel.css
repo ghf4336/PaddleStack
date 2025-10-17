@@ -54,24 +54,19 @@
   transform: translateY(-1px);
 }
 
-.courts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
 .court-card {
   background: var(--color-bg-primary);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-sm) var(--space-md);
+  box-shadow: none;
+  border: 0;
+  padding: var(--space-sm) 0;
   min-height: auto;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   position: relative;
-  transition: background 0.3s, box-shadow 0.3s;
+  transition: background 0.3s;
   gap: var(--space-md);
 }
 
