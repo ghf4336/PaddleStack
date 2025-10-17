@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0px;
-  padding: var(--space-md) var(--space-lg);
+  padding: 2px 16px;
   background: linear-gradient(to right, #22c55e, #16a34a);
   color: var(--color-bg-primary);
   border-top-left-radius: var(--radius-lg);
@@ -34,9 +34,9 @@
 
 .add-court-btn {
   margin-left: auto;
-  padding: var(--space-sm) var(--space-lg);
+  padding: 16px 16px;
   font-weight: 600;
-  font-size: var(--font-size-base);
+  font-size: 15px;
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
   border: none;

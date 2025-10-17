@@ -66,7 +66,20 @@ export const testPlayers = [
   { firstName: 'Bruno', lastName: 'Mars', name: 'Bruno Mars', paid: true, payment: TEST_PAYMENTS.ONLINE, phone: '555-7777' },
   { firstName: 'Sam', lastName: 'Jones', name: 'Sam Jones', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-8888' },
   { firstName: 'Eric', lastName: 'Clark', name: 'Eric Clark', paid: true, payment: TEST_PAYMENTS.ONLINE, phone: '555-9999' },
-  { firstName: 'Tim', lastName: 'Cook', name: 'Tim Cook', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-0000' }
+  { firstName: 'Tim', lastName: 'Cook', name: 'Tim Cook', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-0000' },
+  // Added 12 more players below
+  { firstName: 'Megan', lastName: 'Fox', name: 'Megan Fox', paid: true, payment: TEST_PAYMENTS.ONLINE, phone: '555-1212' },
+  { firstName: 'Chris', lastName: 'Evans', name: 'Chris Evans', paid: false, payment: TEST_PAYMENTS.CASH, phone: '555-2323' },
+  { firstName: 'Natalie', lastName: 'Portman', name: 'Natalie Portman', paid: true, payment: TEST_PAYMENTS.ONLINE, phone: '555-3434' },
+  { firstName: 'Tom', lastName: 'Holland', name: 'Tom Holland', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-4545' },
+  { firstName: 'Emma', lastName: 'Watson', name: 'Emma Watson', paid: false, payment: TEST_PAYMENTS.ONLINE, phone: '555-5656' },
+  { firstName: 'Ryan', lastName: 'Reynolds', name: 'Ryan Reynolds', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-6767' },
+  { firstName: 'Sophia', lastName: 'Turner', name: 'Sophia Turner', paid: true, payment: TEST_PAYMENTS.ONLINE, phone: '555-7878' },
+  { firstName: 'Liam', lastName: 'Neeson', name: 'Liam Neeson', paid: false, payment: TEST_PAYMENTS.CASH, phone: '555-8989' },
+  { firstName: 'Olivia', lastName: 'Benson', name: 'Olivia Benson', paid: true, payment: TEST_PAYMENTS.ONLINE, phone: '555-9090' },
+  { firstName: 'Noah', lastName: 'Centineo', name: 'Noah Centineo', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-1010' },
+  { firstName: 'Ava', lastName: 'Gardner', name: 'Ava Gardner', paid: false, payment: TEST_PAYMENTS.ONLINE, phone: '555-2020' },
+  { firstName: 'Mason', lastName: 'Mount', name: 'Mason Mount', paid: true, payment: TEST_PAYMENTS.CASH, phone: '555-3030' }
 ];
 
 // Pre-built test data arrays for common test scenarios
