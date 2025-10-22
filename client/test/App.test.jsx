@@ -4,6 +4,11 @@ import App from '../src/App.jsx';
 import '@testing-library/jest-dom';
 import { TEST_PLAYER_NAMES, TEST_PHONE_NUMBERS, TEST_PAYMENTS } from '../src/testPlayers';
 
+// Clear localStorage before each test to prevent auto-restore from interfering
+beforeEach(() => {
+  localStorage.clear();
+});
+
 // Helper to bypass the welcome page if present
 function bypassWelcome() {
   const manualBtn = screen.queryByText('Add Players Manually');
@@ -167,9 +172,9 @@ describe('PaddleStack App', () => {
     fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: TEST_PAYMENTS.ONLINE } });
     fireEvent.click(screen.getByText('Confirm'));
-    // Use correct button title
-    const removeBtn = screen.getByTitle('Remove or pause player');
-    fireEvent.click(removeBtn);
+    // Use correct button title - get all and click the last one (Bob)
+    const removeBtns = screen.getAllByTitle('Remove or pause player');
+    fireEvent.click(removeBtns[removeBtns.length - 1]);
     // Modal appears
     fireEvent.click(screen.getByText('Delete Player'));
     await waitFor(() => {
@@ -283,9 +288,9 @@ describe('PaddleStack App', () => {
     fireEvent.click(screen.getByText('+ Add Court'));
     // Court 1 should be filled with Alice, Bob, Charlie, Diana
     expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
-    // Remove the court
-    const removeCourtBtn = screen.getByTitle('Remove court');
-    fireEvent.click(removeCourtBtn);
+    // Remove the court (get the first one if multiple courts exist)
+    const removeCourtBtns = screen.getAllByTitle('Remove court');
+    fireEvent.click(removeCourtBtns[0]);
     // Confirm removal in popup
     fireEvent.click(screen.getByText('Remove'));
     // Court 1 should be gone
@@ -341,8 +346,9 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
-    // Remove button (×) should be enabled
-    fireEvent.click(screen.getByTitle('Remove or pause player'));
+    // Remove button (×) should be enabled - get all remove buttons and click the first one
+    const removeBtns = screen.getAllByTitle('Remove or pause player');
+    fireEvent.click(removeBtns[0]);
     // Modal appears
     fireEvent.click(screen.getByText('Delete Player'));
     await waitFor(() => {
@@ -364,9 +370,13 @@ describe('PaddleStack Player Add/Delete/Pause/Enable', () => {
     fireEvent.change(screen.getByPlaceholderText("Enter last name"), { target: { value: "Test" } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
+    // Wait for modal to close before looking for remove buttons
+    await waitFor(() => {
+      expect(screen.queryByText('Add New Player')).not.toBeInTheDocument();
+    });
     // Pause P1
-    const pauseBtn = screen.getAllByTitle('Remove or pause player')[0];
-    fireEvent.click(pauseBtn);
+    const pauseBtns = screen.getAllByTitle('Remove or pause player');
+    fireEvent.click(pauseBtns[0]);
     fireEvent.click(screen.getByText('Pause Player'));
     // Enable P1
     fireEvent.click(screen.getByText('Play'));
@@ -419,8 +429,9 @@ describe('App logic functions', () => {
       fireEvent.click(screen.getByText('Confirm'));
     });
     fireEvent.click(screen.getByText('+ Add Court'));
-    // Remove the court
-    fireEvent.click(screen.getByTitle('Remove court'));
+    // Remove the court (get all remove buttons since there might be multiple courts)
+    const removeCourtBtns = screen.getAllByTitle('Remove court');
+    fireEvent.click(removeCourtBtns[0]);
     fireEvent.click(screen.getByText('Remove'));
     // Court should be gone
     expect(screen.queryByText('Court 1')).not.toBeInTheDocument();
@@ -457,7 +468,7 @@ describe('App logic functions', () => {
     expect(screen.getAllByText('Court 1').length).toBeGreaterThan(0);
   });
 
-  test('handleEnablePausedPlayer moves paused player to end of queue and re-enables', () => {
+  test('handleEnablePausedPlayer moves paused player to end of queue and re-enables', async () => {
     render(<App />);
     bypassWelcome();
     // Add two players
@@ -471,9 +482,13 @@ describe('App logic functions', () => {
     fireEvent.change(screen.getByPlaceholderText('Enter last name'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByLabelText(/Payment Method/i), { target: { value: 'online' } });
     fireEvent.click(screen.getByText('Confirm'));
+    // Wait for modal to close
+    await waitFor(() => {
+      expect(screen.queryByText('Add New Player')).not.toBeInTheDocument();
+    });
     // Pause P1
-    const pauseBtn = screen.getAllByTitle('Remove or pause player')[0];
-    fireEvent.click(pauseBtn);
+    const pauseBtns = screen.getAllByTitle('Remove or pause player');
+    fireEvent.click(pauseBtns[0]);
     fireEvent.click(screen.getByText('Pause Player'));
     // Enable P1
     fireEvent.click(screen.getByText('Play'));
@@ -561,9 +576,15 @@ describe('App logic functions', () => {
       fireEvent.click(screen.getByText('Confirm'));
     }
     
+    // Wait for modal to close after last player
+    await waitFor(() => {
+      expect(screen.queryByText('Add New Player')).not.toBeInTheDocument();
+    });
+    
     // Pause Player5 first (before adding court)
-    const pauseBtn = screen.getAllByTitle('Remove or pause player')[4]; // Player5 is at index 4
-    fireEvent.click(pauseBtn);
+    const pauseBtns = screen.getAllByTitle('Remove or pause player');
+    expect(pauseBtns.length).toBeGreaterThanOrEqual(5);
+    fireEvent.click(pauseBtns[4]); // Player5 is at index 4
     fireEvent.click(screen.getByText('Pause Player'));
     
     // Add a court - should auto-assign Player1-4, Player5 is paused so not assigned
@@ -613,9 +634,15 @@ describe('App logic functions', () => {
       fireEvent.click(screen.getByText('Confirm'));
     }
     
+    // Wait for modal to close after last player
+    await waitFor(() => {
+      expect(screen.queryByText('Add New Player')).not.toBeInTheDocument();
+    });
+    
     // Pause Player5 first (before adding court)
-    const pauseBtn = screen.getAllByTitle('Remove or pause player')[4]; // Player5 is at index 4
-    fireEvent.click(pauseBtn);
+    const pauseBtns = screen.getAllByTitle('Remove or pause player');
+    expect(pauseBtns.length).toBeGreaterThanOrEqual(6);
+    fireEvent.click(pauseBtns[4]); // Player5 is at index 4
     fireEvent.click(screen.getByText('Pause Player'));
     
     // Add a court - should auto-assign Player1-4, Player6 should be in Next Up

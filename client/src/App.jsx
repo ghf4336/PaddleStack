@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { useSensor, useSensors, PointerSensor, TouchSensor } from '@dnd-kit/core';
 import { swapPlayers, parseDragId, reorderCourts } from './utils/dragDrop';
 import { formatPlayerDisplayName, getPlayerFullName } from './utils/playerUtils';
+import { saveSessionState, loadSessionState, clearSessionState, formatTimeSince } from './utils/sessionStorage';
 import EndSessionModal from './EndSessionModal';
 import Welcome from './Welcome';
 import './App.css';
@@ -22,6 +23,66 @@ function App() {
   // Toast state
   const [toast, setToast] = useState(null);
   const toastTimeout = useRef();
+  
+  // Session players: static order, never reorders
+  const [sessionPlayers, setSessionPlayers] = useState([]);
+  const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
+  const [deletedPlayers, setDeletedPlayers] = useState([]); // Array of soft-deleted players
+  const [uploadedPlayers, setUploadedPlayers] = useState([]); // Array of players from uploaded file
+  const [courts, setCourts] = useState([]); // Array of { number, players: [] }
+  
+  // Track whether we've restored state (to prevent infinite loops)
+  const [hasRestoredState, setHasRestoredState] = useState(false);
+  
+  // Helper function to show toast messages (defined before useEffects that need it)
+  const showToast = useCallback((message) => {
+    setToast(message);
+    if (toastTimeout.current) {
+      clearTimeout(toastTimeout.current);
+    }
+    toastTimeout.current = setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  }, []);
+  
+  // Restore session state on mount
+  useEffect(() => {
+    const savedState = loadSessionState();
+    if (savedState) {
+      setSessionPlayers(savedState.sessionPlayers);
+      setPausedPlayers(savedState.pausedPlayers);
+      setDeletedPlayers(savedState.deletedPlayers);
+      setUploadedPlayers(savedState.uploadedPlayers);
+      setCourts(savedState.courts);
+      setShowWelcome(false); // Skip welcome page if restoring
+      setHasRestoredState(true);
+      
+      // Show toast notification
+      const timeSince = formatTimeSince(savedState.timestamp);
+      showToast(`Session restored (last saved ${timeSince})`);
+    } else {
+      setHasRestoredState(true);
+    }
+  }, [showToast]);
+  
+  // Auto-save session state whenever it changes
+  useEffect(() => {
+    // Don't save until we've attempted restore
+    if (!hasRestoredState) return;
+    
+    // Don't save if we're on the welcome page with no data
+    if (showWelcome && sessionPlayers.length === 0 && courts.length === 0) return;
+    
+    // Save the current state
+    saveSessionState({
+      sessionPlayers,
+      pausedPlayers,
+      deletedPlayers,
+      uploadedPlayers,
+      courts
+    });
+  }, [sessionPlayers, pausedPlayers, deletedPlayers, uploadedPlayers, courts, showWelcome, hasRestoredState]);
+  
   // Remove court handler with in-panel confirmation (must be inside App)
   const [courtToRemove, setCourtToRemove] = useState(null); // index of court to remove or null
   const handleRemoveCourt = (courtIdx) => {
@@ -42,6 +103,7 @@ function App() {
     setToast(null);
     setShowEndSessionModal(false);
     setShowWelcome(true); // Return to welcome page
+    clearSessionState(); // Clear saved state from localStorage
   }
 
   const handleStartManually = () => {
@@ -75,12 +137,6 @@ function App() {
     setCourtToRemove(null);
   };
   const [showAddPlayerModal, setShowAddPlayerModal] = useState(false);
-  // Session players: static order, never reorders
-  const [sessionPlayers, setSessionPlayers] = useState([]);
-  const [pausedPlayers, setPausedPlayers] = useState([]); // Array of { name, paid, addedAt }
-  const [deletedPlayers, setDeletedPlayers] = useState([]); // Array of soft-deleted players
-  const [uploadedPlayers, setUploadedPlayers] = useState([]); // Array of players from uploaded file
-  const [courts, setCourts] = useState([]); // Array of { number, players: [] }
   const [activeId, setActiveId] = useState(null); // For drag overlay
   const [overId, setOverId] = useState(null); // For drop target highlight
 
