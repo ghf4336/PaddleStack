@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import AddPlayerModal from '../src/AddPlayerModal';
+import '@testing-library/jest-dom';
 
 describe('AddPlayerModal Cancel Confirmation', () => {
   const defaultProps = {
