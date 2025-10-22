@@ -51,16 +51,17 @@ function EndSessionModal({ open, onClose, onConfirm, sessionPlayers, deletedPlay
           <h2 style={{ margin: 0 }}>End Session?</h2>
           {onLoadTestData && (
             <button
-              onClick={onLoadTestData}
+              onClick={sessionPlayers.length === 0 ? onLoadTestData : undefined}
+              disabled={sessionPlayers.length > 0}
               style={{
-                background: '#f3f4f6',
-                color: '#374151',
+                background: sessionPlayers.length > 0 ? '#e5e7eb' : '#f3f4f6',
+                color: sessionPlayers.length > 0 ? '#9ca3af' : '#374151',
                 border: '1px solid #d1d5db',
                 borderRadius: 8,
                 padding: '8px 16px',
                 fontSize: 14,
                 fontWeight: 600,
-                cursor: 'pointer'
+                cursor: sessionPlayers.length > 0 ? 'not-allowed' : 'pointer'
               }}
             >
               Load Test Data

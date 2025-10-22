@@ -15,6 +15,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const justSelectedRef = useRef(false);
   const dropdownInteractingRef = useRef(false);
 
@@ -28,6 +29,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       setFilteredPlayers([]);
       setShowDropdown(false);
       setDuplicateError(false);
+      setShowCancelConfirm(false);
       justSelectedRef.current = false;
     }
   }, [show]);
@@ -123,6 +125,24 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
     }
   };
 
+  const handleCancel = () => {
+    const hasData = firstName.trim() || lastName.trim() || phone.trim() || payment;
+    if (hasData) {
+      setShowCancelConfirm(true);
+    } else {
+      onCancel();
+    }
+  };
+
+  const confirmCancel = () => {
+    setShowCancelConfirm(false);
+    onCancel();
+  };
+
+  const cancelCancel = () => {
+    setShowCancelConfirm(false);
+  };
+
   if (!show) return null;
   return (
     <div style={{
@@ -160,7 +180,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
             </svg>
           </span>
           <h3 style={{ margin: 0, fontWeight: 600, fontSize: 20 }}>Add New Player</h3>
-          <button onClick={onCancel} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Close">×</button>
+          <button onClick={handleCancel} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Close">×</button>
         </div>
         <div style={{ marginBottom: 12, position: 'relative' }}>
           <label style={{ fontWeight: 500, fontSize: 15, display: 'block', marginBottom: 4 }}>
@@ -337,7 +357,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
           <button
-            onClick={onCancel}
+            onClick={handleCancel}
             className="cancel-btn"
             type="button"
             style={{
@@ -371,6 +391,71 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
           >Confirm</button>
         </div>
       </form>
+      
+      {/* Cancel Confirmation Modal */}
+      {showCancelConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          paddingTop: '10vh',
+          zIndex: 1001
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 12,
+            padding: '24px 32px',
+            maxWidth: 400,
+            width: '90%',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          }}>
+            <h3 style={{ margin: '0 0 16px 0', fontWeight: 600, fontSize: 18, color: '#374151' }}>
+              Cancel Adding Player?
+            </h3>
+            <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: 15, lineHeight: 1.5 }}>
+              You have unsaved changes. Are you sure you want to cancel without saving this player?
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+              <button
+                onClick={cancelCancel}
+                style={{
+                  background: '#fff',
+                  color: '#374151',
+                  border: '1.5px solid #d1d5db',
+                  borderRadius: 8,
+                  padding: '8px 16px',
+                  fontWeight: 500,
+                  fontSize: 14,
+                  cursor: 'pointer'
+                }}
+              >
+                Keep Editing
+              </button>
+              <button
+                onClick={confirmCancel}
+                style={{
+                  background: '#ef4444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '8px 16px',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: 'pointer'
+                }}
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
