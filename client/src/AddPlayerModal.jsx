@@ -18,6 +18,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const justSelectedRef = useRef(false);
   const dropdownInteractingRef = useRef(false);
+  const firstNameInputRef = useRef(null);
 
   useEffect(() => {
     if (show) {
@@ -31,6 +32,10 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
       setDuplicateError(false);
       setShowCancelConfirm(false);
       justSelectedRef.current = false;
+      // Focus the first name input when modal opens
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 0);
     }
   }, [show]);
 
@@ -194,6 +199,7 @@ function AddPlayerModal({ show, onPaidChange, onConfirm, onCancel, uploadedPlaye
           <div style={{ display: 'flex', gap: '30px' }}>
             <div style={{ flex: 1 }}>
               <input
+                ref={firstNameInputRef}
                 type="text"
                 placeholder="Enter first name"
                 value={firstName}
